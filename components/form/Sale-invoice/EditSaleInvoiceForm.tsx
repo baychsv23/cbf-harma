@@ -1,0 +1,646 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { ShoppingCart, Plus, Minus, X, Package } from "lucide-react";
+
+import { formatCurrency } from "@/lib/getCurrencySymbol";
+
+import { useAlert } from "@/app/hooks/useAlert";
+
+import Loader from "@/components/Loader";
+
+import { updateSaleInvoice } from "@/actions/saleInvoices";
+import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+import { useTranslations } from "next-intl";
+import {
+  Category,
+  InvoiceType,
+  PaidType,
+  Set as SetPrisma,
+} from "@/app/generated/prisma/enums";
+import { translations } from "@/lib/translation";
+interface EditInvoiceFormProps {
+  invoiceId: number;
+  onCancel: () => void;
+  onSuccess?: () => void;
+  type: InvoiceType;
+}
+interface CartItem {
+  id: number;
+  serviceId: number;
+  name: string;
+  cost: number;
+  price: number;
+  quantity: number;
+  details?: string;
+}
+
+export default function EditSaleInvoiceForm({
+  invoiceId,
+  onCancel,
+  onSuccess,
+  type,
+}: EditInvoiceFormProps) {
+  const t = useTranslations();
+  const api = useApiWithAlert();
+  const {
+    showSuccess,
+    showError,
+    showWarning,
+    showProcessing,
+    closeProcessing,
+  } = useAlert();
+
+  // States
+  const [services, setServices] = useState<any[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [selectedPaidStatus, setSelectedPaidStatus] = useState<PaidType>(
+    PaidType.UNPAID
+  );
+  const [selectSetInvoice, setSelectSetInvoice] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [customer, setCustomer] = useState<string>("");
+  const [invoiceNo, setInvoiceNo] = useState("");
+  const [selectedSet, setSelectedSet] = useState<string>(""); // New state for selected set
+  useEffect(() => {
+    loadInitialData();
+    loadServices();
+  }, [invoiceId]);
+
+  const loadInitialData = async () => {
+    if (!invoiceId) return;
+    try {
+      showProcessing();
+
+      // Load invoice data with destructuring
+      const { data: invoiceResponse } = await api.get(
+        `/api/sale-invoices/${invoiceId}`
+      );
+
+
+      const invoice = invoiceResponse.data;
+
+      setCustomer(invoice.customer.name);
+      setSelectSetInvoice(invoice.set);
+      setSelectedPaidStatus(invoice.paidStatus)
+      // Set editable fields
+      setInvoiceNo(invoice.invoice ? invoice.invoice.saleInvoiceNo : invoice.saleInvoiceNo);
+      // Load cart items from invoice
+      const cartItems: CartItem[] = invoice.saleInvoiceServices.map(
+        (item: any) => ({
+          id: item.id,
+          serviceId: item.service?.id,
+          name: item.service?.name,
+          price: item.price,
+          cost: item.cost,
+          quantity: item.quantity,
+          details: Array.isArray(item.details)
+            ? item.details.join(",")
+            : item.details || "",
+        })
+      );
+      setCart(cartItems);
+    } catch (error) {
+      console.error(error)
+      onCancel();
+    } finally {
+      closeProcessing();
+    }
+  };
+  const getAvailableSets = () => {
+    const setsSet = new Set<string>();
+    services.forEach((service) => {
+      if (Array.isArray(service.sets)) {
+        service.sets.forEach((set: string) => setsSet.add(set));
+      }
+    });
+    return Array.from(setsSet).sort();
+  };
+
+  const loadServices = async () => {
+    try {
+      const { data } = await api.get(`/api/services`);
+
+      setServices(data.success ? data.data : []);
+    } catch (error) {
+      setServices([]);
+    }
+  };
+  const filteredServices = services.filter((service) => {
+    const matchCategory =
+      !selectedCategory || service.category === selectedCategory;
+
+    return matchCategory;
+  });
+
+  const updatePrice = (id: number, newPrice: number) => {
+    setCart(
+      cart.map((item) => (item.id === id ? { ...item, price: newPrice } : item))
+    );
+  };
+
+  const updateCost = (id: number, newCost: number) => {
+    setCart(
+      cart.map((item) => (item.id === id ? { ...item, cost: newCost } : item))
+    );
+  };
+  const updateDetails = (id: number, details: string) => {
+    setCart(
+      cart.map((item) =>
+        item.id === id ? { ...item, details: details } : item
+      )
+    );
+  };
+
+  const addToCart = (service: any) => {
+    const existingItem = cart.find((item) => item.serviceId === service.id);
+
+    const currentCartQuantity = existingItem ? existingItem.quantity : 0;
+    const newQuantity = currentCartQuantity + 1;
+
+    if (existingItem) {
+      updateQuantity(service.id, newQuantity);
+    } else {
+      const newItem: CartItem = {
+        id: Date.now(),
+        serviceId: service.id,
+        name: service.name,
+        cost: service.cost || 0,
+        price: service.price || 0,
+        quantity: 1,
+        details: "",
+      };
+      setCart([newItem, ...cart]);
+    }
+  };
+
+  const updateQuantity = (serviceId: number, newQuantity: number) => {
+    if (newQuantity <= 0) return;
+
+    setCart(
+      cart.map((item) =>
+        item.serviceId === serviceId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  const removeFromCart = (id: number) => {
+    setCart(cart.filter((item) => item.id !== id));
+  };
+
+  const calculateTotal = () => {
+    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  };
+
+  const handleUpdate = async () => {
+    // Validation
+    if (cart.length === 0) {
+      showWarning(t(translations.noItemsCart));
+      return;
+    }
+
+    const updateData = {
+      set: selectSetInvoice as SetPrisma,
+      paidStatus: selectedPaidStatus as PaidType,
+      items: cart.map((item) => ({
+        serviceId: item.serviceId,
+        quantity: item.quantity,
+        price: item.price,
+        cost: item.cost,
+        details: item.details,
+      })),
+    };
+    showProcessing();
+    const result = await updateSaleInvoice(invoiceId, updateData);
+    closeProcessing();
+    if (result?.success) {
+      showSuccess(t(result.message));
+      onSuccess?.();
+      onCancel();
+    } else {
+      showError(t(result.message));
+    }
+  };
+
+  const totalAmount = calculateTotal();
+
+  const availableSets = getAvailableSets();
+  const addSetToCart = () => {
+    if (!selectedSet) {
+      showWarning("Please select a set first");
+      return;
+    }
+
+    const servicesInSet = services.filter(
+      (service) =>
+        Array.isArray(service.sets) && service.sets.includes(selectedSet)
+    );
+
+    if (servicesInSet.length === 0) {
+      showWarning("No services found in this set");
+      return;
+    }
+
+    // Create new cart items for services not already in cart
+    const newItems: CartItem[] = [];
+    const updatedCart = [...cart];
+
+    servicesInSet.forEach((service, index) => {
+      const existingItemIndex = updatedCart.findIndex(
+        (item) => item.serviceId === service.id
+      );
+
+      if (existingItemIndex >= 0) {
+        // If item exists, increment quantity
+        updatedCart[existingItemIndex].quantity += 1;
+      } else {
+        // If item doesn't exist, create new item with unique ID
+        newItems.push({
+          id: Date.now() + index, // Add index to make IDs unique
+          serviceId: service.id,
+          name: service.name,
+          price: service.price || 0,
+          cost: service.cost || 0,
+          quantity: 1,
+          details: "",
+        });
+      }
+    });
+
+    // Combine updated cart with new items
+    setCart([...updatedCart, ...newItems]);
+  };
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Left Side - Products */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header with Filters */}
+        <div className="bg-white border-b p-4">
+          <div className="flex items-center gap-3 mb-4">
+            <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+              <button
+                onClick={onCancel}
+                className="text-sm text-gray-600 hover:text-blue-600 mb-2 flex items-center gap-1"
+              >
+                ←{t(translations.back)}
+              </button>
+              <Package className="text-blue-600" />
+              {t(translations.Edit, {
+                name: t(
+                  type === InvoiceType.INVOICE
+                    ? translations.invoice
+                    : translations.quotation
+                ),
+              })}
+            </h1>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t(translations.category)}
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              >
+                <option value="">
+                  -- {t(translations.All, { name: t(translations.category) })}{" "}
+                  --
+                </option>
+
+                {Object.values(Category).map((c) => (
+                  <option key={c} value={c}>
+                    {t(c)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Filter by Set */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t(translations.set)}
+              </label>
+              <select
+                value={selectedSet}
+                onChange={(e) => setSelectedSet(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              >
+                <option value="">
+                  -- {t(translations.All, { name: t(translations.set) })} --
+                </option>
+                {availableSets.map((set) => (
+                  <option key={set} value={set}>
+                    {t(set)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Add Set Button */}
+            <div className="flex items-end">
+              <button
+                onClick={addSetToCart}
+                disabled={!selectedSet}
+                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <Plus size={18} />
+                {t(translations.add)}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {filteredServices.length === 0 ? (
+            // ส่วนแสดงเมื่อไม่มีข้อมูล (No Data State)
+            <div className="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+              <div className="bg-gray-100 p-6 rounded-full mb-4">
+                <Package size={48} className="text-gray-300" />
+              </div>
+              <p className="text-lg font-medium">{t(translations.noData)}</p>
+            </div>
+          ) : (
+            // ส่วนแสดงรายการข้อมูลปกติ
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredServices.map((service, index) => (
+                <div
+                  key={service.id}
+                  onClick={() => addToCart(service)}
+                  className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-4 cursor-pointer transition hover:shadow-md hover:border-blue-500"
+                >
+                  <div className="flex flex-col h-full">
+                    <h3 className="font-semibold text-gray-800 mb-1 line-clamp-2">
+                      {index + 1}. {service.name}
+                    </h3>
+
+                    <div className="mt-auto">
+                      <p className="text-sm text-gray-600 mb-1">
+                        {t(translations.price)}: {formatCurrency(service.price)}
+                      </p>
+                      <div className="flex items-center justify-end">
+                        <Plus size={16} className="text-blue-600" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Right Side - Cart */}
+      <div className="w-full md:w-96 bg-white border-l flex flex-col">
+        {/* Cart Header */}
+        <div className="p-4 border-b space-y-3 max-h-[50vh] overflow-y-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShoppingCart size={24} className="text-blue-600" />
+              <h2 className="text-xl font-bold text-gray-800">
+                {t(translations.cart)} ({cart.length})
+              </h2>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t(translations.customer)}
+            </label>
+            <input
+              type="text"
+              value={customer}
+              disabled
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 text-sm cursor-not-allowed"
+            />
+          </div>
+          {/* Invoice Number */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t(translations.No, { name: t(translations.invoice) })} *
+            </label>
+            <input
+              type="text"
+              value={invoiceNo}
+              onChange={(e) => setInvoiceNo(e.target.value)}
+              disabled
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 text-sm cursor-not-allowed"
+              placeholder="PO-202410-0001"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-600">
+              {t(translations.set)}
+            </label>
+            <select
+              value={selectSetInvoice}
+              onChange={(e) => setSelectSetInvoice(e.target.value)}
+              className="w-full mt-2 p-2 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+            >
+              <option value="" disabled>
+                -- {t(translations.Select, { name: t(translations.set) })} --
+              </option>
+              {Object.values(SetPrisma).map((p) => (
+                <option key={p} value={p}>
+                  {t(p)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Customer - Read Only */}
+
+          {/* Paid Amount - Read Only */}
+          {type === InvoiceType.INVOICE && (
+            <div>
+              <label className="block text-sm font-medium text-gray-600">
+                {t(translations.paymentStatus)}
+              </label>
+              <select
+                value={selectedPaidStatus}
+                onChange={(e) =>
+                  setSelectedPaidStatus(e.target.value as PaidType)
+                }
+                className="w-full mt-2 p-3 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              >
+                <option value="" disabled>
+                  --{" "}
+                  {t(translations.Select, {
+                    name: t(translations.paymentStatus),
+                  })}{" "}
+                  --
+                </option>
+                {Object.values(PaidType).map((p) => (
+                  <option key={p} value={p}>
+                    {t(p)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+
+        {/* Cart Items */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {cart.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400">
+              <ShoppingCart size={64} className="mb-4" />
+              <p>{t(translations.noData)}</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {cart.map((item: any, index: number) => (
+                <div
+                  key={item.id}
+                  className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <div className="flex-1">
+                      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-50 text-blue-600 text-xs font-bold">
+                        #{cart.length - index}
+                      </span>
+                      <h4 className="font-semibold text-gray-800 text-sm">
+                        {item.name}
+                      </h4>
+                      <p className="text-xs text-gray-500">{item.codeName}</p>
+                    </div>
+                    <button
+                      onClick={() => removeFromCart(item.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+
+                  {/* Quantity Controls */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs text-gray-600 w-16">
+                      {t(translations.quantity)}:
+                    </span>
+                    <button
+                      onClick={() =>
+                        updateQuantity(item.serviceId, item.quantity - 1)
+                      }
+                      className="w-7 h-7 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition"
+                      disabled={item.quantity <= 1}
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <input
+                      type="number"
+                      value={item.quantity}
+                      onChange={(e) =>
+                        updateQuantity(
+                          item.serviceId,
+                          parseInt(e.target.value) || 1
+                        )
+                      }
+                      className="w-16 text-center border border-gray-300 rounded py-1 text-sm"
+                      min="1"
+                    />
+                    <button
+                      onClick={() =>
+                        updateQuantity(item.serviceId, item.quantity + 1)
+                      }
+                      className="w-7 h-7 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition"
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs text-gray-600 w-16">
+                      {t(translations.details)}:
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Ex: 4072ອພ,7085ກງ"
+                      value={item.details}
+                      onChange={(e) =>
+                        updateDetails(item.id, e.target.value || "")
+                      }
+                      className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs text-gray-600 w-16">
+                      {t(translations.cost)}:
+                    </span>
+                    <input
+                      type="number"
+                      value={item.cost}
+                      onChange={(e) =>
+                        updateCost(item.id, parseFloat(e.target.value) || 0)
+                      }
+                      className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs text-gray-600 w-16">
+                      {t(translations.price)}:
+                    </span>
+                    <input
+                      type="number"
+                      value={item.price}
+                      onChange={(e) =>
+                        updatePrice(item.id, parseFloat(e.target.value) || 0)
+                      }
+                      className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+
+                  {/* Cost Input */}
+
+                  {/* Subtotal */}
+                  <div className="flex justify-between items-center pt-2 border-t">
+                    <span className="text-xs text-gray-600">
+                      {t(translations.total)}
+                    </span>
+                    <span className="font-bold text-blue-600">
+                      {formatCurrency(item.price * item.quantity)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Cart Footer */}
+        <div className="border-t p-4 bg-gray-50">
+          <div className="space-y-2 mb-4">
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>{t(translations.totalAmount)}:</span>
+              <span className="font-semibold">
+                {formatCurrency(totalAmount)}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={onCancel}
+              className="flex-1 py-3 bg-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-400 transition"
+            >
+              {t(translations.back)}
+            </button>
+            <button
+              onClick={handleUpdate}
+              disabled={cart.length === 0}
+              className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              {t(translations.update)}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

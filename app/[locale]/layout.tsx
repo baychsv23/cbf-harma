@@ -1,0 +1,66 @@
+import { NextIntlClientProvider } from "next-intl";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+import { Noto_Sans_Lao, Noto_Sans_Thai } from "next/font/google";
+
+import SessionProvider from "@/components/provider/SessionProvider";
+import { getMessages } from "next-intl/server";
+import RouteChangeLoader from "@/components/RouteChangeLoader";
+import Sidebar from "@/components/UI/Sidebar";
+import { getSession } from "@/lib/requirePermission";
+
+const notoSansLao = Noto_Sans_Lao({
+  subsets: ["lao"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const notoSansThai = Noto_Sans_Thai({
+  subsets: ["thai"],
+  weight: ["400", "500", "600", "700"],
+});
+
+function getFontClass(locale: string) {
+  switch (locale) {
+    case "lo":
+      return notoSansLao.className;
+    case "th":
+      return notoSansThai.className;
+    default:
+      return notoSansThai.className;
+  }
+}
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+
+  const session = await getSession();
+  const messages = await getMessages();
+
+  return (
+    <div className={getFontClass(locale)}>
+      <SessionProvider session={session}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <RouteChangeLoader />
+          <Sidebar />
+          <main className="transition-all duration-300 lg:ml-64 ">
+            {children}
+          </main>
+        </NextIntlClientProvider>
+      </SessionProvider>
+    </div>
+  );
+}
