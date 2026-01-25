@@ -2,9 +2,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { Permission, Role } from "./app/generated/prisma/enums";
 import { routing } from "./i18n/routing";
 import createIntlMiddleware from "next-intl/middleware";
+import { Permission, Role } from "./generated/prisma/enums";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -20,7 +20,7 @@ function getLocaleAndPath(pathname: string) {
 }
 
 function isPublicRoute(path: string): boolean {
-  const PUBLIC = ["/about", "/auth/signup"];
+  const PUBLIC = ["/", "/public", "/unauthorized", "/auth/signin"];
   return PUBLIC.some((route) => path === route || path.startsWith(route + "/"));
 }
 
@@ -33,8 +33,9 @@ function isAuthRoute(path: string): boolean {
 
 function hasPermission(token: any, requiredPermissions: string[]): boolean {
   if (token.role === Role.ADMIN) return true;
-  if (!token?.permissions) return false;
-  return requiredPermissions.every((perm) => token.permissions.includes(perm));
+  // ป้องกันกรณี permissions เป็น null หรือไม่ใช่ array
+  const userPerms = Array.isArray(token?.permissions) ? token.permissions : [];
+  return requiredPermissions.every((perm) => userPerms.includes(perm));
 }
 
 // --------------------------------------------------
@@ -44,42 +45,17 @@ interface RouteConfig {
   roles?: Role[];
   permissions?: Permission[];
   authOnly?: boolean;
-  public?: boolean;
 }
 
 const ROUTES: Record<string, RouteConfig> = {
-  // Public
-  "/about": { public: true },
-  "/auth/signup": { public: true },
-
-
   // Auth only
   "/profile": { authOnly: true },
-  "/shopping-online": { authOnly: true },
   // Role-only
   "/admin": { roles: [Role.ADMIN] },
 
   // Permission-based
   "/accounts": { permissions: [Permission.USER_VIEW] },
-  "/customers": { permissions: [Permission.CUSTOMER_VIEW] },
-  "/services": { permissions: [Permission.SERVICE_VIEW] },
-  "/invoices": { permissions: [Permission.INVOICE_VIEW] },
-  "/quotations": { permissions: [Permission.QUOTATION_VIEW] },
-  "/bill-services": { permissions: [Permission.BILL_SERVICE_VIEW] },
-  "/receipt-services": { permissions: [Permission.RECEIPT_SERVICE_VIEW] },
-  "/goods-receipts": { permissions: [Permission.GOODS_RECEIPT_VIEW] },
-  "/export-invoices": { permissions: [Permission.EXPORT_VIEW] },
-  "/products": { permissions: [Permission.PRODUCT_VIEW] },
-  "/suppliers": { permissions: [Permission.SUPPLIER_VIEW] },
-  "/exports": { permissions: [Permission.EXPORT_VIEW] },
-  "/exchanges-rates": { permissions: [Permission.EXCHANGE_RATE_VIEW] },
-  "/pricing-rules": { permissions: [Permission.PRICING_RULE_VIEW] },
-  "/brands": { permissions: [Permission.BRAND_VIEW] },
-  "/unit-packs": { permissions: [Permission.UNIT_PACK_VIEW] },
-  "/online-packages": {
-    permissions: [Permission.ONLINE_PACKAGE_VIEW],
-  },
-  "/shipments": { permissions: [Permission.SHIPMENT_VIEW] }
+  "/products": { permissions: [Permission.PRODUCT_VIEW] }
 };
 
 // --------------------------------------------------
@@ -141,11 +117,6 @@ export async function proxy(request: NextRequest) {
 
       // Auth-only routes (just needs login)
       if (config.authOnly) {
-        return intlMiddleware(request);
-      }
-
-      // Public (allow all)
-      if (config.public) {
         return intlMiddleware(request);
       }
     }

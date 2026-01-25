@@ -27,7 +27,7 @@ export default function PremiumLoginForm() {
     });
     closeProcessing();
     if (result?.ok) {
-      showSuccess(t(translations.loginSuccessful));
+      showSuccess(t(translations.view));
       window.location.href = "/";
     } else {
       showError(t(result?.error as string));
@@ -91,7 +91,7 @@ export default function PremiumLoginForm() {
                     type="text"
                     required
                     className="block w-full pl-12 pr-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                    placeholder={t(translations.placeholder)}
+                    placeholder={t(translations.Placeholder, { name: t(translations.userName) })}
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                     onFocus={() => setFocusedField("userName")}
@@ -124,7 +124,7 @@ export default function PremiumLoginForm() {
                     type={showPassword ? "text" : "password"}
                     required
                     className="block w-full pl-12 pr-12 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                    placeholder={t(translations.placeholder)}
+                    placeholder={t(translations.Placeholder, { name: t(translations.password) })}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     onFocus={() => setFocusedField("password")}
@@ -155,17 +155,7 @@ export default function PremiumLoginForm() {
             </form>
 
             {/* Footer */}
-            <div className="mt-6 text-center">
-              <p className="text-slate-400 text-sm">
-                {t(translations.dontHaveAccount)}{" "}
-                <Link
-                  href="/auth/signup"
-                  className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
-                >
-                  {t(translations.signUp)}
-                </Link>
-              </p>
-            </div>
+
           </div>
 
           {/* Bottom gradient accent */}

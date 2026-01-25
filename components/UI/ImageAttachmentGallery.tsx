@@ -27,7 +27,7 @@ export default function ImageAttachmentGallery({
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
           <Package size={20} className="text-blue-600" />
-          {title || t(translations.details)} ({images.length})
+          {title || t(translations.view)} ({images.length})
         </h2>
       </div>
 
@@ -53,7 +53,7 @@ export default function ImageAttachmentGallery({
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                 <ExternalLink size={20} className="text-white" />
                 <span className="text-white text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-1 rounded backdrop-blur-md">
-                  {t(translations.viewFullSize)}
+                  {t(translations.view)}
                 </span>
               </div>
             </a>

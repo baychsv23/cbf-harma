@@ -90,15 +90,6 @@ export default function AuthButtons() {
         <LogIn className="w-4 h-4" />
         <span className="hidden sm:inline">{t(translations.signin)}</span>
       </Link>
-
-      {/* Sign Up - ซ่อน text บนจอมือถือเล็กมากๆ */}
-      <Link
-        href="/auth/signup"
-        className="flex items-center gap-2 px-2.5 py-2 md:px-4 md:py-2 text-sm font-medium text-white bg-linear-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-sm"
-      >
-        <UserPlus2 className="w-4 h-4" />
-        <span className="hidden sm:inline">{t(translations.signUp)}</span>
-      </Link>
     </div>
   );
 }

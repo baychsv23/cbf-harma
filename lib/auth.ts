@@ -1,10 +1,8 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import jwt, { JwtPayload } from "jsonwebtoken";
 import { database } from "./prisma";
 import { translations } from "./translation";
-import { ActiveState } from "@/app/generated/prisma/enums";
 import { timeToken } from "./constant";
 
 
@@ -19,7 +17,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.userName || !credentials?.password) {
-          throw new Error(translations.authMessage);
+          throw new Error(translations.invalidLogin);
         }
 
         const user = await database.user.findUnique({
@@ -27,17 +25,17 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          throw new Error(translations.authMessage);
+          throw new Error(translations.invalidLogin);
         }
-        if (user.activeStatus === ActiveState.INACTIVE)
-          throw new Error(translations.INACTIVE);
+        if (!user.isActive)
+          throw new Error(translations.inactive);
         const isValid = await bcrypt.compare(
           credentials.password,
           user.password
         );
 
         if (!isValid) {
-          throw new Error(translations.authMessage);
+          throw new Error(translations.invalidLogin);
         }
         return {
           id: user.id,

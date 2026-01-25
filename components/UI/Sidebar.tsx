@@ -10,7 +10,6 @@ import {
     Menu,
     X,
 } from "lucide-react";
-import { Role } from "@/app/generated/prisma/enums";
 import { translations } from "@/lib/translation";
 import AuthButtons from "./AuthButtons";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -23,6 +22,7 @@ import {
     DROPDOWN_GROUPS,
     type MenuItem,
 } from "@/lib/menu-config";
+import { Role } from "@/generated/prisma/enums";
 
 const COMMON_PUBLIC = [{ title: translations.home, href: "/" }];
 
@@ -117,9 +117,6 @@ export default function Sidebar() {
 
     if (userRole === Role.ADMIN) {
         menuItems = [...ROLE_MENUS.ADMIN];
-    }
-    else if (userRole === Role.USER) {
-        menuItems = [...ROLE_MENUS.USER];
     }
     else if (userPermissions.length > 0) {
         const processedPermissions = new Set<string>();
@@ -238,7 +235,7 @@ export default function Sidebar() {
             </aside>
 
             {/* Main Content Spacer */}
-            <div className="lg:pl-64 pt-16">
+            <div className="lg:pl-64">
                 {/* Your main content goes here */}
             </div>
         </>

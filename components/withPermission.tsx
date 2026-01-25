@@ -2,10 +2,10 @@
 "use client";
 
 import React from "react";
-import { Permission } from "@/app/generated/prisma/enums";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Permission } from "@/generated/prisma/enums";
 
 export function withPermission<P extends object>(
   WrappedComponent: React.ComponentType<P>,

@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient } from "@/app/generated/prisma/client";
+import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 declare global {
   var prisma: PrismaClient | undefined;
@@ -16,7 +16,7 @@ function wait(ms: number) {
 async function connectWithRetry(
   client: PrismaClient,
   retries = 10,
-  delay = 1500
+  delay = 1500,
 ) {
   for (let i = 0; i < retries; i++) {
     try {
@@ -27,21 +27,13 @@ async function connectWithRetry(
     }
   }
 
-
   return client;
 }
 
-// ----------------------------------------------------
-// 2) MariaDB Adapter
-// ----------------------------------------------------
-const adapter = new PrismaMariaDb({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  connectionLimit: 15,
-  connectTimeout: 15000,
-});
+
+const connectionString = `${process.env.DATABASE_URL}`
+
+const adapter = new PrismaPg({ connectionString })
 
 // ----------------------------------------------------
 // 3) Create PrismaClient instance

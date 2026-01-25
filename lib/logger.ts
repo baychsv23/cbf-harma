@@ -3,7 +3,7 @@
  * Provides structured logging with environment-aware behavior
  */
 
-type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+
 
 interface LogContext {
     [key: string]: unknown;

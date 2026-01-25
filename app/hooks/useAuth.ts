@@ -1,6 +1,7 @@
 // lib/hooks/useAuth.ts
+import { Permission, Role } from "@/generated/prisma/enums";
 import { useSession } from "next-auth/react";
-import { Permission, Role } from "../generated/prisma/enums";
+
 
 
 export function useAuth() {

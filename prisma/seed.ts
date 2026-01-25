@@ -1,6 +1,7 @@
 
 
-import { Role } from "@/app/generated/prisma/enums";
+
+import { Role } from "@/generated/prisma/enums";
 import { database } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 

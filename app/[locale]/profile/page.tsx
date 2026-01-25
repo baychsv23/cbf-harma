@@ -1,195 +1,176 @@
 "use client";
 
-import {
-  useState,
-  useActionState,
-  useEffect,
-  useRef,
-  startTransition,
-} from "react";
-import { User, Shield, Lock, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useState, useRef } from "react";
+import { User, Building2, Shield, Lock, Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
 import { useAlert } from "@/app/hooks/useAlert";
-import { changePassword } from "@/actions/changePassword";
-import { initialState } from "@/lib/constant";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/app/hooks/useAuth";
 import { translations } from "@/lib/translation";
-import { useTranslations } from "next-intl";
-import { Role } from "@/app/generated/prisma/enums";
+import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 
 export default function ProfilePage() {
-  const t = useTranslations();
   const { user } = useAuth();
-  const { showWarning, showSuccess, showProcessing, closeProcessing, showError } = useAlert();
+  const api = useApiWithAlert();
+  const { showWarning, showProcessing } = useAlert();
+  const t = useTranslations();
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const [state, formAction, isPending] = useActionState(changePassword, initialState);
-  const [showPasswords, setShowPasswords] = useState({ new: false, confirm: false });
-  const [passwordData, setPasswordData] = useState({ newPassword: "", confirmPassword: "" });
+  const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
+  const [passwordData, setPasswordData] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isMismatch = passwordData.confirmPassword !== "" && passwordData.newPassword !== passwordData.confirmPassword;
-  const isMatch = passwordData.confirmPassword !== "" && passwordData.newPassword === passwordData.confirmPassword && passwordData.newPassword.length >= 6;
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showWarning(t(translations.passwordMismatch));
-      return;
+  const validate = () => {
+    if (!passwordData.currentPassword) {
+      showWarning(t(translations.FiledRequired, { name: t(translations.currentPassword) }));
+      return false;
     }
-    showProcessing();
-    const formData = new FormData(e.currentTarget);
-    startTransition(() => { formAction(formData); });
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      showWarning(t(translations.passwordMisMatch));
+      return false;
+    }
+    return true;
   };
 
-  useEffect(() => {
-    if (state.message) {
-      closeProcessing();
-      if (state.success) {
-        showSuccess(t(state.message));
-        setPasswordData({ newPassword: "", confirmPassword: "" });
-      } else {
-        showError(t(state.message));
-      }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setIsSubmitting(true);
+    showProcessing();
+
+    try {
+      await api.post("/api/user/change-password", passwordData);
+      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      formRef.current?.reset();
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [state]);
+  };
 
   return (
-    // ปรับ Padding ให้เล็กลงในมือถือ (px-4) และใหญ่ขึ้นใน Desktop (md:py-12)
-    <div className="min-h-screen bg-slate-50 py-6 px-4 md:py-12">
-      <div className="max-w-xl mx-auto space-y-5 md:space-y-8">
-
-        {/* Profile Card */}
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 md:p-8">
-          <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <User className="w-5 h-5 text-blue-600" />
-            </div>
-            {t(translations.profile)}
-          </h2>
-
-          <div className="space-y-5">
-            {/* ในมือถือจะเรียงเป็นแนวตั้ง (flex-col) ในคอมจะเรียงแนวนอน (sm:flex-row) */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 border-b border-slate-50 pb-4">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t(translations.userName)}</span>
-              <span className="text-slate-700 font-semibold text-lg">{user?.userName || "-"}</span>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 border-b border-slate-50 pb-4">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t(translations.fullName)}</span>
-              <span className="text-slate-700 font-semibold text-lg">{user?.fullName || "-"}</span>
-            </div>
-            {
-              user?.role !== Role.USER && <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t(translations.role)}</span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold uppercase w-fit">
-                  <Shield size={14} />
-                  {user?.role ? t(user.role) : "-"}
-                </span>
-              </div>
-            }
-
-          </div>
+    <div className="min-h-screen bg-[#f8fafc] py-12 px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-900">{t(translations.accountSettings)}</h1>
         </div>
 
-        {/* Change Password Card */}
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 md:p-8 relative overflow-hidden">
-          {/* ตกแต่งเล็กน้อยให้ดูทันสมัย */}
-          <div className="absolute top-0 right-0 p-4 opacity-5">
-            <Lock size={80} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column: Profile Info */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="h-24 bg-gradient-to-r from-blue-600 to-indigo-700"></div>
+              <div className="px-6 pb-6">
+                <div className="-mt-12 mb-4 relative inline-block">
+                  <div className="w-24 h-24 rounded-2xl bg-white p-1 shadow-md">
+                    <div className="w-full h-full rounded-xl bg-slate-100 flex items-center justify-center">
+                      <User className="w-12 h-12 text-slate-400" />
+                    </div>
+                  </div>
+                </div>
+
+                <h2 className="text-xl font-bold text-slate-900">{user?.userName}</h2>
+                <p className="text-sm text-slate-500 mb-6 capitalize">{t(user?.role || "")}</p>
+
+              </div>
+            </div>
           </div>
 
-          <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-            <div className="p-2 bg-amber-50 rounded-lg">
-              <Lock className="w-5 h-5 text-amber-500" />
-            </div>
-            {t(translations.changePassword)}
-          </h2>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
-              {/* New Password */}
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
-                  {t(translations.newPassword)}
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPasswords.new ? "text" : "password"}
-                    name="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-900"
-                    placeholder="••••••••"
-                    disabled={isPending}
-                    required
-                    minLength={6}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                  >
-                    {showPasswords.new ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
+          {/* Right Column: Change Password */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-2 bg-amber-50 rounded-lg text-amber-600">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">{t(translations.changePassword)}</h2>
                 </div>
               </div>
 
-              {/* Confirm Password */}
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
-                  {t(translations.confirmNewPassword)}
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPasswords.confirm ? "text" : "password"}
-                    name="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                    className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl focus:ring-2 transition-all outline-none text-slate-900 ${isMismatch ? "border-red-400 ring-red-50 focus:ring-red-500" : "border-slate-200 focus:ring-blue-500"
-                      }`}
-                    placeholder="••••••••"
-                    disabled={isPending}
-                    required
-                  />
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 gap-6">
+                  {/* Current Password */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700">{t(translations.currentPassword)}</label>
+                    <div className="relative">
+                      <input
+                        type={showPasswords.current ? "text" : "password"}
+                        value={passwordData.currentPassword}
+                        onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                        className="w-full pl-4 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-900"
+                        placeholder="••••••••"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showPasswords.current ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="h-px bg-slate-100 my-2"></div>
+
+                  {/* New Password */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700">{t(translations.newPassword)}</label>
+                    <div className="relative">
+                      <input
+                        type={showPasswords.new ? "text" : "password"}
+                        value={passwordData.newPassword}
+                        onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                        className="w-full pl-4 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-900"
+                        placeholder="••••••••"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showPasswords.new ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700">{t(translations.confirmNewPassword)}</label>
+                    <div className="relative">
+                      <input
+                        type={showPasswords.confirm ? "text" : "password"}
+                        value={passwordData.confirmPassword}
+                        onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                        className="w-full pl-4 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-900"
+                        placeholder="••••••••"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showPasswords.confirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4">
                   <button
-                    type="button"
-                    onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full sm:w-auto px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 active:scale-[0.98] transition-all font-bold shadow-lg shadow-slate-200 disabled:opacity-50"
                   >
-                    {showPasswords.confirm ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {isSubmitting ? t(translations.processing) : t(translations.changePassword)}
                   </button>
                 </div>
-
-                {/* Validation Text */}
-                <div className="min-h-[24px] mt-2">
-                  {isMismatch && (
-                    <div className="flex items-center gap-1.5 text-red-500 animate-in fade-in slide-in-from-top-1">
-                      <AlertCircle size={14} />
-                      <p className="text-xs font-bold">{t(translations.passwordMismatch)}</p>
-                    </div>
-                  )}
-                  {isMatch && (
-                    <div className="flex items-center gap-1.5 text-emerald-500 animate-in fade-in">
-                      <CheckCircle2 size={14} />
-                      <p className="text-xs font-bold">Passwords match</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+              </form>
             </div>
-
-            <button
-              type="submit"
-              disabled={isPending || isMismatch || passwordData.newPassword.length < 6}
-              className="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl font-bold shadow-xl shadow-blue-100 transition-all active:scale-[0.98] disabled:from-slate-300 disabled:to-slate-400 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  {t(translations.processing)}
-                </>
-              ) : (
-                t(translations.changePassword)
-              )}
-            </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>

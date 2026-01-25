@@ -24,6 +24,46 @@ enum ActiveState {
   INACTIVE
 }
 
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum BooleanState {
+  TRUE
+  FALSE
+}
+
+enum Category {
+  NUTRITION_ELECTROLYTE // Corrected spelling (Electrolyte)
+  ANTIBIOTICS
+  ANTI_PARASITIC
+  GASTROINTESTINAL // Corrected (One word is standard for clinical use)
+  CARDIOVASCULAR
+  ANTIDIABETIC
+  RESPIRATORY
+  ANTI_ALLERGIC
+  EFFECTIVE_TO_PSYCHOTIC
+  ANESTHETICS
+  ANALGESIC_ANTIPYRETIC
+  VITAMINS_MINERALS // Corrected spelling (Vitamins)
+  DISINFECTANTS_ANTISEPTIC
+  OTHERS
+}
+
+enum CategorySub {
+  NONE
+
+  // Sub-categories for ANTIBIOTICS (07)
+  PENICILLINS
+  CEPHALOSPORINS
+  MACROLIDES
+  QUINOLONES
+  SULFONAMIDES
+  TINIDAZOLES // Corrected from image (Tinidazole group)
+  AMINOGLYCOSIDES // Corrected spelling (Aminoglycosides)
+}
+
 enum Permission {
   USER_VIEW
   USER_CREATE
@@ -34,16 +74,37 @@ enum Permission {
   PRODUCT_CREATE
   PRODUCT_UPDATE
   PRODUCT_DELETE
+
+  ARTICLE_VIEW
+  ARTICLE_CREATE
+  ARTICLE_UPDATE
+  ARTICLE_DELETE
+
+  ANNOUNCEMENT_VIEW
+  ANNOUNCEMENT_CREATE
+  ANNOUNCEMENT_UPDATE
+  ANNOUNCEMENT_DELETE
+
+  SYMPTOM_VIEW
+  SYMPTOM_CREATE
+  SYMPTOM_UPDATE
+  SYMPTOM_DELETE
 }
 
 model User {
-  id          String       @id @default(uuid())
-  userName    String       @unique
-  fullName    String?
-  password    String
-  isActive    BooleanState @default(TRUE)
-  permissions Json?
-  role        Role         @default(USER)
+  id              String       @id @default(uuid())
+  userName        String       @unique
+  fullName        String?
+  password        String
+  isActive        BooleanState @default(TRUE)
+  permissions     Json?
+  role            Role         @default(USER)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  articlesCreator Article[]    @relation("ArticleCreator")
+  articlesUpdater Article[]    @relation("ArticleUpdater")
+  productsCreator Product[]    @relation("ProductCreator")
+  productsUpdater Product[]    @relation("ProductUpdater")
 }
 
 model Product {
@@ -60,7 +121,6 @@ model Product {
   packaging       String? // ຮູບແບບບັນຈຸ e.g., 10 tablets/strip
   indicationLa    String?      @db.Text // ສັບພະຄຸນ
   indicationEn    String?      @db.Text
-  isBestSeller    BooleanState @default(FALSE)
   isPrescription  BooleanState @default(FALSE) // ຕ້ອງມີໃບສັ່ງແພດບໍ່?
   isActive        BooleanState @default(TRUE)
   productImageUrl String?
@@ -70,8 +130,12 @@ model Product {
   articles Article[] // MedThai Concept: ບົດຄວາມສຸຂະພາບທີ່ກ່ຽວຂ້ອງ (Many-to-Many)
   symptom  Symptom[] // Smart Search: ຢານີ້ແກ້ອາການ
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  createdById String
+  createdBy   User     @relation("ProductCreator", fields: [createdById], references: [id])
+  updatedById String?
+  user        User?    @relation("ProductUpdater", fields: [updatedById], references: [id])
+  updatedAt   DateTime @updatedAt
 }
 
 enum ImageType {
@@ -80,21 +144,19 @@ enum ImageType {
 }
 
 model Announcement {
-  id       String    @id @default(uuid())
-  imageUrl String // limit create only 5 items
-  type     ImageType @default(BANNER)
+  id        String       @id @default(uuid())
+  imageUrl  String
+  type      ImageType    @default(BANNER)
+  isActive  BooleanState @default(TRUE) // Added to control visibility
+  createdAt DateTime     @default(now())
 }
 
 model Symptom {
-  id       String    @id @default(uuid())
-  nameLa   String // e.g., ປວດຫົວ, ເປັນໄຂ້, ໄອ
-  nameEn   String
-  products Product[] // ກົດ "ປວດຫົວ" ຈະເຈິຢາຫຍັງແດ່
-}
-
-enum articleStatus {
-  DRAFT
-  PUBLISHED
+  id        String    @id @default(uuid())
+  nameLa    String // e.g., ປວດຫົວ, ເປັນໄຂ້, ໄອ
+  nameEn    String
+  products  Product[] // ກົດ "ປວດຫົວ" ຈະເຈິຢາຫຍັງແດ່
+  createdAt DateTime  @default(now())
 }
 
 model Article {
@@ -106,32 +168,23 @@ model Article {
   contentEn  String  @db.Text
   coverImage String?
 
-  type ArticleType @default(HEALTH_KNOWLEDGE)
-
+  type     ArticleType   @default(HEALTH_KNOWLEDGE)
+  status   ArticleStatus @default(DRAFT) // Added status field
   // Relations
   products Product[] // Tie-in: ບົດຄວາມນີ້ແນະນຳຢາໂຕໃດ (MedThai Ref)
 
   views       Int       @default(0)
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
+  createdById String
+  createdBy   User      @relation("ArticleCreator", fields: [createdById], references: [id])
   updatedAt   DateTime  @updatedAt
+  updatedById String?
+  user        User?     @relation("ArticleUpdater", fields: [updatedById], references: [id])
 }
 
 enum ArticleType {
   NEWS // ຂ່າວປະຊາສຳພັນ/CSR
   HEALTH_KNOWLEDGE // ບົດຄວາມສຸຂະພາບ
   ACTIVITY // ກິດຈະກຳບໍລິສັດ
-}
-
-enum BooleanState {
-  TRUE
-  FALSE
-}
-
-enum Category {
-  TEST
-}
-
-enum CategorySub {
-  TEST
 }

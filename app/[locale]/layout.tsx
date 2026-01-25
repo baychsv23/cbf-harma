@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { Noto_Sans_Lao, Noto_Sans_Thai } from "next/font/google";
+import { Noto_Sans, Noto_Sans_Lao, Noto_Sans_Thai } from "next/font/google";
 
 import SessionProvider from "@/components/provider/SessionProvider";
 import { getMessages } from "next-intl/server";
@@ -11,22 +11,23 @@ import { getSession } from "@/lib/requirePermission";
 
 const notoSansLao = Noto_Sans_Lao({
   subsets: ["lao"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "700"],
 });
 
 const notoSansThai = Noto_Sans_Thai({
   subsets: ["thai"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "700"],
 });
+const notoSans = Noto_Sans({ subsets: ["latin"], weight: ["400", "700"] })
 
 function getFontClass(locale: string) {
   switch (locale) {
     case "lo":
       return notoSansLao.className;
-    case "th":
-      return notoSansThai.className;
+    case "en":
+      return notoSans.className;
     default:
-      return notoSansThai.className;
+      return notoSansLao.className;
   }
 }
 

@@ -20,14 +20,14 @@ export default function LanguageSwitcher() {
     <div className="flex gap-1 md:gap-2">
       {/* ปุ่มภาษาไทย */}
       <button
-        onClick={() => handleLanguageChange("th")}
-        className={`flex items-center px-2 py-2 md:px-3 md:py-2 rounded-md text-sm font-medium transition-colors ${currentLocale === "th"
+        onClick={() => handleLanguageChange("en")}
+        className={`flex items-center px-2 py-2 md:px-3 md:py-2 rounded-md text-sm font-medium transition-colors ${currentLocale === "en"
           ? "bg-blue-600 text-white"
           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
       >
-        <span className="fi fi-th md:mr-2"></span> {/* ธงโชว์ทั้งคู่ แต่เว้นระยะ mr-2 แค่บน desktop */}
-        <span className="hidden md:inline">{t(translations.thai)}</span>
+        <span className="fi fi-us md:mr-2"></span> {/* ธงโชว์ทั้งคู่ แต่เว้นระยะ mr-2 แค่บน desktop */}
+        <span className="hidden md:inline">{t(translations.english)}</span>
       </button>
 
       {/* ปุ่มภาษาลาว */}
