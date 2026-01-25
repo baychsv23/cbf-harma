@@ -6,6 +6,7 @@
   "resetPassword": "Reset password",
   "Placeholder": "Please input field {name}",
   "search": "Search",
+    "Name":"{name} name",
   "All":"All {name}",
   "SearchBy": "Search by {name}",
   "Filter": "Filter {name}",
@@ -122,6 +123,11 @@
   "QUINOLONES": "Quinolones",
   "SULFONAMIDES": "Sulfonamides",
   "TINIDAZOLES": "Tinidazoles", 
-  "AMINOGLYCOSIDES": "Aminoglycosides"
+  "AMINOGLYCOSIDES": "Aminoglycosides",
+  "BANNER": "Main Banner",
+  "ANNOUNCEMENT": "General Announcement",
+  "NEWS": "Public Relations / CSR",
+  "HEALTH_KNOWLEDGE": "Health Knowledge",
+  "ACTIVITY": "Company Activities"
 
 }

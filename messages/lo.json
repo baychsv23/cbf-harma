@@ -7,6 +7,7 @@
   "Placeholder": "ກະລຸນາຕື່ມຂໍ້ມູນ {name}",
   "search": "ຄົ້ນຫາ",
   "All":"{name}ທັງໝົດ",
+  "Name":"ຊື່{name}",
   "SearchBy": "ຄົ້ນຫາດ້ວຍ{name}",
   "Filter": "ຄົ້ນຫາ{name}",
   "Select": "ເລືອກ{name}",
@@ -122,5 +123,10 @@
   "QUINOLONES": "ກຸ່ມ Quinolones",
   "SULFONAMIDES": "ກຸ່ມ Sulfonamides",
   "TINIDAZOLES": "ກຸ່ມ Tinidazoles",
-  "AMINOGLYCOSIDES": "ກຸ່ມ Aminoglycosides"
+  "AMINOGLYCOSIDES": "ກຸ່ມ Aminoglycosides",
+  "BANNER": "ແບນເນີຫຼັກ",
+  "ANNOUNCEMENT": "ແຈ້ງການທົ່ວໄປ",
+  "NEWS": "ຂ່າວປະຊາສຳພັນ / CSR",
+  "HEALTH_KNOWLEDGE": "ບົດຄວາມສຸຂະພາບ",
+  "ACTIVITY": "ກິດຈະກຳບໍລິສັດ"
 }

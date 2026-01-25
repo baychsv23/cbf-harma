@@ -13,6 +13,7 @@ export const translations = {
   submit: "submit",
   search: "search",
   SearchBy: "SearchBy",
+  Name: "Name",
   Filter: "Filter",
   Select: "Select",
   clear: "clear",
@@ -59,9 +60,6 @@ export const translations = {
   invalidLogin: "invalidLogin",
 
   // Roles
-  ADMIN: "ADMIN",
-  EMPLOYEE: "EMPLOYEE",
-  USER: "USER",
   role: "role",
 
   // Status

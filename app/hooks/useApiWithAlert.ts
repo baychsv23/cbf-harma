@@ -8,7 +8,7 @@ let lastErrorTime = 0;
 
 export function useApiWithAlert() {
   const t = useTranslations();
-  const { showSuccess, showError, showWarning, closeProcessing } = useAlert();
+  const { showSuccess, showError, showWarning } = useAlert();
   const api = axios.create({
     timeout: 15000,
   });
@@ -16,7 +16,9 @@ export function useApiWithAlert() {
   api.interceptors.response.use(
     (response) => {
       const message = response?.data?.message;
-      const isMutation = ["POST", "PUT", "PATCH", "DELETE"].includes(response.config.method?.toUpperCase() || "");
+      const isMutation = ["POST", "PUT", "PATCH", "DELETE"].includes(
+        response.config.method?.toUpperCase() || "",
+      );
       if (message && isMutation) {
         showSuccess(t(message));
       }

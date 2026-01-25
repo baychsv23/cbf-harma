@@ -22,6 +22,7 @@ import {
   CategorySub,
   Permission,
 } from "@/generated/prisma/enums";
+import Script from "next/script";
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 
 export default function ProductPage() {
@@ -70,7 +71,6 @@ export default function ProductPage() {
     clearFilters();
   };
   // Helper to get enum translations or raw keys
-  const getCatLabel = (cat: string) => cat.replace(/_/g, " ");
 
   const showProductForm = async (product?: any) => {
     const productSymptomIds = product?.symptom?.map((s: any) => s.id) || [];
@@ -82,7 +82,7 @@ export default function ProductPage() {
         return `
       <label class="flex items-center gap-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition-colors bg-white">
         <input type="checkbox" name="symptom_ids" value="${symptom.id}" ${isChecked} class="w-4 h-4 accent-blue-600 rounded">
-        <span class="text-sm text-slate-700 font-medium">${symptom.nameLa} / ${symptom.nameEn}</span>
+        <span class="text-sm text-slate-700 font-medium">${local === "en" ? symptom.nameEN : symptom.nameLA}</span>
       </label>
     `;
       })
@@ -146,6 +146,16 @@ export default function ProductPage() {
                  </div>
                </label>
             </div>
+            <div class="right-panel">
+            <div class="form-card border-l-4 border-l-purple-500">
+               <div class="form-card-title text-purple-700">🔍 Smart Search (Symptoms)</div>
+               <p class="text-xs text-slate-500 mb-3">Select symptoms that this medication treats:</p>
+               
+               <div class="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-[150px] overflow-y-auto p-1">
+                 ${symptomsHtml}
+               </div>
+            </div>
+         </div>
           </div>
 
           <div class="right-panel">
@@ -161,19 +171,20 @@ export default function ProductPage() {
                    <label class="field-label">Generic Name</label>
                    <input id="swal-genericName" value="${product?.genericName || ""}" class="swal2-input-custom" placeholder="Active Ingredient">
                  </div>
+                  <div class="field-group col-span-2">
+                    <label class="field-label">${t(translations.Name, { name: t(translations.product) })} (${t(translations.english)}) <span class="text-red-500">*</span></label>
+                    <input id="swal-nameEN" value="${product?.nameEN || ""}" class="swal2-input-custom font-medium" placeholder="e.g. Amoxicillin 500mg">
+                    <p id="error-nameEN" class="text-[10px] text-red-500 mt-1 hidden">⚠️ Please use English letters only (A-Z, 0-9)</p>
+                  </div>
                  <div class="field-group col-span-2">
-                   <label class="field-label">Product Name (English) <span class="text-red-500">*</span></label>
-                   <input id="swal-nameEN" value="${product?.nameEN || ""}" class="swal2-input-custom font-medium" placeholder="e.g. Amoxicillin 500mg">
-                 </div>
-                 <div class="field-group col-span-2">
-                   <label class="field-label">Product Name (Lao) <span class="text-red-500">*</span></label>
+                   <label class="field-label">${t(translations.name)} (${t(translations.lao)}) <span class="text-red-500">*</span></label>
                    <input id="swal-nameLA" value="${product?.nameLA || ""}" class="swal2-input-custom font-medium" placeholder="ຊື່ຢາພາສາລາວ">
                  </div>
               </div>
             </div>
 
             <div class="form-card">
-              <div class="form-card-title">🧪 Specifications & Category</div>
+              <div class="form-card-title">🧪 Specifications & ${t(translations.category)}</div>
               <div class="grid grid-cols-2 gap-4">
                  <div class="field-group">
                    <label class="field-label">Dosage Strength</label>
@@ -185,24 +196,24 @@ export default function ProductPage() {
                  </div>
                  
                  <div class="field-group">
-                   <label class="field-label">Category</label>
+                   <label class="field-label">${t(translations.category)}</label>
                    <select id="swal-category" class="swal2-input-custom bg-slate-50">
                      ${Object.values(Category)
                        .map(
                          (c) =>
-                           `<option value="${c}" ${product?.category === c ? "selected" : ""}>${getCatLabel(c)}</option>`,
+                           `<option value="${c}" ${product?.category === c ? "selected" : ""}>${t(c)}</option>`,
                        )
                        .join("")}
                    </select>
                  </div>
 
                  <div id="sub-category-wrapper" class="field-group slide-reveal hidden">
-                   <label class="field-label text-blue-600 font-bold">Antibiotic Class</label>
+                   <label class="field-label text-blue-600 font-bold">${t("ANTIBIOTICS")}</label>
                    <select id="swal-categorySub" class="swal2-input-custom border-blue-200 bg-blue-50 text-blue-700">
                      ${Object.values(CategorySub)
                        .map(
                          (s) =>
-                           `<option value="${s}" ${product?.categorySub === s ? "selected" : ""}>${getCatLabel(s)}</option>`,
+                           `<option value="${s}" ${product?.categorySub === s ? "selected" : ""}>${t(s)}</option>`,
                        )
                        .join("")}
                    </select>
@@ -224,6 +235,7 @@ export default function ProductPage() {
               </div>
             </div>
           </div>
+          
         </div>
       </div>
     `,
@@ -233,6 +245,28 @@ export default function ProductPage() {
         : t(translations.create),
       cancelButtonText: t(translations.cancel),
       didOpen: () => {
+        const nameENInput = document.getElementById(
+          "swal-nameEN",
+        ) as HTMLInputElement;
+        const errorMsg = document.getElementById("error-nameEN");
+
+        nameENInput?.addEventListener("input", (e) => {
+          const target = e.target as HTMLInputElement;
+          const val = target.value;
+
+          // Regex เช็คว่ามีตัวอักษร "ที่ไม่ใช่" ภาษาอังกฤษปนอยู่หรือไม่
+          const hasNonEnglish = /[^A-Za-z0-9\s.,\-()/]/.test(val);
+
+          if (hasNonEnglish) {
+            // แสดงคำเตือน และใส่ขอบแดงที่ Input
+            errorMsg?.classList.remove("hidden");
+            target.classList.add("border-red-500", "bg-red-50");
+          } else {
+            // ซ่อนคำเตือน และกลับเป็นสีปกติ
+            errorMsg?.classList.add("hidden");
+            target.classList.remove("border-red-500", "bg-red-50");
+          }
+        });
         // 1. ดึง Elements มาเตรียมไว้
 
         const uploadTrigger = document.getElementById("image-upload-trigger");
@@ -247,11 +281,12 @@ export default function ProductPage() {
           // @ts-ignore
           const myWidget = window.cloudinary.createUploadWidget(
             {
-              cloudName: "YOUR_CLOUD_NAME", // แก้เป็นของคุณ
-              uploadPreset: "YOUR_PRESET", // แก้เป็นของคุณ
-              sources: ["local", "url", "camera"],
+              cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+              uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_PRESET,
+              sources: ["local", "url"],
               multiple: false,
               cropping: true,
+              folder: "cbf",
             },
             (error: any, result: any) => {
               if (!error && result && result.event === "success") {
@@ -294,7 +329,13 @@ export default function ProductPage() {
       preConfirm: () => {
         const getVal = (id: string) =>
           (document.getElementById(id) as HTMLInputElement)?.value;
-        const nameEN = getVal("swal-nameEN");
+        const nameEN = (
+          document.getElementById("swal-nameEN") as HTMLInputElement
+        )?.value;
+        const selectedSymptoms = Array.from(
+          document.querySelectorAll('input[name="symptom_ids"]:checked'),
+        ).map((cb: any) => cb.value);
+        const hasNonEnglish = /[^A-Za-z0-9\s.,\-()/]/.test(nameEN);
         const nameLA = getVal("swal-nameLA");
         const genericName = getVal("swal-genericName");
         const sku = getVal("swal-sku");
@@ -304,10 +345,24 @@ export default function ProductPage() {
         const categorySub = getVal("swal-categorySub");
         const indicationLA = getVal("swal-indicationLA");
         const indicationEN = getVal("swal-indicationEN");
+        const productImageUrl = getVal("swal-productImageUrl");
+        if (!productImageUrl) {
+          Swal.showValidationMessage(
+            t(translations.FiledRequired, { name: t(translations.image) }),
+          );
+          return false;
+        }
         if (!sku) {
           Swal.showValidationMessage(
             t(translations.FiledRequired, { name: t(translations.sku) }),
           );
+          return false;
+        }
+        if (hasNonEnglish) {
+          Swal.showValidationMessage(
+            "Product name (English) contains invalid characters",
+          );
+          return false;
         }
         if (!nameEN || !nameLA) {
           Swal.showValidationMessage(
@@ -331,6 +386,7 @@ export default function ProductPage() {
           nameEN,
           nameLA,
           genericName,
+          symptomIds: selectedSymptoms,
           sku,
           dosage,
           packaging,
@@ -340,6 +396,7 @@ export default function ProductPage() {
           slug,
           indicationLA,
           indicationEN,
+          productImageUrl,
         };
       },
     });
@@ -360,6 +417,10 @@ export default function ProductPage() {
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
+      <Script
+        src="https://upload-widget.cloudinary.com/global/all.js"
+        strategy="afterInteractive"
+      />
       {/* Header section identical to yours but with updated Permission enum */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
@@ -473,9 +534,7 @@ export default function ProductPage() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                STT
-              </th>
+              <th className="px-6 py-4 text-xs font-bold text-slate-500">#</th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
                 CLINICAL INFO
               </th>
@@ -494,67 +553,79 @@ export default function ProductPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {products.map((product: any) => (
-              <tr
-                key={product.id}
-                className="hover:bg-slate-50/50 transition-colors"
-              >
-                <td className="px-6 py-4">#{product.stt}</td>
-                <td className="px-6 py-4">
-                  <div className="font-bold text-slate-900">
-                    {local === "en" ? product.nameEN : product.nameLA}
-                  </div>
-                  <div className="text-xs text-slate-500 flex items-center gap-1">
-                    <Stethoscope size={12} /> {product.genericName} •{" "}
-                    {product.dosage}
-                  </div>
-                  {product.isPrescription === BooleanState.TRUE && (
-                    <span className="mt-1 inline-block text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded border border-red-100 font-bold">
-                      RX REQUIRED
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm font-medium text-slate-700">
-                    {getCatLabel(product.category)}
-                  </div>
-                  <div className="text-xs text-blue-500">
-                    {getCatLabel(product.categorySub)}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-xs font-mono bg-slate-100 px-2 py-1 rounded inline-block">
-                    SKU: {product.sku}
-                  </div>
-                  <div className="text-[10px] text-slate-400 mt-1">
-                    /{product.slug}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-bold ${product.isActive === BooleanState.TRUE ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}
-                  >
-                    {product.isActive}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => showProductForm(product)}
-                      className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition"
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button
-                      // onClick={() => handleActiveStatus(product)}
-                      className="p-2 hover:bg-slate-100 text-slate-600 rounded-lg transition"
-                    >
-                      <Settings2 size={16} />
-                    </button>
-                  </div>
+            {products.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="px-6 py-10 text-center text-slate-400  items-center justify-center gap-2"
+                >
+                  <Activity className="w-8 h-8 opacity-20" />
+                  {t(translations.noData)}
                 </td>
               </tr>
-            ))}
+            ) : (
+              (products as any[]).map((product: any) => (
+                <tr
+                  key={product.id}
+                  className="hover:bg-slate-50/50 transition-colors"
+                >
+                  <td className="px-6 py-4">#{product.stt}</td>
+                  <td className="px-6 py-4">
+                    <div className="font-bold text-slate-900">
+                      {local === "en" ? product.nameEN : product.nameLA}
+                    </div>
+                    <div className="text-xs text-slate-500 flex items-center gap-1">
+                      <Stethoscope size={12} /> {product.genericName} •{" "}
+                      {product.dosage}
+                    </div>
+                    {product.isPrescription === BooleanState.TRUE && (
+                      <span className="mt-1 inline-block text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded border border-red-100 font-bold">
+                        RX REQUIRED
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm font-medium text-slate-700">
+                      {t(product.category)}
+                    </div>
+                    <div className="text-xs text-blue-500">
+                      {t(product.categorySub)}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-xs font-mono bg-slate-100 px-2 py-1 rounded inline-block">
+                      SKU: {product.sku}
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-1">
+                      /{product.slug}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-bold ${product.isActive === BooleanState.TRUE ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}
+                    >
+                      {product.isActive}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => showProductForm(product)}
+                        className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        // onClick={() => handleActiveStatus(product)}
+                        className="p-2 hover:bg-slate-100 text-slate-600 rounded-lg transition"
+                      >
+                        <Settings2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch all mode
     const data = await database.symptom.findMany({
-      where: { ...where },
+      where: where,
     });
 
     const total = data.length;

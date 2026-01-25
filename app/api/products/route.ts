@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch all mode
     const data = await database.product.findMany({
-      where: { ...where, activeStatus: BooleanState.TRUE },
+      where: { ...where, isActive : BooleanState.TRUE },
     });
 
     const total = data.length;
@@ -97,6 +97,7 @@ export async function POST(req: Request) {
     if (!body.nameEN || !body.nameLA || !body.sku || !body.slug) {
       throw new ApiError(translations.allFiledRequired, 400);
     }
+    const { symptomIds } = body;
 
     const newProduct = await database.product.create({
       data: {
@@ -105,8 +106,6 @@ export async function POST(req: Request) {
         createdById: creator,
         nameEN: body.nameEN,
         nameLA: body.nameLA,
-        descriptionsEN: body.descriptionsEN,
-        descriptionsLA: body.descriptionsLA,
         genericName: body.genericName,
         dosage: body.dosage,
         packaging: body.packaging,
@@ -116,6 +115,9 @@ export async function POST(req: Request) {
         categorySub: body.categorySub,
         productImageUrl: body.productImageUrl,
         isPrescription: body.isPrescription || BooleanState.FALSE,
+        symptom: {
+          connect: symptomIds.map((id: string) => ({ id })),
+        },
       },
       select: { id: true },
     });

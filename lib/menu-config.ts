@@ -87,9 +87,7 @@ export const ROLE_MENUS = {
         },
       ],
     },
-    { title: translations.category, href: "/articles" },
-
-    { title: translations.product, href: "/products" },
+    { title: translations.article, href: "/articles" },
   ],
 };
 
