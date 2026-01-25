@@ -11,8 +11,12 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   return handleApiAction(async () => {
     const searchParams = request.nextUrl.searchParams;
-    const page = searchParams.get("page") ? parseInt(searchParams.get("page")!) : undefined;
-    const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined;
+    const page = searchParams.get("page")
+      ? parseInt(searchParams.get("page")!)
+      : undefined;
+    const limit = searchParams.get("limit")
+      ? parseInt(searchParams.get("limit")!)
+      : undefined;
 
     // ค้นหาจากชื่อ (รองรับทั้ง LA และ EN)
     const name = searchParams.get("name");
@@ -23,7 +27,7 @@ export async function GET(request: NextRequest) {
       where.OR = [
         { nameEN: { contains: name } },
         { nameLA: { contains: name } },
-        { sku: { contains: name } }
+        { sku: { contains: name } },
       ];
     }
     if (category) where.category = category;
@@ -37,10 +41,10 @@ export async function GET(request: NextRequest) {
           skip,
           take: limit,
           where,
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
           include: {
-            symptom: true
-          }
+            symptom: true,
+          },
         }),
         database.product.count({ where }),
       ]);
@@ -82,14 +86,14 @@ export async function GET(request: NextRequest) {
         hasPrev: false,
       },
     });
-  })
+  });
 }
 export async function POST(req: Request) {
   return handleApiAction(async () => {
     const session = await requirePermission(Permission.PRODUCT_CREATE);
     const body = await req.json();
 
-    const creator = session.user.id
+    const creator = session.user.id;
     if (!body.nameEN || !body.nameLA || !body.sku || !body.slug) {
       throw new ApiError(translations.allFiledRequired, 400);
     }
@@ -106,21 +110,21 @@ export async function POST(req: Request) {
         genericName: body.genericName,
         dosage: body.dosage,
         packaging: body.packaging,
-        indicationEn: body.indicationEn,
-        indicationLa: body.indicationLa,
+        indicationEN: body.indicationEN,
+        indicationLA: body.indicationLA,
         category: body.category,
         categorySub: body.categorySub,
         productImageUrl: body.productImageUrl,
         isPrescription: body.isPrescription || BooleanState.FALSE,
       },
-      select: { id: true }
+      select: { id: true },
     });
 
-    // To include the 'message' for your Axios interceptor, 
+    // To include the 'message' for your Axios interceptor,
     // we return an object that the helper will spread into NextResponse
     return {
       ...newProduct,
-      message: translations.createdSuccess
+      message: translations.createdSuccess,
     };
   });
 }

@@ -3,241 +3,248 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import {
-    ChevronDown,
-    LayoutDashboard,
-    FileText,
-    Menu,
-    X,
-} from "lucide-react";
+import { ChevronDown, LayoutDashboard, FileText, Menu, X } from "lucide-react";
 import { translations } from "@/lib/translation";
 import AuthButtons from "./AuthButtons";
 import LanguageSwitcher from "./LanguageSwitcher";
 import AntiSpamLink from "../AntiSpamLink";
 import {
-    ICON_MAP,
-    COLOR_THEMES,
-    ROLE_MENUS,
-    PERMISSION_MENUS,
-    DROPDOWN_GROUPS,
-    type MenuItem,
+  ICON_MAP,
+  COLOR_THEMES,
+  ROLE_MENUS,
+  PERMISSION_MENUS,
+  DROPDOWN_GROUPS,
+  type MenuItem,
 } from "@/lib/menu-config";
 import { Role } from "@/generated/prisma/enums";
 
 const COMMON_PUBLIC = [{ title: translations.home, href: "/" }];
 
-function SidebarItem({
-    item,
-    pathname,
-}: {
-    item: MenuItem;
-    pathname: string;
-}) {
-    const [isOpen, setIsOpen] = useState(false);
-    const t = useTranslations();
+function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const t = useTranslations();
 
-    const hasActiveChild = item.children?.some((child) => pathname === child.href);
-    const isActive = pathname === item.href || hasActiveChild;
+  const hasActiveChild = item.children?.some(
+    (child) => pathname === child.href,
+  );
+  const isActive = pathname === item.href || hasActiveChild;
 
-    const Icon = ICON_MAP[item.title] || ICON_MAP.home;
+  const Icon = ICON_MAP[item.title] || ICON_MAP.home;
 
-    const colorTheme = COLOR_THEMES[item.title] || COLOR_THEMES.dashboard;
+  const colorTheme = COLOR_THEMES[item.title] || COLOR_THEMES.default;
 
-    if (item.children) {
-        return (
-            <div>
-                <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
-                        ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
-                        : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
-                        }`}
-                >
-                    <Icon className={`w-5 h-5 ${isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`}`} />
-                    <span className="flex-1 text-left text-sm font-medium">{t(item.title)}</span>
-                    <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-                            }`}
-                    />
-                </button>
-                {isOpen && (
-                    <div className={`mt-1 ml-4 space-y-0.5 border-l-2 border-opacity-50 pl-3`}
-                        style={{ borderColor: isActive ? 'rgb(203 213 225)' : 'rgb(226 232 240)' }}>
-                        {item.children.map((child) => {
-                            const childIsActive = pathname === child.href;
-                            const ChildIcon = ICON_MAP[child.title] || FileText;
-                            return (
-                                <AntiSpamLink
-                                    key={child.href}
-                                    href={child.href}
-                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 group ${childIsActive
-                                        ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-sm`
-                                        : `text-slate-600 hover:bg-gradient-to-r ${colorTheme.hover}`
-                                        }`}
-                                >
-                                    <ChildIcon className={`w-4 h-4 ${childIsActive ? "text-white" : `text-slate-400 ${colorTheme.icon}`}`} />
-                                    <span className="text-sm font-medium">{t(child.title)}</span>
-                                </AntiSpamLink>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
-        );
-    }
-
+  if (item.children) {
     return (
-        <AntiSpamLink
-            href={item.href!}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
-                ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
-                : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
-                }`}
+      <div>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+            isActive
+              ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
+              : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
+          }`}
         >
-            <Icon className={`w-5 h-5 ${isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`}`} />
-            <span className="text-sm font-medium">{t(item.title)}</span>
-        </AntiSpamLink>
+          <Icon
+            className={`w-5 h-5 ${isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`}`}
+          />
+          <span className="flex-1 text-left text-sm font-medium">
+            {t(item.title)}
+          </span>
+          <ChevronDown
+            className={`w-4 h-4 transition-transform duration-200 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+        {isOpen && (
+          <div
+            className={`mt-1 ml-4 space-y-0.5 border-l-2 border-opacity-50 pl-3`}
+            style={{
+              borderColor: isActive ? "rgb(203 213 225)" : "rgb(226 232 240)",
+            }}
+          >
+            {item.children.map((child) => {
+              const childIsActive = pathname === child.href;
+              const ChildIcon = ICON_MAP[child.title] || FileText;
+              return (
+                <AntiSpamLink
+                  key={child.href}
+                  href={child.href}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 group ${
+                    childIsActive
+                      ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-sm`
+                      : `text-slate-600 hover:bg-gradient-to-r ${colorTheme.hover}`
+                  }`}
+                >
+                  <ChildIcon
+                    className={`w-4 h-4 ${childIsActive ? "text-white" : `text-slate-400 ${colorTheme.icon}`}`}
+                  />
+                  <span className="text-sm font-medium">{t(child.title)}</span>
+                </AntiSpamLink>
+              );
+            })}
+          </div>
+        )}
+      </div>
     );
+  }
+
+  return (
+    <AntiSpamLink
+      href={item.href!}
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+        isActive
+          ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
+          : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
+      }`}
+    >
+      <Icon
+        className={`w-5 h-5 ${isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`}`}
+      />
+      <span className="text-sm font-medium">{t(item.title)}</span>
+    </AntiSpamLink>
+  );
 }
 
 export default function Sidebar() {
-    const { data: session, status } = useSession();
-    const pathname = usePathname();
-    const pathWithoutLocale = pathname.replace(/^\/(th|lo)/, "") || "/";
-    const t = useTranslations();
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const pathWithoutLocale = pathname.replace(/^\/(th|lo)/, "") || "/";
+  const t = useTranslations();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    if (status === "loading") return null;
+  if (status === "loading") return null;
 
-    const { user } = session || {};
-    const userRole = user?.role as string;
-    const userPermissions: string[] = (user?.permissions || []) as string[];
+  const { user } = session || {};
+  const userRole = user?.role as string;
+  const userPermissions: string[] = (user?.permissions || []) as string[];
 
-    let menuItems: MenuItem[] = [...COMMON_PUBLIC];
+  let menuItems: MenuItem[] = [...COMMON_PUBLIC];
 
-    if (userRole === Role.ADMIN) {
-        menuItems = [...ROLE_MENUS.ADMIN];
-    }
-    else if (userPermissions.length > 0) {
-        const processedPermissions = new Set<string>();
-        const finalMenus: MenuItem[] = [];
+  if (userRole === Role.ADMIN) {
+    menuItems = [...ROLE_MENUS.ADMIN];
+  } else if (userPermissions.length > 0) {
+    const processedPermissions = new Set<string>();
+    const finalMenus: MenuItem[] = [];
 
-        Object.values(DROPDOWN_GROUPS).forEach((group) => {
-            const userHasGroupPermission = group.permissions.some((p) =>
-                userPermissions.includes(p)
-            );
+    Object.values(DROPDOWN_GROUPS).forEach((group) => {
+      const userHasGroupPermission = group.permissions.some((p) =>
+        userPermissions.includes(p),
+      );
 
-            if (userHasGroupPermission) {
-                const children = group.items
-                    .filter((item) =>
-                        item.permissions.some((p) => userPermissions.includes(p))
-                    )
-                    .map((item) => ({
-                        title: item.title,
-                        href: item.href,
-                    }));
+      if (userHasGroupPermission) {
+        const children = group.items
+          .filter((item) =>
+            item.permissions.some((p) => userPermissions.includes(p)),
+          )
+          .map((item) => ({
+            title: item.title,
+            href: item.href,
+          }));
 
-                if (children.length > 0) {
-                    finalMenus.push({
-                        title: group.title,
-                        children: children,
-                    });
-                    group.permissions.forEach((p) => processedPermissions.add(p));
-                }
-            }
-        });
+        if (children.length > 0) {
+          finalMenus.push({
+            title: group.title,
+            children: children,
+          });
+          group.permissions.forEach((p) => processedPermissions.add(p));
+        }
+      }
+    });
 
-        userPermissions.forEach((permission) => {
-            if (
-                !processedPermissions.has(permission) &&
-                PERMISSION_MENUS[permission]
-            ) {
-                const menus = PERMISSION_MENUS[permission];
-                if (menus.length > 0) {
-                    finalMenus.push(...menus);
-                }
-            }
-        });
+    userPermissions.forEach((permission) => {
+      if (
+        !processedPermissions.has(permission) &&
+        PERMISSION_MENUS[permission]
+      ) {
+        const menus = PERMISSION_MENUS[permission];
+        if (menus.length > 0) {
+          finalMenus.push(...menus);
+        }
+      }
+    });
 
-        menuItems = finalMenus;
-    }
+    menuItems = finalMenus;
+  }
 
-    if (user) {
-        const baseMenus = [{ title: translations.home, href: "/" }];
-        const existing = new Set(
-            menuItems.flatMap((m) =>
-                m.href ? [m.href] : m.children?.map((c) => c.href) || []
-            )
-        );
-        menuItems = [
-            ...baseMenus.filter((m) => !existing.has(m.href!)),
-            ...menuItems,
-        ];
-    }
+  if (user) {
+    const baseMenus = [{ title: translations.home, href: "/" }];
+    const existing = new Set(
+      menuItems.flatMap((m) =>
+        m.href ? [m.href] : m.children?.map((c) => c.href) || [],
+      ),
+    );
+    menuItems = [
+      ...baseMenus.filter((m) => !existing.has(m.href!)),
+      ...menuItems,
+    ];
+  }
 
-    return (
-        <>
-            {/* Header */}
-            <div className="fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-b border-slate-200 z-50 flex items-center justify-between px-4 md:px-6 shadow-md">
-                <div className="flex items-center gap-3">
-                    {/* Hamburger Menu Button - Mobile Only */}
-                    <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="lg:hidden p-2 hover:bg-white/50 rounded-lg transition-colors"
-                        aria-label="Toggle menu"
-                    >
-                        {isMobileMenuOpen ? (
-                            <X className="w-6 h-6 text-slate-700" />
-                        ) : (
-                            <Menu className="w-6 h-6 text-slate-700" />
-                        )}
-                    </button>
-
-                    <div className="w-9 h-9 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center shadow-lg shadow-purple-300/50">
-                        <LayoutDashboard className="w-5 h-5 text-white" />
-                    </div>
-                    <h1 className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-700 via-purple-700 to-pink-700 bg-clip-text text-transparent">
-                        Web Tax Service
-                    </h1>
-                </div>
-                <div className="flex items-center gap-2 md:gap-4">
-                    <AuthButtons />
-                    <LanguageSwitcher />
-                </div>
-            </div>
-
-            {/* Mobile Overlay */}
-            {isMobileMenuOpen && (
-                <div
-                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                />
+  return (
+    <>
+      {/* Header */}
+      <div className="fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-b border-slate-200 z-50 flex items-center justify-between px-4 md:px-6 shadow-md">
+        <div className="flex items-center gap-3">
+          {/* Hamburger Menu Button - Mobile Only */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-2 hover:bg-white/50 rounded-lg transition-colors"
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6 text-slate-700" />
+            ) : (
+              <Menu className="w-6 h-6 text-slate-700" />
             )}
+          </button>
 
-            {/* Sidebar */}
-            <aside className={`
+          <div className="w-9 h-9 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center shadow-lg shadow-purple-300/50">
+            <LayoutDashboard className="w-5 h-5 text-white" />
+          </div>
+          <h1 className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-700 via-purple-700 to-pink-700 bg-clip-text text-transparent">
+            Web Tax Service
+          </h1>
+        </div>
+        <div className="flex items-center gap-2 md:gap-4">
+          <AuthButtons />
+          <LanguageSwitcher />
+        </div>
+      </div>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`
                 fixed top-16 left-0 bottom-0 w-64 
                 bg-gradient-to-b from-slate-50 via-blue-50/30 to-purple-50/20 
                 border-r border-slate-200 z-40 overflow-hidden flex flex-col shadow-lg
                 transition-transform duration-300 ease-in-out
-                ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+                ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
                 lg:translate-x-0
-            `}>
-                <div className="flex-1 overflow-y-auto p-3 space-y-1">
-                    {menuItems.map((item, index) => (
-                        <div key={index} onClick={() => setIsMobileMenuOpen(false)}>
-                            <SidebarItem item={item} pathname={pathWithoutLocale} />
-                        </div>
-                    ))}
-                </div>
-
-                {/* User Info at Bottom */}
-            </aside>
-
-            {/* Main Content Spacer */}
-            <div className="lg:pl-64">
-                {/* Your main content goes here */}
+            `}
+      >
+        <div className="flex-1 overflow-y-auto p-3 space-y-1">
+          {menuItems.map((item, index) => (
+            <div key={index} onClick={() => setIsMobileMenuOpen(false)}>
+              <SidebarItem item={item} pathname={pathWithoutLocale} />
             </div>
-        </>
-    );
+          ))}
+        </div>
+
+        {/* User Info at Bottom */}
+      </aside>
+
+      {/* Main Content Spacer */}
+      <div className="lg:pl-64 lg:pt-16">
+        {/* Your main content goes here */}
+      </div>
+    </>
+  );
 }

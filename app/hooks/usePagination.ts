@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 
 interface Pagination {
@@ -29,7 +29,7 @@ export function usePagination<T = any>(
   apiUrl: string,
   defaultFilters: Filters = {},
   defaultPage = 1,
-  defaultLimit = 50
+  defaultLimit = 50,
 ): UsePaginatedDataResult<T> {
   const [items, setItems] = useState<T[]>([]);
   const api = useApiWithAlert();
@@ -44,8 +44,9 @@ export function usePagination<T = any>(
   const [page, setPage] = useState(defaultPage);
   const [filters, setFilters] = useState<Filters>(defaultFilters);
 
-  const loadData = useCallback(async (p = page, currentFilters = filters, signal?: AbortSignal) => {
+  const loadData = async (p = page, currentFilters = filters) => {
     setLoading(true);
+
     try {
       const params = {
         page: p,
@@ -55,24 +56,35 @@ export function usePagination<T = any>(
 
       const response = await api.get(apiUrl, {
         params,
-        signal, // ส่ง signal ไปที่ axios
         withCredentials: true,
       });
 
-      if (response?.data?.success) {
-        setItems(response.data.data || []);
+      if (response?.data?.data) {
+        setItems(response.data.data);
         setPagination(response.data.pagination);
+      } else {
+        setItems([]);
+        setPagination({
+          currentPage: 1,
+          totalPages: 1,
+          totalItems: 0,
+          hasNext: false,
+          hasPrev: false,
+        });
       }
-    } catch (err: any) {
-      // ถ้าเป็นการยกเลิก request ไม่ต้องล้างข้อมูล
-      if (err.name === 'CanceledError') return;
-
+    } catch (err) {
       setItems([]);
-      // Reset pagination on error
+      setPagination({
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        hasNext: false,
+        hasPrev: false,
+      });
     } finally {
       setLoading(false);
     }
-  }, [apiUrl, defaultLimit, api]);
+  };
 
   // ✅ แค่เปลี่ยน filter / page → useEffect จะโหลดเอง
   const applyFilters = (newFilters: Filters) => {
@@ -89,6 +101,10 @@ export function usePagination<T = any>(
     loadData(page, filters); // manual reload OK
   };
 
+  // ❗ โหลดข้อมูลที่เดียวเท่านั้น
+  useEffect(() => {
+    loadData(page, filters);
+  }, [page, filters, apiUrl]);
 
   return {
     items,

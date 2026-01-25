@@ -110,5 +110,8 @@ export const translations = {
   createdAt: "createdAt",
   updateAt: "updateAt",
   noData: "noData",
-  resetPassword: "resetPassword"
+  resetPassword: "resetPassword",
+  article: "article",
+  symptom: "symptom",
+  All: "All",
 } as const;

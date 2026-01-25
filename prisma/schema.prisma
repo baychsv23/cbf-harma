@@ -40,7 +40,7 @@ enum Category {
   ANTI_PARASITIC
   GASTROINTESTINAL // Corrected (One word is standard for clinical use)
   CARDIOVASCULAR
-  ANTIDIABETIC
+  ANTI_DIABETIC
   RESPIRATORY
   ANTI_ALLERGIC
   EFFECTIVE_TO_PSYCHOTIC
@@ -119,8 +119,8 @@ model Product {
   genericName     String? // ຊື່ສາມັນທາງຢາ e.g., 
   dosage          String? // 500mg
   packaging       String? // ຮູບແບບບັນຈຸ e.g., 10 tablets/strip
-  indicationLa    String?      @db.Text // ສັບພະຄຸນ
-  indicationEn    String?      @db.Text
+  indicationLA    String?      @db.Text // ສັບພະຄຸນ
+  indicationEN    String?      @db.Text
   isPrescription  BooleanState @default(FALSE) // ຕ້ອງມີໃບສັ່ງແພດບໍ່?
   isActive        BooleanState @default(TRUE)
   productImageUrl String?
@@ -153,8 +153,8 @@ model Announcement {
 
 model Symptom {
   id        String    @id @default(uuid())
-  nameLa    String // e.g., ປວດຫົວ, ເປັນໄຂ້, ໄອ
-  nameEn    String
+  nameLA    String // e.g., ປວດຫົວ, ເປັນໄຂ້, ໄອ
+  nameEN    String
   products  Product[] // ກົດ "ປວດຫົວ" ຈະເຈິຢາຫຍັງແດ່
   createdAt DateTime  @default(now())
 }
@@ -162,10 +162,10 @@ model Symptom {
 model Article {
   id         String  @id @default(uuid())
   slug       String  @unique
-  titleLa    String
-  titleEn    String
-  contentLa  String  @db.Text // Rich Text (HTML)
-  contentEn  String  @db.Text
+  titleLA    String
+  titleEN    String
+  contentLA  String  @db.Text // Rich Text (HTML)
+  contentEN  String  @db.Text
   coverImage String?
 
   type     ArticleType   @default(HEALTH_KNOWLEDGE)

@@ -2,21 +2,10 @@ import {
   Home,
   LayoutDashboard,
   Users,
-  UserCircle,
-  FileText,
-  FileCheck,
-  Receipt,
-  FileSpreadsheet,
-  Package,
-  Tag,
-  Box,
   ShoppingBag,
-  Truck,
-  DollarSign,
-  PieChart,
-  FileOutput,
-  Warehouse,
-  ShoppingCart,
+  Stethoscope,
+  FileText,
+  Pill,
 } from "lucide-react";
 import { translations } from "./translation";
 import { Permission } from "@/generated/prisma/enums";
@@ -26,8 +15,9 @@ export const ICON_MAP: Record<string, any> = {
   home: Home,
   dashboard: LayoutDashboard,
   account: Users,
-  product: ShoppingBag,
-  productManagement: Package,
+  product: Pill, // Changed to Pill for pharma
+  symptom: Stethoscope,
+  article: FileText,
 };
 
 // Color themes for different menu categories
@@ -37,25 +27,37 @@ export const COLOR_THEMES: Record<
 > = {
   home: {
     gradient: "from-purple-600 to-purple-700",
-    hover: "hover:from-purple-50 hover:to-purple-100 hover:text-purple-700",
+    hover: "from-purple-50 to-purple-100 text-purple-700",
     shadow: "shadow-purple-200",
     icon: "group-hover:text-purple-600",
   },
+  products: {
+    // Added for your new Product Page
+    gradient: "from-blue-600 to-blue-700",
+    hover: "from-blue-50 to-blue-100 text-blue-700",
+    shadow: "shadow-blue-200",
+    icon: "group-hover:text-blue-600",
+  },
+  clinical: {
+    // Added for Symptoms/Articles
+    gradient: "from-emerald-600 to-emerald-700",
+    hover: "from-emerald-50 to-emerald-100 text-emerald-700",
+    shadow: "shadow-emerald-200",
+    icon: "group-hover:text-emerald-600",
+  },
   admin: {
     gradient: "from-indigo-600 to-indigo-700",
-    hover: "hover:from-indigo-50 hover:to-indigo-100 hover:text-indigo-700",
+    hover: "from-indigo-50 to-indigo-100 text-indigo-700",
     shadow: "shadow-indigo-200",
     icon: "group-hover:text-indigo-600",
   },
   default: {
     gradient: "from-slate-600 to-slate-700",
-    hover: "hover:from-slate-50 hover:to-slate-100 hover:text-slate-700",
+    hover: "from-slate-50 to-slate-100 text-slate-700",
     shadow: "shadow-slate-200",
     icon: "group-hover:text-slate-600",
   },
-
 };
-
 // Menu item type definition
 export type MenuItem = {
   title: string;
@@ -71,39 +73,48 @@ export const COMMON_PUBLIC: MenuItem[] = [
 // Role-based menu configurations
 export const ROLE_MENUS = {
   ADMIN: [
-    { title: translations.category, href: "/categories" },
+    {
+      title: translations.dashboard,
+      children: [{ title: translations.dashboard, href: "/admin" }],
+    },
+    {
+      title: translations.product,
+      children: [
+        { title: translations.product, href: "/products" },
+        {
+          title: translations.symptom,
+          href: `/symptoms`,
+        },
+      ],
+    },
+    { title: translations.category, href: "/articles" },
 
     { title: translations.product, href: "/products" },
-  ]
+  ],
 };
 
 // Permission-based menu configurations
 export const PERMISSION_MENUS: Record<string, MenuItem[]> = {
-  [Permission.PRODUCT_VIEW]: [
+  [Permission.ARTICLE_VIEW]: [
     { title: translations.product, href: "/products" },
   ],
 };
 
 // Dropdown group configurations
 export const DROPDOWN_GROUPS = {
-  productManagement: {
-    title: translations.product,
-    permissions: ["BRAND_VIEW", "UNIT_PACK_VIEW", "PACK_VIEW", "PRODUCT_VIEW"],
+  clinical: {
+    title: translations.manage, // Or a new "Clinical" translation key
+    permissions: [Permission.PRODUCT_VIEW, Permission.SYMPTOM_VIEW],
     items: [
       {
-        permissions: ["BRAND_VIEW"],
-        title: translations.product,
-        href: "/brands",
+        permissions: [Permission.SYMPTOM_VIEW],
+        title: translations.symptom, // Map to translations.symptom
+        href: "/symptoms",
       },
       {
-        permissions: ["UNIT_PACK_VIEW"],
-        title: translations.product,
-        href: "/",
-      },
-      {
-        permissions: ["UNIT_PACK_VIEW"],
-        title: translations.product,
-        href: "/accounting",
+        permissions: [Permission.PRODUCT_VIEW],
+        title: translations.article, // Map to translations.article
+        href: "/products",
       },
     ],
   },
