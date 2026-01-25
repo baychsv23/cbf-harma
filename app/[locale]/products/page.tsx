@@ -24,6 +24,7 @@ import {
 } from "@/generated/prisma/enums";
 import Script from "next/script";
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+import ProductFormModal from "@/components/Form/ProductFormModal";
 
 export default function ProductPage() {
   const t = useTranslations();
@@ -39,14 +40,6 @@ export default function ProductPage() {
   });
   const [allSymptoms, setAllSymptoms] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchSymptoms = async () => {
-      const { data } = await api.get("/api/symptoms"); // ต้องมี API นี้
-      setAllSymptoms(data.data || []);
-    };
-    fetchSymptoms();
-  }, []);
-
   const {
     items: products,
     pagination,
@@ -57,7 +50,44 @@ export default function ProductPage() {
     applyFilters,
     clearFilters,
   } = usePagination("/api/products");
-  console.log(products);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleOpenCreate = () => {
+    setSelectedProduct(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (product: any) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveProduct = async (formData: any) => {
+    setIsProcessing(true);
+    try {
+      if (selectedProduct) {
+        await api.put(`/api/products/${selectedProduct.id}`, formData);
+      } else {
+        await api.post("/api/products", formData);
+      }
+      setIsModalOpen(false);
+      reloadData();
+    } catch (error: any) {
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchSymptoms = async () => {
+      const { data } = await api.get("/api/symptoms"); // ต้องมี API นี้
+      setAllSymptoms(data.data || []);
+    };
+    fetchSymptoms();
+  }, []);
   const handleApplyFilters = () => {
     applyFilters({
       name: search.name,
@@ -72,349 +102,6 @@ export default function ProductPage() {
   };
   // Helper to get enum translations or raw keys
 
-  const showProductForm = async (product?: any) => {
-    const productSymptomIds = product?.symptom?.map((s: any) => s.id) || [];
-    const symptomsHtml = allSymptoms
-      .map((symptom) => {
-        const isChecked = productSymptomIds.includes(symptom.id)
-          ? "checked"
-          : "";
-        return `
-      <label class="flex items-center gap-2 p-2 border rounded-lg hover:bg-blue-50 cursor-pointer transition-colors bg-white">
-        <input type="checkbox" name="symptom_ids" value="${symptom.id}" ${isChecked} class="w-4 h-4 accent-blue-600 rounded">
-        <span class="text-sm text-slate-700 font-medium">${local === "en" ? symptom.nameEN : symptom.nameLA}</span>
-      </label>
-    `;
-      })
-      .join("");
-    const { value: formData } = await Swal.fire({
-      title: product
-        ? `<div class="flex items-center gap-3 text-xl font-bold text-slate-800"><span class="bg-blue-100 p-2 rounded-lg text-blue-600">💊</span> ${t(translations.Edit, { name: t(translations.product) })}</div>`
-        : `<div class="flex items-center gap-3 text-xl font-bold text-slate-800"><span class="bg-green-100 p-2 rounded-lg text-green-600">➕</span> ${t(translations.Create, { name: t(translations.product) })}</div>`,
-      width: "1000px", // เพิ่มความกว้างเพื่อให้วาง 2 คอลัมน์ได้ไม่อึดอัด
-      padding: "0", // ลบ padding เดิมออก เพื่อจัด layout เอง
-      background: "#f8fafc", // สีพื้นหลังเทาอ่อน
-      html: `
-      <div class="text-left bg-slate-50">
-        <style>
-          /* Layout */
-          .form-container { padding: 1.5rem 2rem; display: grid; grid-template-columns: 300px 1fr; gap: 2rem; max-height: 75vh; overflow-y: auto; }
-          .left-panel { display: flex; flex-direction: column; gap: 1.5rem; }
-          .right-panel { display: flex; flex-direction: column; gap: 1.5rem; }
-          
-          /* Cards */
-          .form-card { background: white; border-radius: 1rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-          .form-card-title { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 0.5rem; }
-          
-          /* Inputs */
-          .field-group { margin-bottom: 1rem; }
-          .field-label { display: block; font-size: 0.8rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem; }
-          .swal2-input-custom { width: 100%; padding: 0.6rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 0.6rem; font-size: 0.875rem; transition: all 0.2s; background: #fff; color: #1e293b; }
-          .swal2-input-custom:focus { border-color: #3b82f6; ring: 3px rgba(59, 130, 246, 0.1); outline: none; }
-          textarea.swal2-input-custom { min-height: 80px; resize: vertical; }
-
-          /* Image Upload */
-          .image-preview-box { width: 100%; aspect-ratio: 1/1; border: 2px dashed #cbd5e1; border-radius: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; background: #f8fafc; cursor: pointer; transition: all 0.2s; position: relative; }
-          .image-preview-box:hover { border-color: #3b82f6; background: #eff6ff; }
-          .image-preview-box img { width: 100%; height: 100%; object-fit: cover; }
-          .upload-hint { font-size: 0.75rem; color: #64748b; margin-top: 0.5rem; text-align: center; }
-
-          /* Animation */
-          .slide-reveal { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; max-height: 100px; opacity: 1; }
-          .slide-reveal.hidden { max-height: 0; opacity: 0; margin: 0; }
-        </style>
-
-        <div class="form-container">
-          <div class="left-panel">
-            <div class="form-card">
-              <div class="form-card-title">📸 Product Visual</div>
-              <div id="image-upload-trigger" class="image-preview-box">
-                 <img id="swal-img-preview" src="${product?.productImageUrl || "https://placehold.co/400x400/f1f5f9/94a3b8?text=Upload+Image"}" alt="preview">
-                 <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity text-white font-medium text-sm">Change Image</div>
-              </div>
-              <p class="upload-hint">Click to upload (JPG, PNG)</p>
-              <input type="hidden" id="swal-productImageUrl" value="${product?.productImageUrl || ""}">
-            </div>
-
-            <div class="form-card border-l-4 border-l-red-500">
-               <div class="form-card-title text-red-600">⚠️ Safety Control</div>
-               <label class="flex items-start gap-3 cursor-pointer p-2 hover:bg-red-50 rounded-lg transition-colors">
-                 <input type="checkbox" id="swal-isPrescription" class="mt-1 w-5 h-5 accent-red-600" ${product?.isPrescription === BooleanState.TRUE ? "checked" : ""}>
-                 <div>
-                   <span class="block font-bold text-slate-800 text-sm">Prescription Required</span>
-                   <span class="text-xs text-slate-500 leading-snug">Check this if the medicine requires a doctor's Rx.</span>
-                 </div>
-               </label>
-            </div>
-            <div class="right-panel">
-            <div class="form-card border-l-4 border-l-purple-500">
-               <div class="form-card-title text-purple-700">🔍 Smart Search (Symptoms)</div>
-               <p class="text-xs text-slate-500 mb-3">Select symptoms that this medication treats:</p>
-               
-               <div class="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-[150px] overflow-y-auto p-1">
-                 ${symptomsHtml}
-               </div>
-            </div>
-         </div>
-          </div>
-
-          <div class="right-panel">
-            
-            <div class="form-card">
-              <div class="form-card-title">📝 Identification</div>
-              <div class="grid grid-cols-2 gap-4">
-                 <div class="field-group">
-                   <label class="field-label">SKU / Code</label>
-                   <input id="swal-sku" value="${product?.sku || ""}" class="swal2-input-custom font-mono" placeholder="CBF-001">
-                 </div>
-                 <div class="field-group">
-                   <label class="field-label">Generic Name</label>
-                   <input id="swal-genericName" value="${product?.genericName || ""}" class="swal2-input-custom" placeholder="Active Ingredient">
-                 </div>
-                  <div class="field-group col-span-2">
-                    <label class="field-label">${t(translations.Name, { name: t(translations.product) })} (${t(translations.english)}) <span class="text-red-500">*</span></label>
-                    <input id="swal-nameEN" value="${product?.nameEN || ""}" class="swal2-input-custom font-medium" placeholder="e.g. Amoxicillin 500mg">
-                    <p id="error-nameEN" class="text-[10px] text-red-500 mt-1 hidden">⚠️ Please use English letters only (A-Z, 0-9)</p>
-                  </div>
-                 <div class="field-group col-span-2">
-                   <label class="field-label">${t(translations.name)} (${t(translations.lao)}) <span class="text-red-500">*</span></label>
-                   <input id="swal-nameLA" value="${product?.nameLA || ""}" class="swal2-input-custom font-medium" placeholder="ຊື່ຢາພາສາລາວ">
-                 </div>
-              </div>
-            </div>
-
-            <div class="form-card">
-              <div class="form-card-title">🧪 Specifications & ${t(translations.category)}</div>
-              <div class="grid grid-cols-2 gap-4">
-                 <div class="field-group">
-                   <label class="field-label">Dosage Strength</label>
-                   <input id="swal-dosage" value="${product?.dosage || ""}" class="swal2-input-custom" placeholder="e.g. 500mg">
-                 </div>
-                 <div class="field-group">
-                   <label class="field-label">Packaging</label>
-                   <input id="swal-packaging" value="${product?.packaging || ""}" class="swal2-input-custom" placeholder="e.g. 10x10 Box">
-                 </div>
-                 
-                 <div class="field-group">
-                   <label class="field-label">${t(translations.category)}</label>
-                   <select id="swal-category" class="swal2-input-custom bg-slate-50">
-                     ${Object.values(Category)
-                       .map(
-                         (c) =>
-                           `<option value="${c}" ${product?.category === c ? "selected" : ""}>${t(c)}</option>`,
-                       )
-                       .join("")}
-                   </select>
-                 </div>
-
-                 <div id="sub-category-wrapper" class="field-group slide-reveal hidden">
-                   <label class="field-label text-blue-600 font-bold">${t("ANTIBIOTICS")}</label>
-                   <select id="swal-categorySub" class="swal2-input-custom border-blue-200 bg-blue-50 text-blue-700">
-                     ${Object.values(CategorySub)
-                       .map(
-                         (s) =>
-                           `<option value="${s}" ${product?.categorySub === s ? "selected" : ""}>${t(s)}</option>`,
-                       )
-                       .join("")}
-                   </select>
-                 </div>
-              </div>
-            </div>
-
-            <div class="form-card">
-              <div class="form-card-title">🩺 Clinical Indications</div>
-              <div class="grid grid-cols-1 gap-4">
-                 <div class="field-group">
-                   <label class="field-label">Indication (English)</label>
-                   <textarea id="swal-indicationEN" class="swal2-input-custom" placeholder="Treatment description...">${product?.indicationEN || ""}</textarea>
-                 </div>
-                 <div class="field-group">
-                   <label class="field-label">Indication (Lao)</label>
-                   <textarea id="swal-indicationLA" class="swal2-input-custom" placeholder="ສັບພະຄຸນ...">${product?.indicationLA || ""}</textarea>
-                 </div>
-              </div>
-            </div>
-          </div>
-          
-        </div>
-      </div>
-    `,
-      showCancelButton: true,
-      confirmButtonText: product
-        ? t(translations.update)
-        : t(translations.create),
-      cancelButtonText: t(translations.cancel),
-      didOpen: () => {
-        const nameENInput = document.getElementById(
-          "swal-nameEN",
-        ) as HTMLInputElement;
-        const errorMsg = document.getElementById("error-nameEN");
-
-        nameENInput?.addEventListener("input", (e) => {
-          const target = e.target as HTMLInputElement;
-          const val = target.value;
-
-          // Regex เช็คว่ามีตัวอักษร "ที่ไม่ใช่" ภาษาอังกฤษปนอยู่หรือไม่
-          const hasNonEnglish = /[^A-Za-z0-9\s.,\-()/]/.test(val);
-
-          if (hasNonEnglish) {
-            // แสดงคำเตือน และใส่ขอบแดงที่ Input
-            errorMsg?.classList.remove("hidden");
-            target.classList.add("border-red-500", "bg-red-50");
-          } else {
-            // ซ่อนคำเตือน และกลับเป็นสีปกติ
-            errorMsg?.classList.add("hidden");
-            target.classList.remove("border-red-500", "bg-red-50");
-          }
-        });
-        // 1. ดึง Elements มาเตรียมไว้
-
-        const uploadTrigger = document.getElementById("image-upload-trigger");
-        const imgPreview = document.getElementById(
-          "swal-img-preview",
-        ) as HTMLImageElement;
-        const imgInput = document.getElementById(
-          "swal-productImageUrl",
-        ) as HTMLInputElement;
-
-        uploadTrigger?.addEventListener("click", () => {
-          // @ts-ignore
-          const myWidget = window.cloudinary.createUploadWidget(
-            {
-              cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-              uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_PRESET,
-              sources: ["local", "url"],
-              multiple: false,
-              cropping: true,
-              folder: "cbf",
-            },
-            (error: any, result: any) => {
-              if (!error && result && result.event === "success") {
-                const uploadedUrl = result.info.secure_url;
-                imgPreview.src = uploadedUrl;
-                imgInput.value = uploadedUrl;
-              }
-            },
-          );
-          myWidget.open();
-        });
-        const categorySelect = document.getElementById(
-          "swal-category",
-        ) as HTMLSelectElement;
-        const subWrapper = document.getElementById("sub-category-wrapper");
-        const subSelect = document.getElementById(
-          "swal-categorySub",
-        ) as HTMLSelectElement;
-
-        // 2. สร้างฟังก์ชัน Logic การแสดงผล
-        const updateVisibility = () => {
-          const val = categorySelect.value;
-          // ใช้ string 'ANTIBIOTICS' ตรงๆ เพื่อความชัวร์ (หรือใช้ Category.ANTIBIOTICS ถ้า import มาถูก)
-          if (val === Category.ANTIBIOTICS) {
-            subWrapper?.classList.remove("hidden");
-          } else {
-            subWrapper?.classList.add("hidden");
-            // รีเซ็ตค่าเป็น NONE เมื่อซ่อน เพื่อไม่ให้ส่งข้อมูลขยะไป
-            subSelect.value = "NONE";
-          }
-        };
-
-        // 3. ผูก Event Listener
-        categorySelect.addEventListener("change", updateVisibility);
-
-        // 4. ***สำคัญ*** เรียกใช้ฟังก์ชันทันที 1 ครั้ง เพื่อเช็คค่าเริ่มต้น (Initial State)
-        // แก้ปัญหา popup เด้งมาแล้ว dropdown แสดง/ซ่อน ผิดจังหวะ
-        updateVisibility();
-      },
-      preConfirm: () => {
-        const getVal = (id: string) =>
-          (document.getElementById(id) as HTMLInputElement)?.value;
-        const nameEN = (
-          document.getElementById("swal-nameEN") as HTMLInputElement
-        )?.value;
-        const selectedSymptoms = Array.from(
-          document.querySelectorAll('input[name="symptom_ids"]:checked'),
-        ).map((cb: any) => cb.value);
-        const hasNonEnglish = /[^A-Za-z0-9\s.,\-()/]/.test(nameEN);
-        const nameLA = getVal("swal-nameLA");
-        const genericName = getVal("swal-genericName");
-        const sku = getVal("swal-sku");
-        const dosage = getVal("swal-dosage");
-        const packaging = getVal("swal-packaging");
-        const category = getVal("swal-category");
-        const categorySub = getVal("swal-categorySub");
-        const indicationLA = getVal("swal-indicationLA");
-        const indicationEN = getVal("swal-indicationEN");
-        const productImageUrl = getVal("swal-productImageUrl");
-        if (!productImageUrl) {
-          Swal.showValidationMessage(
-            t(translations.FiledRequired, { name: t(translations.image) }),
-          );
-          return false;
-        }
-        if (!sku) {
-          Swal.showValidationMessage(
-            t(translations.FiledRequired, { name: t(translations.sku) }),
-          );
-          return false;
-        }
-        if (hasNonEnglish) {
-          Swal.showValidationMessage(
-            "Product name (English) contains invalid characters",
-          );
-          return false;
-        }
-        if (!nameEN || !nameLA) {
-          Swal.showValidationMessage(
-            t(translations.FiledRequired, { name: t(translations.name) }),
-          );
-          return false;
-        }
-        const slug = nameEN
-          .toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "");
-
-        const isPrescription = (
-          document.getElementById("swal-isPrescription") as HTMLInputElement
-        ).checked
-          ? BooleanState.TRUE
-          : BooleanState.FALSE;
-
-        return {
-          nameEN,
-          nameLA,
-          genericName,
-          symptomIds: selectedSymptoms,
-          sku,
-          dosage,
-          packaging,
-          category,
-          categorySub,
-          isPrescription,
-          slug,
-          indicationLA,
-          indicationEN,
-          productImageUrl,
-        };
-      },
-    });
-
-    if (formData) {
-      showProcessing();
-      // Logic Save/Update
-      if (product) {
-        // กรณีแก้ไข (Update) -> ยิง PUT ไปที่ /api/products/[id]
-        await api.put(`/api/products/${product.id}`, formData);
-      } else {
-        // กรณีสร้างใหม่ (Create) -> ยิง POST ไปที่ /api/products
-        await api.post("/api/products", formData);
-      }
-      reloadData();
-    }
-  };
-
   return (
     <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
       <Script
@@ -428,7 +115,7 @@ export default function ProductPage() {
         </h1>
         {hasPermission(Permission.PRODUCT_CREATE) && (
           <button
-            onClick={() => showProductForm()}
+            onClick={handleOpenCreate}
             className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 transition shadow-lg shadow-blue-200"
           >
             <Plus size={18} />{" "}
@@ -610,7 +297,7 @@ export default function ProductPage() {
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
                       <button
-                        onClick={() => showProductForm(product)}
+                        onClick={() => handleOpenEdit(product)}
                         className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition"
                       >
                         <Edit size={16} />
@@ -637,6 +324,15 @@ export default function ProductPage() {
           loading={loading}
         />
       )}
+      <ProductFormModal
+        t={t}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSaveProduct}
+        initialData={selectedProduct}
+        allSymptoms={allSymptoms}
+        isProcessing={isProcessing}
+      />
     </div>
   );
 }

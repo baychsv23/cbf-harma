@@ -155,7 +155,7 @@ export default function ArticleFormModal({
                 <ImageIcon size={12} /> Cover Image
               </label>
               <CldUploadWidget
-                uploadPreset="YOUR_PRESET" // ใส่ Preset ของคุณ
+                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_PRESET} // ใส่ Preset ของคุณ
                 options={{
                   sources: ["local", "url"],
                   multiple: false,
