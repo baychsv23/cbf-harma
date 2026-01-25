@@ -3,17 +3,18 @@
 import { useState } from "react";
 import {
   Search,
-  RefreshCcw,
   Plus,
   Edit,
-  Trash,
-  UserRoundCog,
+  Shield,
+  KeyRound,
+  Power,
+  User,
+  Mail,
+  UserCog
 } from "lucide-react";
 import Pagination from "@/components/UI/Pagination";
 import { usePagination } from "@/app/hooks/usePagination";
-
 import Swal from "sweetalert2";
-
 import { useAuth } from "@/app/hooks/useAuth";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useTranslations } from "next-intl";
@@ -34,6 +35,7 @@ export default function AccountsPage() {
     showConfirm,
   } = useAlert();
   const { hasPermission } = useAuth();
+
   const {
     items: users,
     pagination,
@@ -46,23 +48,20 @@ export default function AccountsPage() {
   } = usePagination("/api/accounts");
 
   const handleApplyFilters = () => {
-    applyFilters({
-      userName: search.userName,
-    });
+    applyFilters({ userName: search.userName });
   };
 
   const handleClearFilters = () => {
     setSearch({ userName: "" });
     clearFilters();
   };
+
   const handleActiveStatus = async (acc: any) => {
-    // หา status ที่จะเปลี่ยนเป็น
     const nextStatus =
       acc.activeStatus === BooleanState.TRUE
         ? BooleanState.FALSE
-        : BooleanState.FALSE;
+        : BooleanState.TRUE; // Fixed logic to toggle correctly
 
-    // หา label แปลภาษาที่จะแสดง
     const text = t(translations.MessageManageIsActive, {
       status: t(nextStatus),
       name: acc.userName,
@@ -71,10 +70,9 @@ export default function AccountsPage() {
     const confirm = await showConfirm(text);
 
     if (confirm) {
-      let result;
       showProcessing();
-
-      result = await activeAccount(acc.id, nextStatus);
+      const result = await activeAccount(acc.id, nextStatus);
+      closeProcessing();
 
       if (result.success) {
         showSuccess(t(result.message));
@@ -82,68 +80,43 @@ export default function AccountsPage() {
       } else {
         showError(t(result.message));
       }
-      closeProcessing();
     }
   };
 
   const showResetPasswordForm = async (user?: any) => {
-    // Get existing warehouse IDs for the product
-
     const { value: formData } = await Swal.fire({
-      title: t(translations.resetPassword),
+      title: `<div class="flex items-center gap-2 justify-center text-slate-800"><span class="bg-orange-100 p-2 rounded-lg text-orange-600"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-round"><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/><circle cx="16.5" cy="7.5" r=".5"/></svg></span> ${t(translations.resetPassword)}</div>`,
       html: `
-        <div style="text-align: left;">
-           <label style="display: block; margin-bottom: 8px; font-weight: 500;">${t(
-        translations.userName,
-      )}</label>
-          <input 
-            id="swal-userName" 
-            class="swal2-input" 
-            value="${user.userName || ""}"
-            disabled
-            style="margin-bottom: 15px; background-color: #f5f5f5; color: #888; cursor: not-allowed;"
-          >
-          <label style="display: block; margin-bottom: 8px; font-weight: 500;">${t(
-        translations.newPassword,
-      )}</label>
-          <input 
-            id="swal-new-password" 
-            class="swal2-input" 
-            placeholder=${t(translations.Placeholder, { name: t(translations.newPassword) })}
-            value=""
-            style="margin-bottom: 15px;"
-          >
+        <div class="text-left mt-4">
+           <div class="mb-4">
+             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">${t(translations.userName)}</label>
+             <input disabled value="${user.userName || ""}" class="w-full p-2.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 text-sm font-mono cursor-not-allowed">
+           </div>
+           <div>
+             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">${t(translations.newPassword)}</label>
+             <input type="password" id="swal-new-password" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-slate-800 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Enter new password...">
+           </div>
         </div>
       `,
       focusConfirm: false,
       confirmButtonText: t(translations.submit),
       showCancelButton: true,
       cancelButtonText: t(translations.cancel),
-      width: "600px",
+      confirmButtonColor: "#f97316", // Orange for sensitive action
+      width: "500px",
       preConfirm: () => {
-        const newPassword = (
-          document.getElementById("swal-new-password") as HTMLInputElement
-        )?.value?.trim();
+        const newPassword = (document.getElementById("swal-new-password") as HTMLInputElement)?.value?.trim();
         if (!newPassword) {
-          Swal.showValidationMessage(
-            t(translations.FiledRequired, {
-              name: t(translations.newPassword),
-            }),
-          );
+          Swal.showValidationMessage(t(translations.FiledRequired, { name: t(translations.newPassword) }));
           return false;
         }
-        return {
-          newPassword,
-        };
+        return { newPassword };
       },
     });
 
     if (formData) {
-      let result;
       showProcessing();
-
-      result = await resetPassword(user.id, formData.newPassword);
-
+      const result = await resetPassword(user.id, formData.newPassword);
       closeProcessing();
 
       if (result.success) {
@@ -156,52 +129,59 @@ export default function AccountsPage() {
   };
 
   return (
-    <div className="p-8 max-w-400 mx-auto min-h-screen bg-slate-50/50">
+    <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-          {t(translations.account)}
+        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+          <div className="bg-sky-100 p-2 rounded-xl">
+            <UserCog className="text-sky-600 w-6 h-6" />
+          </div>
+          <span>{t(translations.Management, { name: t(translations.account) })} </span>
         </h1>
-        <Link
-          href={"/accounts/create"}
-          className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95"
-        >
-          <Plus size={20} strokeWidth={2.5} />
-          {t(translations.Create, { name: t(translations.account) })}
-        </Link>
+
+        {hasPermission(Permission.USER_CREATE) && (
+          <Link
+            href={"/accounts/create"}
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-sky-600 text-white rounded-xl font-semibold hover:bg-sky-700 transition-all shadow-lg shadow-sky-200 active:scale-95"
+          >
+            <Plus size={20} strokeWidth={2.5} />
+            {t(translations.Create, { name: t(translations.account) })}
+          </Link>
+        )}
       </div>
 
       {/* Filter Card */}
-      <div className="mb-8 bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
-        <h2 className="text-lg font-semibold text-slate-700 mb-4">
-          {t(translations.Filter, { name: t(translations.account) })}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="text"
-            placeholder={t(translations.SearchBy, {
-              name: t(translations.userName),
-            })}
-            value={search.userName}
-            onChange={(e) => setSearch({ ...search, userName: e.target.value })}
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-          />
-        </div>
+      <div className="mb-6 bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
+        <div className="flex flex-col md:flex-row gap-4 items-end">
+          <div className="flex-1 w-full">
+            <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
+              {t(translations.SearchBy, { name: t(translations.userName) })}
+            </label>
+            <input
+              type="text"
+              placeholder="Search username..."
+              value={search.userName}
+              onChange={(e) => setSearch({ ...search, userName: e.target.value })}
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none transition-all"
+            />
+          </div>
 
-        <div className="flex justify-end mt-6 gap-3">
-          <button
-            onClick={handleClearFilters}
-            className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
-          >
-            {t(translations.clear)}
-          </button>
-          <button
-            onClick={handleApplyFilters}
-            className="flex items-center gap-2 px-8 py-2.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-all shadow-md"
-          >
-            <Search size={18} />
-            {t(translations.apply)}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleClearFilters}
+              className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
+            >
+              {t(translations.clear)}
+            </button>
+            <button
+              onClick={handleApplyFilters}
+              className="flex items-center gap-2 px-6 py-2.5 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-900 transition-all shadow-md"
+            >
+              <Search size={18} />
+              {t(translations.apply)}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -211,101 +191,97 @@ export default function AccountsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200">
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  {t(translations.stt)}
-                </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  {t(translations.userName)}
-                </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  {t(translations.fullName)}
-                </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  {t(translations.status)}
-                </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  {t(translations.role)}
-                </th>
-
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  Actions
-                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">ACCOUNT INFO</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">ROLE</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">STATUS</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider text-right">ACTIONS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {users.length === 0 ? (
+              {loading ? (
+                [...Array(5)].map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-full bg-slate-100"></div><div className="space-y-2"><div className="h-4 w-24 bg-slate-100 rounded"></div><div className="h-3 w-16 bg-slate-100 rounded"></div></div></div></td>
+                    <td className="px-6 py-4"><div className="h-6 w-16 bg-slate-100 rounded-full"></div></td>
+                    <td className="px-6 py-4"><div className="h-6 w-16 bg-slate-100 rounded-full"></div></td>
+                    <td className="px-6 py-4"><div className="h-8 w-24 bg-slate-100 rounded ml-auto"></div></td>
+                  </tr>
+                ))
+              ) : users.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-10 text-center text-slate-400"
-                  >
+                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400 flex flex-col items-center justify-center gap-2">
+                    <User className="w-8 h-8 opacity-20" />
                     {t(translations.noData)}
                   </td>
                 </tr>
               ) : (
-                (
-                  users as Array<{
-                    id: string;
-                    userName: string;
-                    stt: number;
-                    fullName: string;
-                    isActive: BooleanState;
-                    role: Role;
-                  }>
-                ).map((user) => (
-                  <tr
-                    key={user.id}
-                    className="hover:bg-slate-50/80 transition-colors group"
-                  >
-                    <td className="px-6 py-4 text-sm text-slate-600">
-                      {user.stt}
+                (users as any[]).map((user) => (
+                  <tr key={user.id} className="hover:bg-sky-50/30 transition-colors group">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        {/* Avatar Circle */}
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-100 to-blue-100 border border-sky-200 flex items-center justify-center text-sky-700 font-bold shrink-0">
+                          {user.fullName ? user.fullName.charAt(0).toUpperCase() : <User size={18} />}
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-slate-800">{user.fullName}</div>
+                          <div className="text-xs text-slate-500 flex items-center gap-1 font-mono">
+                            <Mail size={10} /> {user.userName}
+                          </div>
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium text-slate-800">
-                      {user.userName}
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border flex items-center gap-1 w-fit ${user.role === Role.ADMIN
+                        ? 'bg-purple-50 text-purple-700 border-purple-200'
+                        : 'bg-slate-100 text-slate-600 border-slate-200'
+                        }`}>
+                        {user.role === Role.ADMIN && <Shield size={10} />}
+                        {t(user.role)}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium text-slate-800">
-                      {user.fullName}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span
-                        className={`font-medium ${user.isActive === BooleanState.TRUE
-                          ? "text-green-600"
-                          : "text-red-600"
-                          }`}
-                      >
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${user.isActive === BooleanState.TRUE
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-red-50 text-red-600 border-red-200'
+                        }`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${user.isActive === BooleanState.TRUE ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
                         {t(user.isActive === BooleanState.TRUE ? translations.active : translations.inactive)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
-                      {t(user.role)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
+
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2">
                         {hasPermission(Permission.USER_UPDATE) && (
-                          <>
-                            <Link
-                              href={`/accounts/${user.id}/edit`}
-                              className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-lg hover:bg-blue-200 transition"
-                            >
-                              <Edit size={14} />
-                              {t(translations.edit)}
-                            </Link>
-                            <button
-                              onClick={() => showResetPasswordForm(user)}
-                              className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 text-sm rounded-lg hover:bg-red-200 transition"
-                            >
-                              <UserRoundCog size={14} />
-                              {t(translations.resetPassword)}
-                            </button>
-                          </>
+                          <Link
+                            href={`/accounts/${user.id}/edit`}
+                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-sky-50 hover:text-sky-600 hover:border-sky-200 transition shadow-sm"
+                            title={t(translations.edit)}
+                          >
+                            <Edit size={16} />
+                          </Link>
                         )}
+
+                        {hasPermission(Permission.USER_UPDATE) && (
+                          <button
+                            onClick={() => showResetPasswordForm(user)}
+                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition shadow-sm"
+                            title={t(translations.resetPassword)}
+                          >
+                            <KeyRound size={16} />
+                          </button>
+                        )}
+
                         {hasPermission(Permission.USER_DELETE) && (
                           <button
                             onClick={() => handleActiveStatus(user)}
-                            className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 text-sm rounded-lg hover:bg-red-200 transition"
+                            className={`p-2 bg-white border border-slate-200 rounded-lg transition shadow-sm ${user.isActive === BooleanState.TRUE
+                              ? "text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                              : "text-slate-400 hover:bg-green-50 hover:text-green-600 hover:border-green-200"
+                              }`}
+                            title={t(translations.manage)}
                           >
-                            <UserRoundCog size={14} />
-                            {t(translations.manage)}
+                            <Power size={16} />
                           </button>
                         )}
                       </div>

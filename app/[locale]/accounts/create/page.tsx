@@ -46,26 +46,40 @@ export default function CreateAccountPage() {
   // Define modules with their CRUD permissions
   const modules = [
     {
+      name: translations.account,
+      permissions: [
+        Permission.USER_VIEW,
+        Permission.USER_CREATE,
+        Permission.USER_UPDATE,
+        Permission.USER_DELETE
+      ],
+    },
+    {
       name: translations.product,
       permissions: [
-        "PRODUCT_CREATE",
-        "PRODUCT_VIEW",
-        "PRODUCT_UPDATE",
-        "PRODUCT_DELETE",
+        Permission.PRODUCT_VIEW,
+        Permission.PRODUCT_CREATE,
+        Permission.PRODUCT_UPDATE,
+        Permission.PRODUCT_DELETE,
       ],
     },
     {
-      name: translations.category,
+      name: translations.symptom,
       permissions: [
-        "CATEGORY_CREATE",
-        "CATEGORY_VIEW",
-        "CATEGORY_UPDATE",
-        "CATEGORY_DELETE",
+        Permission.SYMPTOM_VIEW,
+        Permission.SYMPTOM_CREATE,
+        Permission.SYMPTOM_UPDATE,
+        Permission.SYMPTOM_DELETE,
       ],
     },
     {
-      name: translations.account,
-      permissions: ["ACCOUNT_VIEW", "ACCOUNT_CREATE", "ACCOUNT_UPDATE", "ACCOUNT_DELETE"],
+      name: translations.article,
+      permissions: [
+        Permission.ARTICLE_VIEW,
+        Permission.ARTICLE_CREATE,
+        Permission.ARTICLE_UPDATE,
+        Permission.ARTICLE_DELETE,
+      ],
     },
   ];
 
@@ -194,7 +208,6 @@ export default function CreateAccountPage() {
                       <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
                       Module Permissions
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">กำหนดสิทธิ์การ Read/Write ในแต่ละโมดูล</p>
                   </div>
                   <div className="px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-100">
                     {selectedPermissions.length} Selected
@@ -209,7 +222,7 @@ export default function CreateAccountPage() {
                         <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Create</th>
                         <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">View</th>
                         <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Update</th>
-                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Delete/Manage</th>
+                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Delete</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -264,7 +277,7 @@ export default function CreateAccountPage() {
                     type="submit"
                     className="px-10 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
                   >
-                    {t(translations.Create, { name: t(translations.account) })}
+                    {t(translations.create)}
                   </button>
                 </div>
               </div>

@@ -40,7 +40,7 @@ export default function ArticlePage() {
   } = useAlert();
   const { hasPermission } = useAuth();
 
-  const [search, setSearch] = useState({ title: "", type: "" });
+  const [search, setSearch] = useState({ title: "", type: "", status: "" });
   const [allProducts, setAllProducts] = useState<any[]>([]); // สำหรับเลือก Tie-in Products
 
   // โหลด Pagination
@@ -54,7 +54,6 @@ export default function ArticlePage() {
     applyFilters,
     clearFilters,
   } = usePagination("/api/articles");
-
   // โหลดสินค้าทั้งหมดเพื่อมาทำ Selection (Tie-in)
   useEffect(() => {
     const fetchProducts = async () => {
@@ -65,17 +64,16 @@ export default function ArticlePage() {
   }, []);
 
   const handleApplyFilters = () => {
-    applyFilters({ title: search.title, type: search.type });
+    applyFilters({ title: search.title, type: search.type, status: search.status });
   };
 
   const handleClearFilters = () => {
-    setSearch({ title: "", type: "" });
+    setSearch({ title: "", type: "", status: "" });
     clearFilters();
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleOpenCreate = () => {
     setSelectedArticle(null);
@@ -89,24 +87,15 @@ export default function ArticlePage() {
 
   // --- FORM LOGIC ---
   const handleSaveArticle = async (formData: any) => {
-    setIsProcessing(true);
-    try {
-      const response = selectedArticle
-        ? await api.put(`/api/articles/${selectedArticle.id}`, formData)
-        : await api.post("/api/articles", formData);
 
-      if (response.data.success) {
-        showSuccess(t(response.data.message));
-        reloadData();
-        setIsModalOpen(false); // ปิด Modal เมื่อสำเร็จ
-      } else {
-        showError(t(response.data.message));
-      }
-    } catch (error: any) {
-      showError(t(error?.response?.data?.message || "Error"));
-    } finally {
-      setIsProcessing(false);
+    if (selectedArticle) {
+      await api.put(`/api/articles/${selectedArticle.id}`, formData)
     }
+    else {
+      await api.post("/api/articles", formData);
+    }
+    setIsModalOpen(false);
+    reloadData();
   };
 
   // --- DELETE LOGIC ---
@@ -143,7 +132,7 @@ export default function ArticlePage() {
           <div className="bg-indigo-100 p-2 rounded-xl">
             <FileText className="text-indigo-600 w-6 h-6" />
           </div>
-          <span>{t(translations.list)} Management</span>
+          <span>{t(translations.Management, { name: t(translations.article) })} </span>
         </h1>
 
         {hasPermission(Permission.ARTICLE_CREATE) && (
@@ -152,7 +141,7 @@ export default function ArticlePage() {
             className="flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95"
           >
             <Plus size={20} strokeWidth={2.5} />
-            {t(translations.Create, { name: t(translations.list) })}
+            {t(translations.Create, { name: t(translations.article) })}
           </button>
         )}
       </div>
@@ -189,6 +178,23 @@ export default function ArticlePage() {
               ))}
             </select>
           </div>
+          <div className="w-full md:w-64">
+            <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
+              {t(translations.status)}
+            </label>
+            <select
+              value={search.status}
+              onChange={(e) => setSearch({ ...search, status: e.target.value })}
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+            >
+              <option value="">{t(translations.All, { name: t(translations.status) })}</option>
+              {Object.values(ArticleStatus).map((s) => (
+                <option key={s} value={s}>
+                  {t(s)}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="flex gap-2">
             <button
@@ -215,6 +221,9 @@ export default function ArticlePage() {
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200">
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                  #
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
                   ARTICLE INFO
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
@@ -232,27 +241,7 @@ export default function ArticlePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {loading ? (
-                [...Array(5)].map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td className="px-6 py-4">
-                      <div className="h-12 bg-slate-100 rounded w-full"></div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="h-4 bg-slate-100 rounded w-24"></div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="h-4 bg-slate-100 rounded w-20"></div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="h-4 bg-slate-100 rounded w-16"></div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="h-8 bg-slate-100 rounded w-20 ml-auto"></div>
-                    </td>
-                  </tr>
-                ))
-              ) : articles.length === 0 ? (
+              {articles.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
@@ -262,17 +251,18 @@ export default function ArticlePage() {
                   </td>
                 </tr>
               ) : (
-                (articles as any[]).map((item) => (
+                (articles as any[]).map((article) => (
                   <tr
-                    key={item.id}
+                    key={article.id}
                     className="hover:bg-indigo-50/30 transition-colors group"
                   >
+                    <td className="px-6 py-4">#{article.stt}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-10 bg-slate-100 rounded-lg overflow-hidden shrink-0 border border-slate-200">
-                          {item.coverImage ? (
+                          {article.coverImage ? (
                             <img
-                              src={item.coverImage}
+                              src={article.coverImage}
                               className="w-full h-full object-cover"
                               alt="cover"
                             />
@@ -284,47 +274,46 @@ export default function ArticlePage() {
                         </div>
                         <div>
                           <div className="text-sm font-bold text-slate-800 line-clamp-1">
-                            {local === "lo" ? item.titleLA : item.titleEN}
+                            {local === "lo" ? article.titleLA : article.titleEN}
                           </div>
                           <div className="text-xs text-slate-500 flex items-center gap-1">
                             <Globe size={10} />{" "}
-                            {local === "lo" ? item.titleEN : item.titleLA}
+                            {local === "lo" ? article.titleEN : article.titleLA}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="px-2 py-1 rounded text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        {item.type.replace(/_/g, " ")}
+                        {t(article.type)}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-bold border ${
-                          item.status === ArticleStatus.PUBLISHED
-                            ? "bg-green-50 text-green-700 border-green-200"
-                            : "bg-slate-100 text-slate-500 border-slate-200"
-                        }`}
+                        className={`px-2 py-1 rounded-full text-xs font-bold border ${article.status === ArticleStatus.PUBLISHED
+                          ? "bg-green-50 text-green-700 border-green-200"
+                          : "bg-slate-100 text-slate-500 border-slate-200"
+                          }`}
                       >
-                        {item.status}
+                        {t(article.status)}
                       </span>
-                      {item.publishedAt && (
+                      {article.publishedAt && (
                         <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                          <Calendar size={10} /> {formatDate(item.publishedAt)}
+                          <Calendar size={10} /> {formatDate(article.publishedAt)}
                         </div>
                       )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1 text-slate-600 text-sm">
                         <Eye size={14} className="text-slate-400" />{" "}
-                        {item.views.toLocaleString()}
+                        {article.views.toLocaleString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         {hasPermission(Permission.ARTICLE_UPDATE) && (
                           <button
-                            onClick={() => handleOpenEdit(item)}
+                            onClick={() => handleOpenEdit(article)}
                             className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm"
                           >
                             <Edit size={16} />
@@ -332,7 +321,7 @@ export default function ArticlePage() {
                         )}
                         {hasPermission(Permission.ARTICLE_DELETE) && (
                           <button
-                            onClick={() => handleDelete(item)}
+                            onClick={() => handleDelete(article)}
                             className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition shadow-sm"
                           >
                             <Trash2 size={16} />
@@ -358,12 +347,13 @@ export default function ArticlePage() {
         />
       )}
       <ArticleFormModal
+        t={t}
+        local={local}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSaveArticle}
         initialData={selectedArticle}
         allProducts={allProducts}
-        isProcessing={isProcessing}
       />
     </div>
   );

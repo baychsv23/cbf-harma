@@ -73,11 +73,10 @@ export async function handleApiAction<T>(handler: ApiHandler<T>) {
                 { status: 403 }
             );
         }
-        const customStatus = error.status
-        if (customStatus) {
+        if (translations.allFiledRequired) {
             return NextResponse.json(
-                { success: false, error: error.message },
-                { status: customStatus }
+                { success: false, error: translations.allFiledRequired },
+                { status: 400 }
             );
         }
         // 4. Default Error (500)

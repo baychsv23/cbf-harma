@@ -112,4 +112,7 @@ export const translations = {
   article: "article",
   symptom: "symptom",
   All: "All",
+  Management: "Management",
+  limitBanner: 'limitBanner',
+  limitAnnouncement: "limitAnnouncement"
 } as const;

@@ -33,7 +33,7 @@ export async function DELETE(
   return handleApiAction(async () => {
     const { id } = await params;
     await requirePermission(Permission.SYMPTOM_DELETE);
-    const deleted = await database.symptom.delete({ where: { id: id } });
+    await database.symptom.delete({ where: { id: id } });
     return { message: translations.deletedSuccess };
   });
 }

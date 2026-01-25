@@ -22,7 +22,6 @@ import {
   CategorySub,
   Permission,
 } from "@/generated/prisma/enums";
-import Script from "next/script";
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 import ProductFormModal from "@/components/Form/ProductFormModal";
 
@@ -53,7 +52,6 @@ export default function ProductPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleOpenCreate = () => {
     setSelectedProduct(null);
@@ -66,19 +64,15 @@ export default function ProductPage() {
   };
 
   const handleSaveProduct = async (formData: any) => {
-    setIsProcessing(true);
-    try {
-      if (selectedProduct) {
-        await api.put(`/api/products/${selectedProduct.id}`, formData);
-      } else {
-        await api.post("/api/products", formData);
-      }
-      setIsModalOpen(false);
-      reloadData();
-    } catch (error: any) {
-    } finally {
-      setIsProcessing(false);
+    showProcessing()
+    if (selectedProduct) {
+      await api.put(`/api/products/${selectedProduct.id}`, formData);
+    } else {
+      await api.post("/api/products", formData);
     }
+    setIsModalOpen(false);
+    reloadData();
+
   };
 
   useEffect(() => {
@@ -104,14 +98,9 @@ export default function ProductPage() {
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
-      <Script
-        src="https://upload-widget.cloudinary.com/global/all.js"
-        strategy="afterInteractive"
-      />
-      {/* Header section identical to yours but with updated Permission enum */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-          <Pill className="text-blue-600" /> {t(translations.product)}
+          <Pill className="text-blue-600" /> {t(translations.Management, { name: translations.product })}
         </h1>
         {hasPermission(Permission.PRODUCT_CREATE) && (
           <button
@@ -147,7 +136,7 @@ export default function ProductPage() {
           {/* ค้นหาด้วยหมวดหมู่หลัก */}
           <div className="flex flex-col gap-1">
             <label className="text-xs font-bold text-slate-500 ml-1">
-              CATEGORY
+              {t(translations.category)}
             </label>
             <select
               value={search.category}
@@ -243,10 +232,9 @@ export default function ProductPage() {
             {products.length === 0 ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={6}
                   className="px-6 py-10 text-center text-slate-400  items-center justify-center gap-2"
                 >
-                  <Activity className="w-8 h-8 opacity-20" />
                   {t(translations.noData)}
                 </td>
               </tr>
@@ -326,12 +314,12 @@ export default function ProductPage() {
       )}
       <ProductFormModal
         t={t}
+        local={local}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSaveProduct}
         initialData={selectedProduct}
         allSymptoms={allSymptoms}
-        isProcessing={isProcessing}
       />
     </div>
   );

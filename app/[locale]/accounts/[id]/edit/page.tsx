@@ -101,26 +101,40 @@ export default function EditAccountPage({ params }: any) {
 
   const modules = [
     {
+      name: translations.account,
+      permissions: [
+        Permission.USER_VIEW,
+        Permission.USER_CREATE,
+        Permission.USER_UPDATE,
+        Permission.USER_DELETE
+      ],
+    },
+    {
       name: translations.product,
       permissions: [
-        "PRODUCT_CREATE",
-        "PRODUCT_VIEW",
-        "PRODUCT_UPDATE",
-        "PRODUCT_DELETE",
+        Permission.PRODUCT_VIEW,
+        Permission.PRODUCT_CREATE,
+        Permission.PRODUCT_UPDATE,
+        Permission.PRODUCT_DELETE,
       ],
     },
     {
-      name: translations.category,
+      name: translations.symptom,
       permissions: [
-        "CATEGORY_CREATE",
-        "CATEGORY_VIEW",
-        "CATEGORY_UPDATE",
-        "CATEGORY_DELETE",
+        Permission.SYMPTOM_VIEW,
+        Permission.SYMPTOM_CREATE,
+        Permission.SYMPTOM_UPDATE,
+        Permission.SYMPTOM_DELETE,
       ],
     },
     {
-      name: translations.account,
-      permissions: ["ACCOUNT_VIEW", "ACCOUNT_CREATE", "ACCOUNT_UPDATE", "ACCOUNT_DELETE"],
+      name: translations.article,
+      permissions: [
+        Permission.ARTICLE_VIEW,
+        Permission.ARTICLE_CREATE,
+        Permission.ARTICLE_UPDATE,
+        Permission.ARTICLE_DELETE,
+      ],
     },
   ];
 

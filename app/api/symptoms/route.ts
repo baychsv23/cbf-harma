@@ -19,6 +19,14 @@ export async function GET(request: NextRequest) {
       : undefined;
 
     const where: any = {};
+    const name = searchParams.get("name")
+
+    if (name) {
+      where.OR = [
+        { nameEN: { contains: name } },
+        { nameLA: { contains: name } },
+      ];
+    }
 
     if (page && limit) {
       const skip = (page - 1) * limit;

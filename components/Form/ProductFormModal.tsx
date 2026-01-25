@@ -19,7 +19,7 @@ interface ProductFormProps {
   onSubmit: (data: any) => void;
   initialData?: any;
   allSymptoms: any[];
-  isProcessing: boolean;
+  local: string
 }
 
 export default function ProductFormModal({
@@ -28,8 +28,8 @@ export default function ProductFormModal({
   onSubmit,
   initialData,
   allSymptoms,
-  isProcessing,
   t,
+  local
 }: ProductFormProps) {
   // --- STATE ---
   const [formData, setFormData] = useState<{
@@ -42,7 +42,8 @@ export default function ProductFormModal({
     category: Category;
     categorySub: CategorySub;
     isPrescription: BooleanState;
-    productImageUrl: string;
+    productImage: string;
+    productImagePublicId: string
     indicationEN: string;
     indicationLA: string;
     symptomIds: string[];
@@ -57,7 +58,9 @@ export default function ProductFormModal({
     category: Category.OTHERS,
     categorySub: CategorySub.NONE,
     isPrescription: BooleanState.FALSE,
-    productImageUrl: "",
+    productImage: "",
+    productImagePublicId: "",
+
     indicationEN: "",
     indicationLA: "",
     symptomIds: [],
@@ -79,11 +82,12 @@ export default function ProductFormModal({
         category: initialData.category || Category.OTHERS,
         categorySub: initialData.categorySub || CategorySub.NONE,
         isPrescription: initialData.isPrescription || BooleanState.FALSE,
-        productImageUrl: initialData.productImageUrl || "",
+        productImage: initialData.productImage || "",
         indicationEN: initialData.indicationEN || "",
         indicationLA: initialData.indicationLA || "",
         symptomIds: initialData.symptom?.map((s: any) => s.id) || [],
         slug: initialData.slug || "",
+        productImagePublicId: initialData.productImagePublicId || ""
       });
     } else {
       // Reset
@@ -97,11 +101,12 @@ export default function ProductFormModal({
         category: Category.ANALGESIC_ANTIPYRETIC,
         categorySub: CategorySub.NONE,
         isPrescription: BooleanState.FALSE,
-        productImageUrl: "",
+        productImage: "",
         indicationEN: "",
         indicationLA: "",
         symptomIds: [],
         slug: "",
+        productImagePublicId: ""
       });
     }
     setErrors({});
@@ -148,7 +153,7 @@ export default function ProductFormModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-800 leading-none">
-                {initialData ? "Edit Product" : "Add New Product"}
+                {initialData ? t(translations.Edit, { name: t(translations.product) }) : t(translations.Create, { name: t(translations.product) })}
               </h2>
               <p className="text-xs text-slate-500 mt-1">
                 Clinical Information & Stock Details
@@ -171,7 +176,7 @@ export default function ProductFormModal({
               {/* Image Upload using CldUploadWidget */}
               <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <label className="text-xs font-bold text-slate-500 uppercase mb-3 block">
-                  Product Image
+                  {t(translations.image)}
                 </label>
                 <CldUploadWidget
                   uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_PRESET}
@@ -179,12 +184,13 @@ export default function ProductFormModal({
                     sources: ["local", "url"],
                     multiple: false,
                     cropping: true,
-                    folder: "products",
+                    folder: "cbf",
                   }}
                   onSuccess={(result: any) =>
                     setFormData((prev) => ({
                       ...prev,
-                      productImageUrl: result.info.secure_url,
+                      productImage: result.info.secure_url,
+                      productImagePublicId: result.info.public_id
                     }))
                   }
                 >
@@ -193,10 +199,10 @@ export default function ProductFormModal({
                       onClick={() => open()}
                       className="group relative w-full aspect-square rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-blue-400 transition-all cursor-pointer overflow-hidden flex flex-col items-center justify-center"
                     >
-                      {formData.productImageUrl ? (
+                      {formData.productImage ? (
                         <>
                           <img
-                            src={formData.productImageUrl}
+                            src={formData.productImage}
                             className="w-full h-full object-contain p-2"
                             alt="Product"
                           />
@@ -253,7 +259,7 @@ export default function ProductFormModal({
               {/* Symptoms (Smart Search) */}
               <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-purple-500 flex-1 flex flex-col">
                 <label className="text-xs font-bold text-purple-700 uppercase mb-2 block">
-                  Symptoms (Smart Search)
+                  {t(translations.symptom)}
                 </label>
                 <div className="flex-1 max-h-[250px] overflow-y-auto space-y-1 custom-scrollbar pr-1">
                   {allSymptoms.map((s) => (
@@ -281,7 +287,7 @@ export default function ProductFormModal({
                         }}
                       />
                       <span className="text-xs text-slate-700 truncate">
-                        {s.nameLA} / {s.nameEN}
+                        {local === "en" ? s.nameEN : s.nameLA}
                       </span>
                     </label>
                   ))}
@@ -400,7 +406,7 @@ export default function ProductFormModal({
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      Category
+                      {t(translations.category)}
                     </label>
                     <select
                       value={formData.category}
@@ -408,6 +414,7 @@ export default function ProductFormModal({
                         setFormData({
                           ...formData,
                           category: e.target.value as Category,
+                          categorySub: CategorySub.NONE,
                         })
                       }
                       className="w-full p-2 border border-slate-200 rounded-lg text-sm bg-slate-50"
@@ -495,11 +502,10 @@ export default function ProductFormModal({
             onClick={onClose}
             className="px-6 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-100 transition text-sm"
           >
-            Cancel
+            {t(translations.cancel)}
           </button>
           <button
             onClick={handleSubmit}
-            disabled={isProcessing}
             className="flex items-center gap-2 px-8 py-2.5 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition shadow-lg shadow-blue-200 disabled:opacity-50 text-sm"
           >
             {initialData ? t(translations.update) : t(translations.create)}

@@ -13,9 +13,21 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams;
         const page = searchParams.get("page") ? parseInt(searchParams.get("page")!) : undefined;
         const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined;
-
-
+        const title = searchParams.get("title")
+        const type = searchParams.get("type")
+        const status = searchParams.get("status")
         const where: any = {};
+        if (title) {
+            where.OR = [
+                { titleEN: { contains: title } },
+                { titleLA: { contains: title } },
+
+            ];
+        }
+        if (type) where.type = type
+
+        if (status) where.status = status
+
 
         if (page && limit) {
             const skip = (page - 1) * limit;
@@ -26,7 +38,13 @@ export async function GET(request: NextRequest) {
                     take: limit,
                     where,
                     orderBy: { createdAt: 'desc' },
+                    include: {
+                        products: { select: { id: true, nameEN: true, nameLA: true } },
+                        createdBy: { select: { fullName: true } },
+                        updatedBy: { select: { fullName: true } }
+                    }
                 }),
+
                 database.article.count({ where }),
             ]);
 
@@ -68,4 +86,53 @@ export async function GET(request: NextRequest) {
             },
         });
     })
+}
+export async function POST(req: Request) {
+    return handleApiAction(async () => {
+        // 1. ตรวจสอบสิทธิ์ (ใช้ Permission.ARTICLE_CREATE)
+        const session = await requirePermission(Permission.ARTICLE_CREATE);
+        const body = await req.json();
+
+        const creator = session.user.id;
+
+        // 2. Validate ข้อมูลที่จำเป็นต้องมี
+        if (!body.titleEN || !body.titleLA || !body.slug) {
+            throw new ApiError(translations.allFiledRequired, 400);
+        }
+
+        const { productIds } = body; // รับ array ของ product IDs มาจากหน้าบ้าน
+
+        // 3. บันทึกลงฐานข้อมูล
+        const newArticle = await database.article.create({
+            data: {
+                slug: body.slug,
+                titleEN: body.titleEN,
+                titleLA: body.titleLA,
+                contentEN: body.contentEN || "", // กันค่า null
+                contentLA: body.contentLA || "",
+                coverImage: body.coverImage,
+                coverImagePublicId: body.coverImagePublicId,
+
+                type: body.type,
+                status: body.status,
+
+                // Logic: ถ้าสถานะเป็น PUBLISHED ให้ใส่วันที่ปัจจุบันทันที
+                publishedAt: body.status === ArticleStatus.PUBLISHED ? new Date() : null,
+
+                createdById: creator,
+
+                // Handle Relation: Tie-in Products (Many-to-Many)
+                products: {
+                    connect: productIds?.map((id: string) => ({ id })) || [],
+                },
+            },
+            select: { id: true },
+        });
+
+        // 4. ส่งค่ากลับพร้อม Message
+        return {
+            ...newArticle,
+            message: translations.createdSuccess,
+        };
+    });
 }

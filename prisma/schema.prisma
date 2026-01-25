@@ -108,22 +108,23 @@ model User {
 }
 
 model Product {
-  id              String       @id @default(uuid())
-  status          ActiveState  @default(ACTIVE)
-  slug            String       @unique // URL ທີ່ສວຍງາມ (SEO) e.g., freecold-paracetamol
-  sku             String       @unique
-  nameEN          String
-  nameLA          String
-  genericName     String? // ຊື່ສາມັນທາງຢາ e.g., 
-  dosage          String? // 500mg
-  packaging       String? // ຮູບແບບບັນຈຸ e.g., 10 tablets/strip
-  indicationLA    String?      @db.Text // ສັບພະຄຸນ
-  indicationEN    String?      @db.Text
-  isPrescription  BooleanState @default(FALSE) // ຕ້ອງມີໃບສັ່ງແພດບໍ່?
-  isActive        BooleanState @default(TRUE)
-  productImageUrl String?
-  category        Category
-  categorySub     CategorySub
+  id                   String       @id @default(uuid())
+  status               ActiveState  @default(ACTIVE)
+  slug                 String       @unique // URL ທີ່ສວຍງາມ (SEO) e.g., freecold-paracetamol
+  sku                  String       @unique
+  nameEN               String
+  nameLA               String
+  genericName          String? // ຊື່ສາມັນທາງຢາ e.g., 
+  dosage               String? // 500mg
+  packaging            String? // ຮູບແບບບັນຈຸ e.g., 10 tablets/strip
+  indicationLA         String?      @db.Text // ສັບພະຄຸນ
+  indicationEN         String?      @db.Text
+  isPrescription       BooleanState @default(FALSE) // ຕ້ອງມີໃບສັ່ງແພດບໍ່?
+  isActive             BooleanState @default(TRUE)
+  productImage         String?
+  productImagePublicId String?
+  category             Category
+  categorySub          CategorySub
 
   articles Article[] // MedThai Concept: ບົດຄວາມສຸຂະພາບທີ່ກ່ຽວຂ້ອງ (Many-to-Many)
   symptom  Symptom[] // Smart Search: ຢານີ້ແກ້ອາການ
@@ -132,7 +133,7 @@ model Product {
   createdById String
   createdBy   User     @relation("ProductCreator", fields: [createdById], references: [id])
   updatedById String?
-  user        User?    @relation("ProductUpdater", fields: [updatedById], references: [id])
+  updatedBy   User?    @relation("ProductUpdater", fields: [updatedById], references: [id])
   updatedAt   DateTime @updatedAt
 }
 
@@ -142,11 +143,12 @@ enum ImageType {
 }
 
 model Announcement {
-  id        String       @id @default(uuid())
-  imageUrl  String
-  type      ImageType    @default(BANNER)
-  isActive  BooleanState @default(TRUE) // Added to control visibility
-  createdAt DateTime     @default(now())
+  id            String       @id @default(uuid())
+  image         String?
+  imagePublicId String?
+  type          ImageType    @default(BANNER)
+  isActive      BooleanState @default(TRUE) // Added to control visibility
+  createdAt     DateTime     @default(now())
 }
 
 model Symptom {
@@ -158,13 +160,14 @@ model Symptom {
 }
 
 model Article {
-  id         String  @id @default(uuid())
-  slug       String  @unique
-  titleLA    String
-  titleEN    String
-  contentLA  String  @db.Text // Rich Text (HTML)
-  contentEN  String  @db.Text
-  coverImage String?
+  id                 String  @id @default(uuid())
+  slug               String  @unique
+  titleLA            String
+  titleEN            String
+  contentLA          String  @db.Text // Rich Text (HTML)
+  contentEN          String  @db.Text
+  coverImage         String?
+  coverImagePublicId String?
 
   type     ArticleType   @default(HEALTH_KNOWLEDGE)
   status   ArticleStatus @default(DRAFT) // Added status field
@@ -178,7 +181,7 @@ model Article {
   createdBy   User      @relation("ArticleCreator", fields: [createdById], references: [id])
   updatedAt   DateTime  @updatedAt
   updatedById String?
-  user        User?     @relation("ArticleUpdater", fields: [updatedById], references: [id])
+  updatedBy   User?     @relation("ArticleUpdater", fields: [updatedById], references: [id])
 }
 
 enum ArticleType {

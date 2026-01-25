@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { Permission, Role } from "@/generated/prisma/enums";
 import { translations } from "./translation";
 import { authOptions } from "./auth";
+import { ApiError } from "./api-error";
 
 
 export async function getSession() {
@@ -12,7 +13,7 @@ export async function requirePermission(...requiredPermissions: Permission[]) {
   const session = await getSession();
 
   if (!session) {
-    throw new Error(translations.unauthorized);
+    throw new ApiError(translations.unauthorized, 401);
   }
   const userRole = session.user?.role;
   if (userRole === Role.ADMIN) {
@@ -41,7 +42,7 @@ export async function requireAccess({
 }) {
   const session = await getSession();
 
-  if (!session) throw new Error(translations.unauthorized);
+  if (!session) throw new ApiError(translations.unauthorized, 403);
 
   const userRole = session.user?.role;
   if (userRole === Role.ADMIN) {

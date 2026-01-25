@@ -11,7 +11,7 @@ CREATE TYPE "ArticleStatus" AS ENUM ('DRAFT', 'PUBLISHED');
 CREATE TYPE "BooleanState" AS ENUM ('TRUE', 'FALSE');
 
 -- CreateEnum
-CREATE TYPE "Category" AS ENUM ('NUTRITION_ELECTROLYTE', 'ANTIBIOTICS', 'ANTI_PARASITIC', 'GASTROINTESTINAL', 'CARDIOVASCULAR', 'ANTIDIABETIC', 'RESPIRATORY', 'ANTI_ALLERGIC', 'EFFECTIVE_TO_PSYCHOTIC', 'ANESTHETICS', 'ANALGESIC_ANTIPYRETIC', 'VITAMINS_MINERALS', 'DISINFECTANTS_ANTISEPTIC', 'OTHERS');
+CREATE TYPE "Category" AS ENUM ('NUTRITION_ELECTROLYTE', 'ANTIBIOTICS', 'ANTI_PARASITIC', 'GASTROINTESTINAL', 'CARDIOVASCULAR', 'ANTI_DIABETIC', 'RESPIRATORY', 'ANTI_ALLERGIC', 'EFFECTIVE_TO_PSYCHOTIC', 'ANESTHETICS', 'ANALGESIC_ANTIPYRETIC', 'VITAMINS_MINERALS', 'DISINFECTANTS_ANTISEPTIC', 'OTHERS');
 
 -- CreateEnum
 CREATE TYPE "CategorySub" AS ENUM ('NONE', 'PENICILLINS', 'CEPHALOSPORINS', 'MACROLIDES', 'QUINOLONES', 'SULFONAMIDES', 'TINIDAZOLES', 'AMINOGLYCOSIDES');
@@ -48,16 +48,15 @@ CREATE TABLE "Product" (
     "sku" TEXT NOT NULL,
     "nameEN" TEXT NOT NULL,
     "nameLA" TEXT NOT NULL,
-    "descriptionsLA" TEXT,
-    "descriptionsEN" TEXT,
     "genericName" TEXT,
     "dosage" TEXT,
     "packaging" TEXT,
-    "indicationLa" TEXT,
-    "indicationEn" TEXT,
+    "indicationLA" TEXT,
+    "indicationEN" TEXT,
     "isPrescription" "BooleanState" NOT NULL DEFAULT 'FALSE',
     "isActive" "BooleanState" NOT NULL DEFAULT 'TRUE',
-    "productImageUrl" TEXT,
+    "productImage" TEXT,
+    "productImagePublicId" TEXT,
     "category" "Category" NOT NULL,
     "categorySub" "CategorySub" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -82,8 +81,9 @@ CREATE TABLE "Announcement" (
 -- CreateTable
 CREATE TABLE "Symptom" (
     "id" TEXT NOT NULL,
-    "nameLa" TEXT NOT NULL,
-    "nameEn" TEXT NOT NULL,
+    "nameLA" TEXT NOT NULL,
+    "nameEN" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Symptom_pkey" PRIMARY KEY ("id")
 );
@@ -92,10 +92,10 @@ CREATE TABLE "Symptom" (
 CREATE TABLE "Article" (
     "id" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
-    "titleLa" TEXT NOT NULL,
-    "titleEn" TEXT NOT NULL,
-    "contentLa" TEXT NOT NULL,
-    "contentEn" TEXT NOT NULL,
+    "titleLA" TEXT NOT NULL,
+    "titleEN" TEXT NOT NULL,
+    "contentLA" TEXT NOT NULL,
+    "contentEN" TEXT NOT NULL,
     "coverImage" TEXT,
     "type" "ArticleType" NOT NULL DEFAULT 'HEALTH_KNOWLEDGE',
     "status" "ArticleStatus" NOT NULL DEFAULT 'DRAFT',

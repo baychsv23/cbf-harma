@@ -38,11 +38,10 @@ function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
       <div>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
-            isActive
-              ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
-              : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
-          }`}
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
+            ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
+            : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
+            }`}
         >
           <Icon
             className={`w-5 h-5 ${isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`}`}
@@ -51,9 +50,8 @@ function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
             {t(item.title)}
           </span>
           <ChevronDown
-            className={`w-4 h-4 transition-transform duration-200 ${
-              isOpen ? "rotate-180" : ""
-            }`}
+            className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+              }`}
           />
         </button>
         {isOpen && (
@@ -70,11 +68,10 @@ function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
                 <AntiSpamLink
                   key={child.href}
                   href={child.href}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 group ${
-                    childIsActive
-                      ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-sm`
-                      : `text-slate-600 hover:bg-gradient-to-r ${colorTheme.hover}`
-                  }`}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 group ${childIsActive
+                    ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-sm`
+                    : `text-slate-600 hover:bg-gradient-to-r ${colorTheme.hover}`
+                    }`}
                 >
                   <ChildIcon
                     className={`w-4 h-4 ${childIsActive ? "text-white" : `text-slate-400 ${colorTheme.icon}`}`}
@@ -92,11 +89,10 @@ function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
   return (
     <AntiSpamLink
       href={item.href!}
-      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
-        isActive
-          ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
-          : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
-      }`}
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
+        ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
+        : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
+        }`}
     >
       <Icon
         className={`w-5 h-5 ${isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`}`}
@@ -109,8 +105,7 @@ function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
 export default function Sidebar() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  const pathWithoutLocale = pathname.replace(/^\/(th|lo)/, "") || "/";
-  const t = useTranslations();
+  const pathWithoutLocale = pathname.replace(/^\/(en|lo)/, "") || "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   if (status === "loading") return null;
@@ -127,30 +122,30 @@ export default function Sidebar() {
     const processedPermissions = new Set<string>();
     const finalMenus: MenuItem[] = [];
 
-    Object.values(DROPDOWN_GROUPS).forEach((group) => {
-      const userHasGroupPermission = group.permissions.some((p) =>
-        userPermissions.includes(p),
-      );
+    // Object.values(DROPDOWN_GROUPS).forEach((group) => {
+    //   const userHasGroupPermission = group.permissions.some((p) =>
+    //     userPermissions.includes(p),
+    //   );
 
-      if (userHasGroupPermission) {
-        const children = group.items
-          .filter((item) =>
-            item.permissions.some((p) => userPermissions.includes(p)),
-          )
-          .map((item) => ({
-            title: item.title,
-            href: item.href,
-          }));
+    //   if (userHasGroupPermission) {
+    //     const children = group.items
+    //       .filter((item) =>
+    //         item.permissions.some((p) => userPermissions.includes(p)),
+    //       )
+    //       .map((item) => ({
+    //         title: item.title,
+    //         href: item.href,
+    //       }));
 
-        if (children.length > 0) {
-          finalMenus.push({
-            title: group.title,
-            children: children,
-          });
-          group.permissions.forEach((p) => processedPermissions.add(p));
-        }
-      }
-    });
+    //     if (children.length > 0) {
+    //       finalMenus.push({
+    //         title: group.title,
+    //         children: children,
+    //       });
+    //       group.permissions.forEach((p) => processedPermissions.add(p));
+    //     }
+    //   }
+    // });
 
     userPermissions.forEach((permission) => {
       if (
@@ -202,7 +197,7 @@ export default function Sidebar() {
             <LayoutDashboard className="w-5 h-5 text-white" />
           </div>
           <h1 className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-700 via-purple-700 to-pink-700 bg-clip-text text-transparent">
-            Web Tax Service
+            CBF Pharma Co., Ltd
           </h1>
         </div>
         <div className="flex items-center gap-2 md:gap-4">

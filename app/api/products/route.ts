@@ -44,6 +44,8 @@ export async function GET(request: NextRequest) {
           orderBy: { createdAt: "desc" },
           include: {
             symptom: true,
+            createdBy: { select: { fullName: true } },
+            updatedBy: { select: { fullName: true } }
           },
         }),
         database.product.count({ where }),
@@ -70,7 +72,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch all mode
     const data = await database.product.findMany({
-      where: { ...where, isActive : BooleanState.TRUE },
+      where: { ...where, isActive: BooleanState.TRUE },
     });
 
     const total = data.length;
@@ -113,7 +115,7 @@ export async function POST(req: Request) {
         indicationLA: body.indicationLA,
         category: body.category,
         categorySub: body.categorySub,
-        productImageUrl: body.productImageUrl,
+        productImage: body.productImage,
         isPrescription: body.isPrescription || BooleanState.FALSE,
         symptom: {
           connect: symptomIds.map((id: string) => ({ id })),

@@ -13,6 +13,7 @@ import {
 import { ArticleType, ArticleStatus } from "@/generated/prisma/enums";
 import TiptapEditor from "@/components/Editor/TiptapEditor";
 import { CldUploadWidget } from "next-cloudinary";
+import { translations } from "@/lib/translation";
 
 interface ArticleFormProps {
   isOpen: boolean;
@@ -20,7 +21,8 @@ interface ArticleFormProps {
   onSubmit: (data: any) => void;
   initialData?: any;
   allProducts: any[];
-  isProcessing: boolean;
+  t: any
+  local: string
 }
 
 export default function ArticleFormModal({
@@ -29,7 +31,8 @@ export default function ArticleFormModal({
   onSubmit,
   initialData,
   allProducts,
-  isProcessing,
+  t,
+  local
 }: ArticleFormProps) {
   // --- STATE ---
   const [activeTab, setActiveTab] = useState<"EN" | "LA">("EN");
@@ -92,8 +95,6 @@ export default function ArticleFormModal({
 
   const handleSubmit = () => {
     if (!formData.titleEN || !formData.titleLA) {
-      // แนะนำให้ใช้ Toast หรือ Alert สวยๆ แทน window.alert
-      alert("Please fill in the title for both languages.");
       return;
     }
     const finalSlug =
@@ -161,7 +162,7 @@ export default function ArticleFormModal({
                   multiple: false,
                   cropping: true,
                   croppingAspectRatio: 1.77,
-                  showSkipCropButton: false,
+                  folder: "cbf",
                 }}
                 onSuccess={(result: any) => {
                   // เมื่ออัปโหลดเสร็จ ให้เซตค่าลง State
@@ -233,16 +234,16 @@ export default function ArticleFormModal({
                     }
                     className="w-full text-sm p-2.5 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   >
-                    {Object.values(ArticleType).map((t) => (
-                      <option key={t} value={t}>
-                        {t.replace(/_/g, " ")}
+                    {Object.values(ArticleType).map((type) => (
+                      <option key={type} value={type}>
+                        {t(type)}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div className="space-y-1">
                   <label className="text-[11px] font-bold text-slate-500 uppercase">
-                    Status
+                    {t(translations.status)}
                   </label>
                   <select
                     value={formData.status}
@@ -252,33 +253,22 @@ export default function ArticleFormModal({
                         status: e.target.value as ArticleStatus,
                       })
                     }
-                    className={`w-full text-sm p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium ${
-                      formData.status === ArticleStatus.PUBLISHED
-                        ? "bg-green-50 text-green-700 border-green-200"
-                        : "bg-slate-50 text-slate-600"
-                    }`}
+                    className={`w-full text-sm p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium ${formData.status === ArticleStatus.PUBLISHED
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : "bg-slate-50 text-slate-600"
+                      }`}
+
+
                   >
-                    <option value={ArticleStatus.DRAFT}>Draft</option>
-                    <option value={ArticleStatus.PUBLISHED}>Published</option>
+                    {Object.values(ArticleStatus).map((s) => (
+                      <option key={s} value={s}>
+                        {t(s)}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] font-bold text-slate-500 uppercase">
-                  Slug URL
-                </label>
-                <div className="relative">
-                  <input
-                    value={formData.slug}
-                    onChange={(e) =>
-                      setFormData({ ...formData, slug: e.target.value })
-                    }
-                    className="w-full text-xs p-2.5 pl-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none font-mono"
-                    placeholder="auto-generated-slug"
-                  />
-                </div>
-              </div>
             </div>
 
             {/* Related Products */}
@@ -315,18 +305,16 @@ export default function ArticleFormModal({
                     return (
                       <label
                         key={p.id}
-                        className={`flex items-start gap-3 p-2 rounded-lg cursor-pointer border transition-all ${
-                          isSelected
-                            ? "bg-indigo-50 border-indigo-200"
-                            : "bg-white border-transparent hover:bg-slate-50 hover:border-slate-200"
-                        }`}
+                        className={`flex items-start gap-3 p-2 rounded-lg cursor-pointer border transition-all ${isSelected
+                          ? "bg-indigo-50 border-indigo-200"
+                          : "bg-white border-transparent hover:bg-slate-50 hover:border-slate-200"
+                          }`}
                       >
                         <div
-                          className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                            isSelected
-                              ? "bg-indigo-600 border-indigo-600"
-                              : "bg-white border-slate-300"
-                          }`}
+                          className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${isSelected
+                            ? "bg-indigo-600 border-indigo-600"
+                            : "bg-white border-slate-300"
+                            }`}
                         >
                           {isSelected && (
                             <CheckCircle2 size={10} className="text-white" />
@@ -351,15 +339,18 @@ export default function ArticleFormModal({
                             }}
                           />
                         </div>
+
                         <div className="flex-1 min-w-0">
-                          <p
-                            className={`text-xs font-medium truncate ${isSelected ? "text-indigo-700" : "text-slate-700"}`}
-                          >
-                            {p.nameEN}
-                          </p>
-                          <p className="text-[10px] text-slate-400 truncate">
-                            {p.nameLA}
-                          </p>
+                          {/* กำหนดค่าสีไว้ที่ตัวแปรเดียว เพื่อลดความซ้ำซ้อน */}
+                          {/* เพิ่มความแตกต่างของสีระหว่างชื่อหลักและชื่อรองให้ชัดเจนขึ้น (Opacity) */}
+                          <div className={isSelected ? "text-indigo-700" : "text-slate-700"}>
+                            <p className="text-sm font-medium truncate">
+                              {local === "en" ? p.nameEN : p.nameLA}
+                            </p>
+                            <p className={`text-xs truncate ${isSelected ? "text-indigo-500/80" : "text-slate-400"}`}>
+                              {local === "en" ? p.nameLA : p.nameEN}
+                            </p>
+                          </div>
                         </div>
                       </label>
                     );
@@ -379,11 +370,10 @@ export default function ArticleFormModal({
             <div className="flex items-center gap-1 px-6 pt-4 border-b border-slate-200 bg-white">
               <button
                 onClick={() => setActiveTab("EN")}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${
-                  activeTab === "EN"
-                    ? "border-indigo-600 text-indigo-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
-                }`}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${activeTab === "EN"
+                  ? "border-indigo-600 text-indigo-600"
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
+                  }`}
               >
                 <span className="text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">
                   EN
@@ -392,16 +382,15 @@ export default function ArticleFormModal({
               </button>
               <button
                 onClick={() => setActiveTab("LA")}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${
-                  activeTab === "LA"
-                    ? "border-indigo-600 text-indigo-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
-                }`}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${activeTab === "LA"
+                  ? "border-indigo-600 text-indigo-600"
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
+                  }`}
               >
                 <span className="text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">
                   LA
                 </span>{" "}
-                Lao (ພາສາລາວ)
+                Lao
               </button>
             </div>
 
@@ -480,21 +469,16 @@ export default function ArticleFormModal({
               onClick={onClose}
               className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-100 border border-transparent transition-all text-sm"
             >
-              Cancel
+              {t(translations.cancel)}
             </button>
             <button
               onClick={handleSubmit}
-              disabled={isProcessing}
+
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-2.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all shadow-lg shadow-indigo-200 disabled:opacity-70 disabled:pointer-events-none text-sm"
             >
-              {isProcessing ? (
-                <>Saving...</>
-              ) : (
-                <>
-                  <Save size={18} />
-                  {initialData ? "Update Article" : "Save Article"}
-                </>
-              )}
+
+              <Save size={18} />
+              {initialData ? t(translations.update) : t(translations.create)}
             </button>
           </div>
         </div>

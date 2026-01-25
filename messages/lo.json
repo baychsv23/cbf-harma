@@ -6,8 +6,9 @@
   "resetPassword": "ຣີເຊັດລະຫັດ",
   "Placeholder": "ກະລຸນາຕື່ມຂໍ້ມູນ {name}",
   "search": "ຄົ້ນຫາ",
-  "All":"{name}ທັງໝົດ",
-  "Name":"ຊື່{name}",
+  "All": "{name}ທັງໝົດ",
+  "Management": "ຈັດການ{name}",
+  "Name": "ຊື່{name}",
   "SearchBy": "ຄົ້ນຫາດ້ວຍ{name}",
   "Filter": "ຄົ້ນຫາ{name}",
   "Select": "ເລືອກ{name}",
@@ -100,8 +101,8 @@
   "confirmTitle": "ທ່ານແນ່ໃຈບໍທີ່ຈະດຳເນີນການ?",
   "accountSettings": "ຕັ້ງຄ່າບັນຊີ",
   "image": "ຮູບພາບ",
-  "article":"ບົດຄວາມ",
-  "symptom":"ອາການ",
+  "article": "ບົດຄວາມ",
+  "symptom": "ອາການ",
   "NUTRITION_ELECTROLYTE": "ໝວດສານອາຫານ ແລະ ເກືອແຮ່",
   "ANTIBIOTICS": "ໝວດຢາຕ້ານເຊື້ອ",
   "ANTI_PARASITIC": "ໝວດຢາຂ້າແມ່ກາຝາກ",
@@ -128,5 +129,9 @@
   "ANNOUNCEMENT": "ແຈ້ງການທົ່ວໄປ",
   "NEWS": "ຂ່າວປະຊາສຳພັນ / CSR",
   "HEALTH_KNOWLEDGE": "ບົດຄວາມສຸຂະພາບ",
-  "ACTIVITY": "ກິດຈະກຳບໍລິສັດ"
+  "ACTIVITY": "ກິດຈະກຳບໍລິສັດ",
+  "DRAFT": "ຮ່າງໄວ້",
+  "PUBLISHED": "ເຜີຍແພ່",
+  "limitBanner": "ທ່ານສາມາດສ້າງປ້າຍໂຄສະນາໄດ້ສູງສຸດ 5 ລາຍການເທົ່ານັ້ນ.",
+  "limitAnnouncement": "ທ່ານສາມາດສ້າງປະກາດໄດ້ສູງສຸດ 1 ລາຍການເທົ່ານັ້ນ."
 }
