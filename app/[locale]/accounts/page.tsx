@@ -10,7 +10,8 @@ import {
   Power,
   User,
   Mail,
-  UserCog
+  UserCog,
+  RefreshCcw
 } from "lucide-react";
 import Pagination from "@/components/UI/Pagination";
 import { usePagination } from "@/app/hooks/usePagination";
@@ -58,12 +59,12 @@ export default function AccountsPage() {
 
   const handleActiveStatus = async (acc: any) => {
     const nextStatus =
-      acc.activeStatus === BooleanState.TRUE
+      acc.isActive === BooleanState.TRUE
         ? BooleanState.FALSE
         : BooleanState.TRUE; // Fixed logic to toggle correctly
 
     const text = t(translations.MessageManageIsActive, {
-      status: t(nextStatus),
+      status: t(nextStatus === BooleanState.FALSE ? translations.inactive : translations.active),
       name: acc.userName,
     });
 
@@ -172,14 +173,13 @@ export default function AccountsPage() {
               onClick={handleClearFilters}
               className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
             >
-              {t(translations.clear)}
+              <RefreshCcw size={18} />
             </button>
             <button
               onClick={handleApplyFilters}
               className="flex items-center gap-2 px-6 py-2.5 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-900 transition-all shadow-md"
             >
               <Search size={18} />
-              {t(translations.apply)}
             </button>
           </div>
         </div>
@@ -191,23 +191,14 @@ export default function AccountsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200">
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">ACCOUNT INFO</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">ROLE</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">STATUS</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider text-right">ACTIONS</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.Info, { name: t(translations.account) })}</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.role)}</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.status)}</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider text-right">{t(translations.actions)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {loading ? (
-                [...Array(5)].map((_, i) => (
-                  <tr key={i} className="animate-pulse">
-                    <td className="px-6 py-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-full bg-slate-100"></div><div className="space-y-2"><div className="h-4 w-24 bg-slate-100 rounded"></div><div className="h-3 w-16 bg-slate-100 rounded"></div></div></div></td>
-                    <td className="px-6 py-4"><div className="h-6 w-16 bg-slate-100 rounded-full"></div></td>
-                    <td className="px-6 py-4"><div className="h-6 w-16 bg-slate-100 rounded-full"></div></td>
-                    <td className="px-6 py-4"><div className="h-8 w-24 bg-slate-100 rounded ml-auto"></div></td>
-                  </tr>
-                ))
-              ) : users.length === 0 ? (
+              {users.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-10 text-center text-slate-400 flex flex-col items-center justify-center gap-2">
                     <User className="w-8 h-8 opacity-20" />

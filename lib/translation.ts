@@ -114,5 +114,13 @@ export const translations = {
   All: "All",
   Management: "Management",
   limitBanner: 'limitBanner',
-  limitAnnouncement: "limitAnnouncement"
+  limitAnnouncement: "limitAnnouncement",
+  announcement: 'announcement',
+  type: 'type',
+  subCategory: 'subCategory',
+  actions: 'actions',
+  Info: "Info",
+  title: "title",
+  preview: "preview",
+  loginSuccessful: 'loginSuccessful'
 } as const;

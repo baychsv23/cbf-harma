@@ -17,10 +17,11 @@ export async function GET(request: NextRequest) {
         const limit = searchParams.get("limit")
             ? parseInt(searchParams.get("limit")!)
             : undefined;
+        const type = searchParams.get("type")
 
         const where: any = {};
 
-
+        if (type) where.type = type
 
         if (page && limit) {
             const skip = (page - 1) * limit;
@@ -81,14 +82,9 @@ export async function POST(req: Request) {
         const body = await req.json();
 
         const { image, type, imagePublicId } = body;
-
         if (!image || !type) {
             throw new ApiError(translations.allFiledRequired, 400);
         }
-
-        // --- เพิ่มส่วนการจำกัดจำนวน (Logic Validation) ---
-
-        // 1. นับจำนวนที่มีอยู่แล้วในฐานข้อมูลตาม type นั้นๆ
         const existingCount = await database.announcement.count({
             where: { type: type }
         });

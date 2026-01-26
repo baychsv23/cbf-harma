@@ -7,10 +7,13 @@ import {
   Save,
   Pill,
   AlertCircle,
+  Search,
 } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import { BooleanState, Category, CategorySub } from "@/generated/prisma/enums";
 import { translations } from "@/lib/translation";
+import ImageUpload from "./ImageUpload";
+import { isEnglish } from "@/lib/constant";
 
 interface ProductFormProps {
   isOpen: boolean;
@@ -66,7 +69,7 @@ export default function ProductFormModal({
     symptomIds: [],
     slug: "",
   });
-
+  const [symptomSearch, setSymptomSearch] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // --- EFFECT: Load Data ---
@@ -132,13 +135,18 @@ export default function ProductFormModal({
     }
 
     const finalSlug =
-      formData.slug ||
       formData.nameEN
         .toLowerCase()
         .trim()
         .replace(/[^a-z0-9]+/g, "-");
     onSubmit({ ...formData, slug: finalSlug });
   };
+
+  const filteredProducts = allSymptoms.filter(
+    (p) =>
+      p.nameEN.toLowerCase().includes(symptomSearch.toLowerCase()) ||
+      p.nameLA.toLowerCase().includes(symptomSearch.toLowerCase()),
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 transition-all">
@@ -178,49 +186,19 @@ export default function ProductFormModal({
                 <label className="text-xs font-bold text-slate-500 uppercase mb-3 block">
                   {t(translations.image)}
                 </label>
-                <CldUploadWidget
-                  uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_PRESET}
-                  options={{
-                    sources: ["local", "url"],
-                    multiple: false,
-                    cropping: true,
-                    folder: "cbf",
-                  }}
-                  onSuccess={(result: any) =>
+                <ImageUpload
+                  value={formData.productImage}
+                  aspectRatio={1}     // 16:9 for Banners
+                  label="Click to Upload Product 1:1"
+                  onChange={(result) =>
                     setFormData((prev) => ({
                       ...prev,
-                      productImage: result.info.secure_url,
-                      productImagePublicId: result.info.public_id
+                      productImage: result.url,
+                      productImagePublicId: result.publicId,
                     }))
                   }
-                >
-                  {({ open }) => (
-                    <div
-                      onClick={() => open()}
-                      className="group relative w-full aspect-square rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-blue-400 transition-all cursor-pointer overflow-hidden flex flex-col items-center justify-center"
-                    >
-                      {formData.productImage ? (
-                        <>
-                          <img
-                            src={formData.productImage}
-                            className="w-full h-full object-contain p-2"
-                            alt="Product"
-                          />
-                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-white font-bold text-xs">
-                            Change Image
-                          </div>
-                        </>
-                      ) : (
-                        <div className="text-slate-400 text-center">
-                          <ImageIcon size={32} className="mx-auto mb-2" />
-                          <span className="text-xs font-medium">
-                            Click to Upload
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </CldUploadWidget>
+                />
+
               </div>
 
               {/* Safety Control */}
@@ -256,13 +234,34 @@ export default function ProductFormModal({
                 </label>
               </div>
 
-              {/* Symptoms (Smart Search) */}
-              <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-purple-500 flex-1 flex flex-col">
-                <label className="text-xs font-bold text-purple-700 uppercase mb-2 block">
-                  {t(translations.symptom)}
-                </label>
+
+
+
+              <div className="flex-1 flex flex-col min-h-[200px]">
+                <div className="pb-2 border-b border-slate-100 mb-3 flex justify-between items-end">
+                  <h3 className="text-sm font-bold text-slate-800">
+                    Related Symptoms
+                  </h3>
+                  <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-md">
+                    {formData.symptomIds.length} selected
+                  </span>
+                </div>
+                <div className="relative mb-2">
+                  <Search
+                    size={14}
+                    className="absolute left-2.5 top-2.5 text-slate-400"
+                  />
+                  <input
+                    type="text"
+                    placeholder={t(translations.SearchBy, { name: t(translations.symptom) })}
+                    value={symptomSearch}
+                    onChange={(e) => setSymptomSearch(e.target.value)}
+                    className="w-full text-xs py-2 pl-8 pr-3 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none transition-all"
+                  />
+                </div>
+
                 <div className="flex-1 max-h-[250px] overflow-y-auto space-y-1 custom-scrollbar pr-1">
-                  {allSymptoms.map((s) => (
+                  {filteredProducts.length > 0 ? (filteredProducts.map((s) => (
                     <label
                       key={s.id}
                       className="flex items-center gap-2 p-1.5 hover:bg-purple-50 rounded cursor-pointer"
@@ -287,10 +286,14 @@ export default function ProductFormModal({
                         }}
                       />
                       <span className="text-xs text-slate-700 truncate">
-                        {local === "en" ? s.nameEN : s.nameLA}
+                        {isEnglish(local) ? s.nameEN : s.nameLA}
                       </span>
                     </label>
-                  ))}
+                  ))) : (
+                    <div className="text-center py-4 text-xs text-slate-400">
+                      {t(translations.notFound)}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

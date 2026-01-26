@@ -147,7 +147,7 @@ model Announcement {
   image         String?
   imagePublicId String?
   type          ImageType    @default(BANNER)
-  isActive      BooleanState @default(TRUE) // Added to control visibility
+  isPublic      BooleanState @default(TRUE) // Added to control visibility
   createdAt     DateTime     @default(now())
 }
 
@@ -160,19 +160,20 @@ model Symptom {
 }
 
 model Article {
-  id                 String  @id @default(uuid())
-  slug               String  @unique
+  id                 String        @id @default(uuid())
+  slug               String        @unique
   titleLA            String
   titleEN            String
-  contentLA          String  @db.Text // Rich Text (HTML)
-  contentEN          String  @db.Text
+  contentLA          String        @db.Text // Rich Text (HTML)
+  contentEN          String        @db.Text
   coverImage         String?
   coverImagePublicId String?
-
-  type     ArticleType   @default(HEALTH_KNOWLEDGE)
-  status   ArticleStatus @default(DRAFT) // Added status field
+  year               Int
+  month              Int
+  type               ArticleType   @default(HEALTH_KNOWLEDGE)
+  status             ArticleStatus @default(DRAFT) // Added status field
   // Relations
-  products Product[] // Tie-in: ບົດຄວາມນີ້ແນະນຳຢາໂຕໃດ (MedThai Ref)
+  products           Product[] // Tie-in: ບົດຄວາມນີ້ແນະນຳຢາໂຕໃດ (MedThai Ref)
 
   views       Int       @default(0)
   publishedAt DateTime?

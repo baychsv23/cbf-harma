@@ -9,6 +9,7 @@ import {
   Eye,
   Globe,
   Calendar,
+  RefreshCcw,
 } from "lucide-react";
 import Pagination from "@/components/UI/Pagination";
 import Swal from "sweetalert2";
@@ -25,6 +26,7 @@ import {
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 import { formatDate } from "@/lib/formateData";
 import ArticleFormModal from "@/components/Form/ArticleFormModal";
+import { isEnglish } from "@/lib/constant";
 
 export default function ArticlePage() {
   const t = useTranslations();
@@ -53,7 +55,7 @@ export default function ArticlePage() {
     reloadData,
     applyFilters,
     clearFilters,
-  } = usePagination("/api/articles");
+  } = usePagination("/api/public/articles");
   // โหลดสินค้าทั้งหมดเพื่อมาทำ Selection (Tie-in)
   useEffect(() => {
     const fetchProducts = async () => {
@@ -87,7 +89,7 @@ export default function ArticlePage() {
 
   // --- FORM LOGIC ---
   const handleSaveArticle = async (formData: any) => {
-
+    showProcessing()
     if (selectedArticle) {
       await api.put(`/api/articles/${selectedArticle.id}`, formData)
     }
@@ -102,25 +104,16 @@ export default function ArticlePage() {
   const handleDelete = async (article: any) => {
     const isConfirmed = await showConfirm(
       t(translations.confirmDelete, {
-        name: local === "lo" ? article.titleLA : article.titleEN,
+        name: isEnglish(local) ? article.titleEN : article.titleLA,
       }),
     );
 
     if (isConfirmed) {
       showProcessing();
-      try {
-        const response = await api.delete(`/api/articles/${article.id}`);
-        closeProcessing();
-        if (response.data.success) {
-          showSuccess(t(response.data.message));
-          reloadData();
-        } else {
-          showError(t(response.data.message));
-        }
-      } catch (error: any) {
-        closeProcessing();
-        showError(t(error?.response?.data?.message || translations.unknown));
-      }
+
+      await api.delete(`/api/articles/${article.id}`);
+
+
     }
   };
 
@@ -151,11 +144,11 @@ export default function ArticlePage() {
         <div className="flex flex-col md:flex-row gap-4 items-end">
           <div className="flex-1 w-full">
             <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
-              Title Search
+              {t(translations.title)}
             </label>
             <input
               type="text"
-              placeholder="Search by title..."
+              placeholder={t(translations.SearchBy, { name: t(translations.title) })}
               value={search.title}
               onChange={(e) => setSearch({ ...search, title: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
@@ -163,14 +156,14 @@ export default function ArticlePage() {
           </div>
           <div className="w-full md:w-64">
             <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
-              Type
+              {t(translations.type)}
             </label>
             <select
               value={search.type}
               onChange={(e) => setSearch({ ...search, type: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
             >
-              <option value="">All Types</option>
+              <option value="">{t(translations.All, { name: t(translations.article) })}</option>
               {Object.values(ArticleType).map((type) => (
                 <option key={type} value={type}>
                   {t(type)}
@@ -201,14 +194,15 @@ export default function ArticlePage() {
               onClick={handleClearFilters}
               className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
             >
-              {t(translations.clear)}
+              <RefreshCcw size={18} />
+
             </button>
             <button
               onClick={handleApplyFilters}
               className="flex items-center gap-2 px-6 py-2.5 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-900 transition-all shadow-md"
             >
               <Search size={18} />
-              {t(translations.apply)}
+
             </button>
           </div>
         </div>
@@ -221,22 +215,22 @@ export default function ArticlePage() {
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200">
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  #
+                  {t(translations.stt)}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  ARTICLE INFO
+                  {t(translations.Info, { name: t(translations.article) })}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  TYPE
+                  {t(translations.type)}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  STATUS
+                  {t(translations.status)}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
                   STATS
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider text-right">
-                  ACTIONS
+                  {t(translations.actions)}
                 </th>
               </tr>
             </thead>
@@ -256,7 +250,7 @@ export default function ArticlePage() {
                     key={article.id}
                     className="hover:bg-indigo-50/30 transition-colors group"
                   >
-                    <td className="px-6 py-4">#{article.stt}</td>
+                    <td className="px-6 py-4">{article.stt}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-10 bg-slate-100 rounded-lg overflow-hidden shrink-0 border border-slate-200">
@@ -274,11 +268,11 @@ export default function ArticlePage() {
                         </div>
                         <div>
                           <div className="text-sm font-bold text-slate-800 line-clamp-1">
-                            {local === "lo" ? article.titleLA : article.titleEN}
+                            {isEnglish(local) ? article.titleEN : article.titleLA}
                           </div>
                           <div className="text-xs text-slate-500 flex items-center gap-1">
                             <Globe size={10} />{" "}
-                            {local === "lo" ? article.titleEN : article.titleLA}
+                            {isEnglish(local) ? article.titleLA : article.titleEN}
                           </div>
                         </div>
                       </div>

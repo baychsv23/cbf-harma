@@ -27,7 +27,7 @@ export default function PremiumLoginForm() {
     });
     closeProcessing();
     if (result?.ok) {
-      showSuccess(t(translations.view));
+      showSuccess(t(translations.loginSuccessful));
       window.location.href = "/";
     } else {
       showError(t(result?.error as string));

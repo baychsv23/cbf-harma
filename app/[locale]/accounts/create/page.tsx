@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { initialState } from "@/lib/constant";
+import { initialState, modules } from "@/lib/constant";
 import { useTranslations } from "next-intl";
 
 import { useAlert } from "@/app/hooks/useAlert";
@@ -44,44 +44,6 @@ export default function CreateAccountPage() {
   };
 
   // Define modules with their CRUD permissions
-  const modules = [
-    {
-      name: translations.account,
-      permissions: [
-        Permission.USER_VIEW,
-        Permission.USER_CREATE,
-        Permission.USER_UPDATE,
-        Permission.USER_DELETE
-      ],
-    },
-    {
-      name: translations.product,
-      permissions: [
-        Permission.PRODUCT_VIEW,
-        Permission.PRODUCT_CREATE,
-        Permission.PRODUCT_UPDATE,
-        Permission.PRODUCT_DELETE,
-      ],
-    },
-    {
-      name: translations.symptom,
-      permissions: [
-        Permission.SYMPTOM_VIEW,
-        Permission.SYMPTOM_CREATE,
-        Permission.SYMPTOM_UPDATE,
-        Permission.SYMPTOM_DELETE,
-      ],
-    },
-    {
-      name: translations.article,
-      permissions: [
-        Permission.ARTICLE_VIEW,
-        Permission.ARTICLE_CREATE,
-        Permission.ARTICLE_UPDATE,
-        Permission.ARTICLE_DELETE,
-      ],
-    },
-  ];
 
   const selectAllForModule = (moduleName: string, permissions: string[]) => {
     const allSelected = permissions.every((p) =>

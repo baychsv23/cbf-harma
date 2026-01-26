@@ -8,9 +8,9 @@ import {
   Pill,
   Activity,
   Stethoscope,
+  RefreshCcw,
 } from "lucide-react";
 import Pagination from "@/components/UI/Pagination";
-import Swal from "sweetalert2";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useAuth } from "@/app/hooks/useAuth";
 import { usePagination } from "@/app/hooks/usePagination";
@@ -24,6 +24,7 @@ import {
 } from "@/generated/prisma/enums";
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 import ProductFormModal from "@/components/Form/ProductFormModal";
+import { isEnglish } from "@/lib/constant";
 
 export default function ProductPage() {
   const t = useTranslations();
@@ -120,7 +121,7 @@ export default function ProductPage() {
           {/* ค้นหาด้วยชื่อ */}
           <div className="flex flex-col gap-1">
             <label className="text-xs font-bold text-slate-500 ml-1">
-              NAME / SKU
+              {t(translations.Name, { name: t(translations.product) })} / {t(translations.sku)}
             </label>
             <input
               type="text"
@@ -164,7 +165,7 @@ export default function ProductPage() {
           {search.category === Category.ANTIBIOTICS && (
             <div className="flex flex-col gap-1">
               <label className="text-xs font-bold text-slate-500 ml-1">
-                SUB-CATEGORY
+                {t(translations.subCategory)}
               </label>
               <select
                 value={search.categorySub}
@@ -193,14 +194,14 @@ export default function ProductPage() {
             onClick={handleClearFilters}
             className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
           >
-            {t(translations.clear)}
+            <RefreshCcw size={18} />
           </button>
           <button
             onClick={handleApplyFilters}
             className="flex items-center gap-2 px-8 py-2.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-all shadow-md"
           >
             <Search size={18} />
-            {t(translations.apply)}
+
           </button>
         </div>
       </div>
@@ -210,15 +211,15 @@ export default function ProductPage() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="px-6 py-4 text-xs font-bold text-slate-500">#</th>
+              <th className="px-6 py-4 text-xs font-bold text-slate-500">{t(translations.stt)}</th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                CLINICAL INFO
+                {t(translations.Info, { name: t(translations.product) })}
               </th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                CLASSIFICATION
+                {t(translations.category)}
               </th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                IDENTIFIERS
+                {t(translations.name)}
               </th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
                 STATUS
@@ -244,10 +245,10 @@ export default function ProductPage() {
                   key={product.id}
                   className="hover:bg-slate-50/50 transition-colors"
                 >
-                  <td className="px-6 py-4">#{product.stt}</td>
+                  <td className="px-6 py-4">{product.stt}</td>
                   <td className="px-6 py-4">
                     <div className="font-bold text-slate-900">
-                      {local === "en" ? product.nameEN : product.nameLA}
+                      {isEnglish(local) ? product.nameEN : product.nameLA}
                     </div>
                     <div className="text-xs text-slate-500 flex items-center gap-1">
                       <Stethoscope size={12} /> {product.genericName} •{" "}
@@ -263,13 +264,16 @@ export default function ProductPage() {
                     <div className="text-sm font-medium text-slate-700">
                       {t(product.category)}
                     </div>
-                    <div className="text-xs text-blue-500">
-                      {t(product.categorySub)}
-                    </div>
+                    {product.categorySub !== CategorySub.NONE ?
+                      <div className="text-xs text-blue-500">
+                        {t(product.categorySub)}
+                      </div>
+                      : ""
+                    }
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-xs font-mono bg-slate-100 px-2 py-1 rounded inline-block">
-                      SKU: {product.sku}
+                      {t(translations.sku)}: {product.sku}
                     </div>
                     <div className="text-[10px] text-slate-400 mt-1">
                       /{product.slug}
@@ -279,7 +283,7 @@ export default function ProductPage() {
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-bold ${product.isActive === BooleanState.TRUE ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}
                     >
-                      {product.isActive}
+                      {t(product.isActive === BooleanState.TRUE ? (translations.active) : (translations.inactive))}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -304,14 +308,16 @@ export default function ProductPage() {
           </tbody>
         </table>
       </div>
-      {!loading && pagination.totalPages > 1 && (
-        <Pagination
-          pagination={pagination}
-          page={page}
-          setPage={setPage}
-          loading={loading}
-        />
-      )}
+      {
+        !loading && pagination.totalPages > 1 && (
+          <Pagination
+            pagination={pagination}
+            page={page}
+            setPage={setPage}
+            loading={loading}
+          />
+        )
+      }
       <ProductFormModal
         t={t}
         local={local}
@@ -321,6 +327,6 @@ export default function ProductPage() {
         initialData={selectedProduct}
         allSymptoms={allSymptoms}
       />
-    </div>
+    </div >
   );
 }

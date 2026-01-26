@@ -12,8 +12,9 @@ import {
 } from "lucide-react";
 import { ArticleType, ArticleStatus } from "@/generated/prisma/enums";
 import TiptapEditor from "@/components/Editor/TiptapEditor";
-import { CldUploadWidget } from "next-cloudinary";
 import { translations } from "@/lib/translation";
+import ImageUpload from "./ImageUpload";
+import { isEnglish } from "@/lib/constant";
 
 interface ArticleFormProps {
   isOpen: boolean;
@@ -35,7 +36,7 @@ export default function ArticleFormModal({
   local
 }: ArticleFormProps) {
   // --- STATE ---
-  const [activeTab, setActiveTab] = useState<"EN" | "LA">("EN");
+  const [activeTab, setActiveTab] = useState<"EN" | "LA">("LA");
   const [productSearch, setProductSearch] = useState("");
 
   const [formData, setFormData] = useState<{
@@ -44,6 +45,7 @@ export default function ArticleFormModal({
     contentEN: string;
     contentLA: string;
     coverImage: string;
+    coverImagePublicId: string,
     type: ArticleType;
     status: ArticleStatus;
     slug: string;
@@ -54,6 +56,7 @@ export default function ArticleFormModal({
     contentEN: "",
     contentLA: "",
     coverImage: "",
+    coverImagePublicId: "",
     type: ArticleType.HEALTH_KNOWLEDGE,
     status: ArticleStatus.DRAFT,
     slug: "",
@@ -73,6 +76,7 @@ export default function ArticleFormModal({
         status: initialData.status || ArticleStatus.DRAFT,
         slug: initialData.slug || "",
         productIds: initialData.products?.map((p: any) => p.id) || [],
+        coverImagePublicId: initialData.coverImagePublicId || ""
       });
     } else {
       setFormData({
@@ -85,6 +89,7 @@ export default function ArticleFormModal({
         status: ArticleStatus.DRAFT,
         slug: "",
         productIds: [],
+        coverImagePublicId: ""
       });
       setActiveTab("EN"); // Reset tab to EN for new article
     }
@@ -126,7 +131,7 @@ export default function ArticleFormModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-800 leading-none">
-                {initialData ? "Edit Article" : "Create New Article"}
+                {initialData ? t(translations.Edit, { name: t(translations.article) }) : t(translations.Create, { name: t(translations.article) })}
               </h2>
               <p className="text-xs text-slate-500 mt-1">
                 {initialData
@@ -155,60 +160,19 @@ export default function ArticleFormModal({
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
                 <ImageIcon size={12} /> Cover Image
               </label>
-              <CldUploadWidget
-                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_PRESET} // ใส่ Preset ของคุณ
-                options={{
-                  sources: ["local", "url"],
-                  multiple: false,
-                  cropping: true,
-                  croppingAspectRatio: 1.77,
-                  folder: "cbf",
-                }}
-                onSuccess={(result: any) => {
-                  // เมื่ออัปโหลดเสร็จ ให้เซตค่าลง State
+              <ImageUpload
+                value={formData.coverImage}
+                aspectRatio={1.78}     // 16:9 for Banners
+                label="Click to Upload Article 16:9"
+                onChange={(result) =>
                   setFormData((prev) => ({
                     ...prev,
-                    coverImage: result.info.secure_url,
-                  }));
-                }}
-              >
-                {({ open }) => {
-                  return (
-                    // 👇 นี่คือ UI เดิมที่เราดีไซน์ไว้ เอามาใส่ตรงนี้
-                    <div
-                      onClick={() => open()} // สั่งเปิดเมื่อกดที่ Div สวยๆ ของเรา
-                      className="group relative w-full aspect-video rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-indigo-400 transition-all cursor-pointer overflow-hidden"
-                    >
-                      {formData.coverImage ? (
-                        <>
-                          <img
-                            src={formData.coverImage}
-                            className="w-full h-full object-cover"
-                            alt="Cover"
-                          />
-                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span className="text-white text-xs font-bold bg-black/50 px-3 py-1 rounded-full backdrop-blur-md">
-                              Change Image
-                            </span>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-slate-400 group-hover:text-indigo-500 transition-colors">
-                          <ImageIcon
-                            size={32}
-                            strokeWidth={1.5}
-                            className="mb-2"
-                          />
-                          <span className="text-xs font-medium">
-                            Click to upload
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    // 👆 จบ UI เดิม
-                  );
-                }}
-              </CldUploadWidget>
+                    coverImage: result.url,
+                    coverImagePublicId: result.publicId,
+                  }))
+                }
+              />
+
             </div>
 
             {/* Publishing Settings */}
@@ -290,7 +254,7 @@ export default function ArticleFormModal({
                 />
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder={t(translations.SearchBy, { name: t(translations.product) })}
                   value={productSearch}
                   onChange={(e) => setProductSearch(e.target.value)}
                   className="w-full text-xs py-2 pl-8 pr-3 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none transition-all"
@@ -345,10 +309,10 @@ export default function ArticleFormModal({
                           {/* เพิ่มความแตกต่างของสีระหว่างชื่อหลักและชื่อรองให้ชัดเจนขึ้น (Opacity) */}
                           <div className={isSelected ? "text-indigo-700" : "text-slate-700"}>
                             <p className="text-sm font-medium truncate">
-                              {local === "en" ? p.nameEN : p.nameLA}
+                              {isEnglish(local) ? p.nameEN : p.nameLA}
                             </p>
                             <p className={`text-xs truncate ${isSelected ? "text-indigo-500/80" : "text-slate-400"}`}>
-                              {local === "en" ? p.nameLA : p.nameEN}
+                              {isEnglish(local) ? p.nameLA : p.nameEN}
                             </p>
                           </div>
                         </div>
@@ -357,7 +321,7 @@ export default function ArticleFormModal({
                   })
                 ) : (
                   <div className="text-center py-4 text-xs text-slate-400">
-                    No products found
+                    {t(translations.notFound)}
                   </div>
                 )}
               </div>

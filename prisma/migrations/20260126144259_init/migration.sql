@@ -70,9 +70,10 @@ CREATE TABLE "Product" (
 -- CreateTable
 CREATE TABLE "Announcement" (
     "id" TEXT NOT NULL,
-    "imageUrl" TEXT NOT NULL,
+    "image" TEXT,
+    "imagePublicId" TEXT,
     "type" "ImageType" NOT NULL DEFAULT 'BANNER',
-    "isActive" "BooleanState" NOT NULL DEFAULT 'TRUE',
+    "isPublic" "BooleanState" NOT NULL DEFAULT 'TRUE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Announcement_pkey" PRIMARY KEY ("id")
@@ -97,6 +98,9 @@ CREATE TABLE "Article" (
     "contentLA" TEXT NOT NULL,
     "contentEN" TEXT NOT NULL,
     "coverImage" TEXT,
+    "coverImagePublicId" TEXT,
+    "year" INTEGER NOT NULL,
+    "month" INTEGER NOT NULL,
     "type" "ArticleType" NOT NULL DEFAULT 'HEALTH_KNOWLEDGE',
     "status" "ArticleStatus" NOT NULL DEFAULT 'DRAFT',
     "views" INTEGER NOT NULL DEFAULT 0,

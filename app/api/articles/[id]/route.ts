@@ -6,32 +6,9 @@ import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
 import { NextRequest, NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
+import { deleteFromCloudinary } from "@/action/cloudinary";
 
-cloudinary.config({
-    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-export async function GET(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
-    return handleApiAction(async () => {
-        const { id } = await params;
 
-        const article = await database.article.findUnique({
-            where: { id }, include: { products: true }
-        });
-        if (!article) {
-            throw new ApiError(translations.notFound, 404);
-        }
-        return NextResponse.json({
-            success: true,
-            data: article
-        });
-    })
-}
 
 export async function PUT(
     request: NextRequest,
@@ -67,7 +44,7 @@ export async function PUT(
             try {
                 const publicId = existingArticle.coverImagePublicId
                 if (publicId) {
-                    await cloudinary.uploader.destroy(publicId);
+                    await deleteFromCloudinary(publicId);
                 }
             } catch (error) {
                 logger.error("Cloudinary Delete Error:", error);
@@ -131,7 +108,7 @@ export async function DELETE(
     try {
         const publicId = existingArticle.coverImagePublicId
         if (publicId) {
-            await cloudinary.uploader.destroy(publicId);
+            await deleteFromCloudinary(publicId);
         }
     } catch (error) {
         logger.error("Cloudinary Delete Error:", error);

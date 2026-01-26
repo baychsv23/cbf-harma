@@ -54,10 +54,11 @@ export async function handleApiAction<T>(handler: ApiHandler<T>) {
                     );
             }
         }
-
+        const message = error.message
+        const status = error.status
         // 2. จัดการเรื่องสิทธิ์ (Permission Level)
         if (
-            error.message?.includes(translations.unauthorized)
+            message?.includes(translations.unauthorized)
         ) {
             return NextResponse.json(
                 { success: false, error: translations.unauthorized },
@@ -66,16 +67,16 @@ export async function handleApiAction<T>(handler: ApiHandler<T>) {
         }
 
         if (
-            error.message?.includes(translations.forbidden)
+            message?.includes(translations.forbidden)
         ) {
             return NextResponse.json(
                 { success: false, error: translations.forbidden },
                 { status: 403 }
             );
         }
-        if (translations.allFiledRequired) {
+        if (status === 400) {
             return NextResponse.json(
-                { success: false, error: translations.allFiledRequired },
+                { success: false, error: message },
                 { status: 400 }
             );
         }
@@ -83,7 +84,7 @@ export async function handleApiAction<T>(handler: ApiHandler<T>) {
         return NextResponse.json(
             {
                 success: false,
-                error: error.message,
+                error: message,
             },
             { status: 500 }
         );

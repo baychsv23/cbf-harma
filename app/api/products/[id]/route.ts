@@ -5,36 +5,8 @@ import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
 import { NextRequest, NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
 import { logger } from "@/lib/logger";
-cloudinary.config({
-    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-export async function GET(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> },
-) {
-    return handleApiAction(async () => {
-        const { id } = await params;
-
-        const product = await database.product.findUnique({
-            where: { id },
-            include: {
-                symptom: true, // ดึงข้อมูลอาการที่เกี่ยวข้อง
-                articles: true, // ดึงบทความที่เกี่ยวข้อง
-            },
-        });
-        if (!product) {
-            throw new ApiError(translations.notFound, 404);
-        }
-        return NextResponse.json({
-            success: true,
-            data: product,
-        });
-    });
-}
+import { deleteFromCloudinary } from "@/action/cloudinary";
 
 export async function PUT(
     req: Request,
@@ -44,14 +16,6 @@ export async function PUT(
         const { id } = await params;
         const body = await req.json();
         const { symptomIds } = body;
-        const existingProduct = await database.product.findUnique({
-            where: { id },
-            select: { productImage: true, productImagePublicId: true },
-        });
-
-        if (!existingProduct) {
-            throw new ApiError(translations.notFound, 404);
-        }
         if (body.isActive) {
             await requirePermission(Permission.PRODUCT_DELETE);
             const updatedStatus = await database.product.update({
@@ -60,6 +24,15 @@ export async function PUT(
             });
             return { ...updatedStatus, message: translations.updatedSuccess };
         }
+        const existingProduct = await database.product.findUnique({
+            where: { id },
+            select: { productImage: true, productImagePublicId: true },
+        });
+
+        if (!existingProduct) {
+            throw new ApiError(translations.notFound, 404);
+        }
+
         const session = await requirePermission(Permission.PRODUCT_UPDATE);
         const updater = session.user.id;
         if (
@@ -69,7 +42,7 @@ export async function PUT(
             try {
                 const publicId = existingProduct.productImagePublicId
                 if (publicId) {
-                    await cloudinary.uploader.destroy(publicId);
+                    await deleteFromCloudinary(publicId);
                 }
             } catch (error) {
                 logger.error("Cloudinary Delete Error:", error);
@@ -115,7 +88,7 @@ export async function DELETE(
     try {
         const publicId = existingProduct.productImagePublicId
         if (publicId) {
-            await cloudinary.uploader.destroy(publicId);
+            await deleteFromCloudinary(publicId)
         }
     } catch (error) {
         logger.error("Cloudinary Delete Error:", error);

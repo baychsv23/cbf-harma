@@ -133,5 +133,12 @@
   "DRAFT": "Draft",
   "PUBLISHED": "Published",
   "bannerLimit": "You can create a maximum of 5 banners.",
-  "announcementLimit": "You can create a maximum of 1 announcement."
+  "announcementLimit": "You can create a maximum of 1 announcement.",
+  "announcement": "Announcement",
+  "type": "type",
+  "subCategory": "group",
+  "actions": "Actions",
+  "Info": "{name} info",
+  "title": "Title",
+  "preview": "Preview"
 }

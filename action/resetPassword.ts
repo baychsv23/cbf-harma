@@ -2,7 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import { handleAction } from "@/lib/handleAction";
-import { getAuth, requirePermission } from "@/lib/requirePermission";
+import { requirePermission } from "@/lib/requirePermission";
 import { database } from "@/lib/prisma";
 import { translations } from "@/lib/translation";
 import { Permission, Role } from "@/generated/prisma/enums";

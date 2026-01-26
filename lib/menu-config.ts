@@ -80,6 +80,7 @@ export const ROLE_MENUS = {
     { title: translations.product, href: "/products" },
     { title: translations.symptom, href: "/symptoms" },
     { title: translations.article, href: "/articles" },
+    { title: translations.announcement, href: "/announcements" },
   ],
 };
 

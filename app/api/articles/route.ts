@@ -1,5 +1,6 @@
 // app/api/warehouses/route.ts
 
+import { getArticles } from "@/action/articles";
 import { ArticleStatus, ArticleType, BooleanState, Permission } from "@/generated/prisma/enums";
 import { ApiError } from "@/lib/api-error";
 import { handleApiAction } from "@/lib/handleApiAction";
@@ -31,22 +32,13 @@ export async function GET(request: NextRequest) {
 
         if (page && limit) {
             const skip = (page - 1) * limit;
+            const include = {
+                products: { select: { id: true, nameEN: true, nameLA: true } },
+                createdBy: { select: { fullName: true } },
+                updatedBy: { select: { fullName: true } }
+            }
+            const { data, total } = await getArticles({ where, skip, limit, include })
 
-            const [data, total] = await Promise.all([
-                database.article.findMany({
-                    skip,
-                    take: limit,
-                    where,
-                    orderBy: { createdAt: 'desc' },
-                    include: {
-                        products: { select: { id: true, nameEN: true, nameLA: true } },
-                        createdBy: { select: { fullName: true } },
-                        updatedBy: { select: { fullName: true } }
-                    }
-                }),
-
-                database.article.count({ where }),
-            ]);
 
             const totalPages = Math.max(1, Math.ceil(total / limit));
             const dataWithStt = data.map((item, index) => ({
@@ -67,12 +59,9 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // Fetch all mode
-        const data = await database.article.findMany({
-            where: { ...where, status: ArticleStatus.PUBLISHED },
-        });
+        const whereWithStatus = { ...where, status: ArticleStatus.PUBLISHED }
+        const { data, total } = await getArticles({ where: whereWithStatus })
 
-        const total = data.length;
 
         return NextResponse.json({
             success: true,
@@ -96,28 +85,36 @@ export async function POST(req: Request) {
         const creator = session.user.id;
 
         // 2. Validate ข้อมูลที่จำเป็นต้องมี
-        if (!body.titleEN || !body.titleLA || !body.slug) {
+        const { productIds, titleEN, titleLA, slug, contentEN, contentLA, status, type } = body;
+        if (!titleEN || !titleLA || !slug) {
             throw new ApiError(translations.allFiledRequired, 400);
         }
+        const now = new Date();
 
-        const { productIds } = body; // รับ array ของ product IDs มาจากหน้าบ้าน
+        const year = now.getFullYear();      // ปี เช่น 2026
+        const month = now.getMonth() + 1;
+
+        // รับ array ของ product IDs มาจากหน้าบ้าน
 
         // 3. บันทึกลงฐานข้อมูล
         const newArticle = await database.article.create({
             data: {
-                slug: body.slug,
-                titleEN: body.titleEN,
-                titleLA: body.titleLA,
-                contentEN: body.contentEN || "", // กันค่า null
-                contentLA: body.contentLA || "",
+                slug: slug,
+                titleEN: titleEN,
+                titleLA: titleLA,
+                contentEN: contentEN || "", // กันค่า null
+                contentLA: contentLA || "",
                 coverImage: body.coverImage,
                 coverImagePublicId: body.coverImagePublicId,
 
-                type: body.type,
-                status: body.status,
+                type: type,
+                status: status,
 
                 // Logic: ถ้าสถานะเป็น PUBLISHED ให้ใส่วันที่ปัจจุบันทันที
-                publishedAt: body.status === ArticleStatus.PUBLISHED ? new Date() : null,
+                publishedAt: status === ArticleStatus.PUBLISHED ? now : null,
+
+                year: year,
+                month: month,
 
                 createdById: creator,
 

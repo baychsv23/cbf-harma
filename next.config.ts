@@ -11,6 +11,9 @@ const nextConfig = {
     },
     proxyClientMaxBodySize: 50 * 1024 * 1024,
   },
+  images: {
+    remotePatterns: [new URL('https://res.cloudinary.com/**')],
+  },
 };
 
 export default withNextIntl(nextConfig);

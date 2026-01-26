@@ -116,6 +116,7 @@ export async function POST(req: Request) {
         category: body.category,
         categorySub: body.categorySub,
         productImage: body.productImage,
+        productImagePublicId: body.productImagePublicId,
         isPrescription: body.isPrescription || BooleanState.FALSE,
         symptom: {
           connect: symptomIds.map((id: string) => ({ id })),

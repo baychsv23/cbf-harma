@@ -8,6 +8,7 @@ import { getMessages } from "next-intl/server";
 import RouteChangeLoader from "@/components/RouteChangeLoader";
 import Sidebar from "@/components/UI/Sidebar";
 import { getSession } from "@/lib/requirePermission";
+import ContactFloatingBtn from "@/components/UI/ContactFloatingBtn";
 
 const notoSansLao = Noto_Sans_Lao({
   subsets: ["lao"],
@@ -60,6 +61,7 @@ export default async function LocaleLayout({
           <main className="transition-all duration-300 lg:ml-64 ">
             {children}
           </main>
+          {!session && <ContactFloatingBtn />}
         </NextIntlClientProvider>
       </SessionProvider>
     </div>
