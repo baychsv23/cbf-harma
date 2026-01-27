@@ -1,36 +1,21 @@
-import axios from "axios";
 import BannerSection from "@/components/UI/BannerSection";
 import Link from "next/link";
-import { useApiWithAlert } from "../hooks/useApiWithAlert";
 import ArticleCard from "@/components/UI/Card/ArticleCard";
-import { useLocale } from "next-intl";
 import { Article } from "@/lib/interface";
+import apiServer from "@/lib/api-server";
 
 // ฟังก์ชันดึงข้อมูลด้วย Axios
 async function getLatestArticles() {
-  // ⚠️ สำคัญ: บน Server Side ต้องใช้ Full URL เท่านั้น
-
   try {
-    const response = await axios.get(`http://localhost:3000/api/articles`, {
-      params: {
-        limit: 10,
-        status: 'PUBLISHED'
-      },
-      // ถ้าต้องการให้ข้อมูลสดใหม่เสมอ (ไม่ cache) ให้ใส่ headers เพิ่ม
-      headers: {
-        'Cache-Control': 'no-store',
-        'Pragma': 'no-cache'
-      }
+    const response = await apiServer.get("/api/articles", {
+      params: { limit: 10 },
+      // ป้องกันการจำ Cache ถ้าต้องการข้อมูลสดใหม่เสมอ
+      headers: { "Cache-Control": "no-store" },
     });
-
-    return response.data.data; // axios จะหุ้มด้วย data อีกชั้น แล้ว API เราก็คืนค่า key ชื่อ data
+    return response.data.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios Error:", error.message);
-    } else {
-      console.error("Unexpected Error:", error);
-    }
-    return []; // คืนค่า array ว่างเพื่อไม่ให้เว็บพัง
+    // คืนค่า array ว่าง เพื่อไม่ให้หน้าเว็บล่ม (Graceful Degradation)
+    return [];
   }
 }
 
@@ -39,7 +24,6 @@ export default async function Home() {
   const articles = await getLatestArticles();
   return (
     <main className="min-h-screen bg-gray-50/30 pb-20">
-
       {/* 1. Banner Section */}
       <div className="pt-6">
         <BannerSection />
@@ -47,12 +31,13 @@ export default async function Home() {
 
       {/* 2. Latest Updates Section */}
       <div className="max-w-7xl mx-auto px-6 mt-12">
-
         {/* Header Section */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-3xl font-bold text-gray-800">Latest Updates</h2>
-            <p className="text-gray-500 mt-1">ติดตามข่าวสารและกิจกรรมล่าสุดของเรา</p>
+            <p className="text-gray-500 mt-1">
+              ติดตามข่าวสารและกิจกรรมล่าสุดของเรา
+            </p>
           </div>
           <Link
             href="/articles"
@@ -77,11 +62,13 @@ export default async function Home() {
 
         {/* Mobile Button */}
         <div className="mt-8 md:hidden text-center">
-          <Link href="/articles" className="inline-block w-full py-3 rounded-xl text-sm font-semibold text-white bg-primary shadow-lg">
+          <Link
+            href="/articles"
+            className="inline-block w-full py-3 rounded-xl text-sm font-semibold text-white bg-primary shadow-lg"
+          >
             View All Updates
           </Link>
         </div>
-
       </div>
     </main>
   );

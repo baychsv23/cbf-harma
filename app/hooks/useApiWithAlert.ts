@@ -1,7 +1,7 @@
+//hooks/useApiWithAlert.ts
 "use client";
 import axios from "axios";
 import { useTranslations } from "next-intl";
-import { translations } from "@/lib/translation";
 import { useAlert } from "./useAlert";
 
 let lastErrorTime = 0;
