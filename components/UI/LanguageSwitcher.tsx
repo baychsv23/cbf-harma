@@ -22,7 +22,7 @@ export default function LanguageSwitcher() {
       <button
         onClick={() => handleLanguageChange("en")}
         className={`flex items-center px-2 py-2 md:px-3 md:py-2 rounded-md text-sm font-medium transition-colors ${currentLocale === "en"
-          ? "bg-blue-600 text-white"
+          ? "bg-primary text-white"
           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
       >
@@ -34,7 +34,7 @@ export default function LanguageSwitcher() {
       <button
         onClick={() => handleLanguageChange("lo")}
         className={`flex items-center px-2 py-2 md:px-3 md:py-2 rounded-md text-sm font-medium transition-colors ${currentLocale === "lo"
-          ? "bg-blue-600 text-white"
+          ? "bg-primary text-white"
           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
       >

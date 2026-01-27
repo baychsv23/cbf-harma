@@ -5,7 +5,7 @@ import { requirePermission } from "@/lib/requirePermission";
 import { ApiError } from "@/lib/api-error";
 import { translations } from "@/lib/translation";
 import { Permission, BooleanState, ImageType } from "@/generated/prisma/enums";
-import { deleteFromCloudinary } from "@/action/cloudinary";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 import { logger } from "@/lib/logger";
 
 // Helper to get ID from params

@@ -34,14 +34,6 @@ export default function BannerSection() {
     const progressContent = useRef<HTMLSpanElement>(null);
 
     // ฟังก์ชันสำหรับ Progress Ring (วงกลมจับเวลา)
-    const onAutoplayTimeLeft = (s: any, time: number, progress: number) => {
-        if (progressCircle.current) {
-            progressCircle.current.style.setProperty("--progress", `${1 - progress}`);
-        }
-        if (progressContent.current) {
-            progressContent.current.textContent = `${Math.ceil(time / 1000)}s`;
-        }
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -108,7 +100,7 @@ export default function BannerSection() {
                             nextEl: ".custom-next", // ใช้ปุ่ม Next ที่เราสร้างเอง
                             prevEl: ".custom-prev", // ใช้ปุ่ม Prev ที่เราสร้างเอง
                         }}
-                        onAutoplayTimeLeft={onAutoplayTimeLeft}
+
                         className="w-full h-[180px] sm:h-[280px] md:h-[350px] lg:h-[450px] banner-swiper relative"
                     >
                         {/* Background Gradient Overlay (Global) */}
@@ -155,7 +147,7 @@ export default function BannerSection() {
 
                                             {/* Optional Call to Action Button */}
                                             <div className="pt-2 opacity-0 translate-y-8 transition-all duration-700 delay-700 slide-content-btn">
-                                                <button className="inline-flex items-center gap-2 px-6 py-2.5 bg-white/20 hover:bg-white text-white hover:text-blue-900 rounded-full backdrop-blur-md border border-white/30 transition-all font-semibold text-sm md:text-base group/btn">
+                                                <button className="inline-flex items-center gap-2 px-6 py-2.5 bg-white/20 hover:bg-white text-white hover:text-primary rounded-full backdrop-blur-md border border-white/30 transition-all font-semibold text-sm md:text-base group/btn">
                                                     Explore More
                                                     <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                                                 </button>
@@ -170,12 +162,12 @@ export default function BannerSection() {
 
                         {/* 1. Navigation Buttons (ซ่อนใน Mobile โชว์ใน PC ตอน Hover) */}
                         <div className="hidden md:flex absolute top-1/2 -translate-y-1/2 left-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <button className="custom-prev w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-blue-900 transition-all active:scale-95 shadow-lg">
+                            <button className="custom-prev w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-primary transition-all active:scale-95 shadow-lg">
                                 <ChevronLeft size={24} />
                             </button>
                         </div>
                         <div className="hidden md:flex absolute top-1/2 -translate-y-1/2 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <button className="custom-next w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-blue-900 transition-all active:scale-95 shadow-lg">
+                            <button className="custom-next w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-primary transition-all active:scale-95 shadow-lg">
                                 <ChevronRight size={24} />
                             </button>
                         </div>
@@ -184,25 +176,7 @@ export default function BannerSection() {
                         <div className="custom-pagination absolute bottom-6 right-6 md:right-auto md:left-12 z-30 flex gap-2 !w-auto"></div>
 
                         {/* 3. Autoplay Progress Ring (วงกลมจับเวลาขวาล่าง) */}
-                        <div className="autoplay-progress absolute top-6 right-6 z-30 w-10 h-10 flex items-center justify-center font-bold text-white bg-black/20 backdrop-blur-sm rounded-full border border-white/10">
-                            <svg viewBox="0 0 48 48" ref={progressCircle} className="w-full h-full absolute top-0 left-0 rotate-[-90deg]">
-                                <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="4" className="opacity-30" />
-                                <circle
-                                    cx="24"
-                                    cy="24"
-                                    r="20"
-                                    fill="none"
-                                    stroke="#fff"
-                                    strokeWidth="4"
-                                    className="stroke-dashoffset"
-                                    style={{
-                                        strokeDasharray: 125.6,
-                                        strokeDashoffset: "calc(125.6px * (1 - var(--progress)))",
-                                    }}
-                                />
-                            </svg>
-                            <span ref={progressContent} className="text-[10px] relative z-10"></span>
-                        </div>
+
 
                     </Swiper>
                 )}

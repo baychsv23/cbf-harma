@@ -155,7 +155,7 @@ export default function ProductFormModal({
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
           <div className="flex items-center gap-3">
             <div
-              className={`p-2.5 rounded-xl ${initialData ? "bg-blue-50 text-blue-600" : "bg-green-50 text-green-600"}`}
+              className={`p-2.5 rounded-xl ${initialData ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary"}`}
             >
               <Pill size={20} />
             </div>
@@ -431,7 +431,7 @@ export default function ProductFormModal({
                   </div>
                   {formData.category === Category.ANTIBIOTICS && (
                     <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                      <label className="block text-xs font-bold text-blue-600 mb-1">
+                      <label className="block text-xs font-bold text-primary mb-1">
                         Antibiotic Group
                       </label>
                       <select
@@ -442,7 +442,7 @@ export default function ProductFormModal({
                             categorySub: e.target.value as CategorySub,
                           })
                         }
-                        className="w-full p-2 border border-blue-200 rounded-lg text-sm bg-blue-50 text-blue-700"
+                        className="w-full p-2 border border-primary/30 rounded-lg text-sm bg-primary/5 text-primary"
                       >
                         {Object.values(CategorySub).map((s) => (
                           <option key={s} value={s}>
@@ -509,7 +509,7 @@ export default function ProductFormModal({
           </button>
           <button
             onClick={handleSubmit}
-            className="flex items-center gap-2 px-8 py-2.5 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition shadow-lg shadow-blue-200 disabled:opacity-50 text-sm"
+            className="flex items-center gap-2 px-8 py-2.5 rounded-xl font-bold text-white bg-primary hover:bg-primary/90 transition shadow-lg shadow-primary/20 disabled:opacity-50 text-sm"
           >
             {initialData ? t(translations.update) : t(translations.create)}
           </button>

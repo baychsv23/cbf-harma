@@ -6,9 +6,7 @@ import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
 import { NextRequest, NextResponse } from "next/server";
-import { deleteFromCloudinary } from "@/action/cloudinary";
-
-
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function PUT(
     request: NextRequest,
@@ -19,7 +17,8 @@ export async function PUT(
 
         // 1. ตรวจสอบสิทธิ์ (User ต้องมีสิทธิ์แก้ไขบทความ)
         const session = await requirePermission(Permission.ARTICLE_UPDATE);
-        const updaterId = session.user.id;
+        if (!session) throw new ApiError(translations.forbidden, 403)
+        const updatedById = session.user.id;
 
         // 2. รับข้อมูลจาก Body
         const body = await request.json();
@@ -74,12 +73,8 @@ export async function PUT(
                 status: body.status,
 
                 publishedAt: newPublishedAt,
-                updatedById: updaterId,
-
-                // Handle Many-to-Many Relation (Tie-in Products)
+                updatedById,
                 products: {
-                    // ใช้ 'set' เพื่อแทนที่รายการเดิมทั้งหมดด้วยรายการใหม่
-                    // ถ้าส่ง array ว่าง [] มา จะถือว่าลบความสัมพันธ์ทั้งหมด
                     set: productIds?.map((pid: string) => ({ id: pid })) || [],
                 },
             },
@@ -96,8 +91,8 @@ export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-
-    await requirePermission(Permission.ARTICLE_DELETE);
+    const session = await requirePermission(Permission.ARTICLE_DELETE);
+    if (!session) throw new ApiError(translations.forbidden, 403)
     const existingArticle = await database.article.findUnique({
         where: { id },
         select: { coverImagePublicId: true }

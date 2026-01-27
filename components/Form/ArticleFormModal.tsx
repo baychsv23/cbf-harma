@@ -218,7 +218,7 @@ export default function ArticleFormModal({
                       })
                     }
                     className={`w-full text-sm p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium ${formData.status === ArticleStatus.PUBLISHED
-                      ? "bg-green-50 text-green-700 border-green-200"
+                      ? "bg-secondary/10 text-secondary border-secondary/30"
                       : "bg-slate-50 text-slate-600"
                       }`}
 

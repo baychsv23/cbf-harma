@@ -4,11 +4,18 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Custom Colors */
+  --primary: #154f30;
+  --secondary: #6cbf6f;
+  --accent: #d4af37;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

@@ -1,8 +1,8 @@
 // app/api/warehouses/route.ts
 
-import { getArticles } from "@/action/articles";
-import { ArticleStatus, ArticleType, BooleanState, Permission } from "@/generated/prisma/enums";
+import { ArticleStatus, Permission } from "@/generated/prisma/enums";
 import { ApiError } from "@/lib/api-error";
+import { getArticles } from "@/lib/getData";
 import { handleApiAction } from "@/lib/handleApiAction";
 import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
@@ -11,33 +11,35 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
     return handleApiAction(async () => {
+        const session = await requirePermission(Permission.ARTICLE_VIEW)
         const searchParams = request.nextUrl.searchParams;
         const page = searchParams.get("page") ? parseInt(searchParams.get("page")!) : undefined;
         const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined;
         const title = searchParams.get("title")
         const type = searchParams.get("type")
         const status = searchParams.get("status")
-        const where: any = {};
+        const where: any = { status: ArticleStatus.PUBLISHED };
+        if (session) { if (status) where.status = status };
+
         if (title) {
             where.OR = [
                 { titleEN: { contains: title } },
                 { titleLA: { contains: title } },
-
             ];
         }
+
         if (type) where.type = type
-
-        if (status) where.status = status
-
 
         if (page && limit) {
             const skip = (page - 1) * limit;
-            const include = {
-                products: { select: { id: true, nameEN: true, nameLA: true } },
-                createdBy: { select: { fullName: true } },
-                updatedBy: { select: { fullName: true } }
-            }
-            const { data, total } = await getArticles({ where, skip, limit, include })
+
+            const { data, total } = await getArticles({
+                where, skip, limit, include: {
+                    products: { select: { id: true, nameEN: true, nameLA: true } },
+                    createdBy: { select: { fullName: true } },
+                    updatedBy: { select: { fullName: true } }
+                }
+            })
 
 
             const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -59,8 +61,8 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        const whereWithStatus = { ...where, status: ArticleStatus.PUBLISHED }
-        const { data, total } = await getArticles({ where: whereWithStatus })
+
+        const { data, total } = await getArticles({ where })
 
 
         return NextResponse.json({
@@ -81,7 +83,7 @@ export async function POST(req: Request) {
         // 1. ตรวจสอบสิทธิ์ (ใช้ Permission.ARTICLE_CREATE)
         const session = await requirePermission(Permission.ARTICLE_CREATE);
         const body = await req.json();
-
+        if (!session) throw new ApiError(translations.forbidden, 403)
         const creator = session.user.id;
 
         // 2. Validate ข้อมูลที่จำเป็นต้องมี

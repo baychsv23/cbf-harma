@@ -14,14 +14,15 @@ export async function createAccount(prevState: any, data: FormData) {
   return handleAction(
     async () => {
       const session = await requirePermission(Permission.USER_CREATE);
-
+      if (!session) throw new Error(translations.forbidden)
+      const roleSession = session.user.role
       const userName = data.get("userName")?.toString();
 
       const fullName = data.get("fullName")?.toString();
       const password = data.get("password")?.toString();
       const role = data.get("role")?.toString();
       const permissionsString = data.get("permissions")?.toString();
-      if (session.user.role !== Role.ADMIN && Role.ADMIN === role)
+      if (roleSession !== Role.ADMIN && Role.ADMIN === role)
         throw new Error(translations.forbidden);
 
       if (!userName || !password || !role)
@@ -59,6 +60,8 @@ export async function updateAccount(prevState: any, data: FormData) {
   return handleAction(
     async () => {
       const session = await requirePermission(Permission.USER_UPDATE);
+      if (!session) throw new Error(translations.forbidden)
+      const roleSession = session.user.role
       const id = data.get("id")?.toString();
       const userName = data.get("userName")?.toString();
       const fullName = data.get("fullName")?.toString();
@@ -68,7 +71,7 @@ export async function updateAccount(prevState: any, data: FormData) {
         throw new Error(translations.allFiledRequired);
 
       // Parse permissions
-      if (session.user.role !== Role.ADMIN && Role.ADMIN === role)
+      if (roleSession !== Role.ADMIN && Role.ADMIN === role)
         throw new Error(translations.forbidden);
       let permissions: Permission[] = [];
       if (permissionsString) {

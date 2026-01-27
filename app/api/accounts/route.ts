@@ -10,6 +10,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
     return handleApiAction(async () => {
+        const session = await requirePermission(Permission.USER_VIEW)
+        if (!session) throw new ApiError(translations.forbidden, 403)
         const searchParams = request.nextUrl.searchParams;
         const page = searchParams.get("page") ? parseInt(searchParams.get("page")!) : undefined;
         const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined;

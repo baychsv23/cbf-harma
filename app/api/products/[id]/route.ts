@@ -6,7 +6,7 @@ import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
-import { deleteFromCloudinary } from "@/action/cloudinary";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function PUT(
     req: Request,
@@ -34,7 +34,8 @@ export async function PUT(
         }
 
         const session = await requirePermission(Permission.PRODUCT_UPDATE);
-        const updater = session.user.id;
+        if (!session) throw new ApiError(translations.forbidden, 403)
+        const updatedById = session.user.id;
         if (
             body.productImage &&
             body.productImage !== existingProduct.productImage
@@ -61,7 +62,7 @@ export async function PUT(
                 indicationLA: body.indicationLA,
                 indicationEN: body.indicationEN,
                 productImage: body.productImage,
-                updatedById: updater,
+                updatedById,
                 symptom: {
                     connect: symptomIds.map((id: string) => ({ id })),
                 },

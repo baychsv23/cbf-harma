@@ -15,7 +15,6 @@ export async function GET(
             where: { slug },
             include: {
                 symptom: true, // ดึงข้อมูลอาการที่เกี่ยวข้อง
-                articles: true, // ดึงบทความที่เกี่ยวข้อง
             },
         });
         if (!product) {

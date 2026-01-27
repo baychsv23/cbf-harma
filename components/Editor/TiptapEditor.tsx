@@ -160,7 +160,7 @@ export default function TiptapEditor({
       Placeholder.configure({ placeholder: placeholder || "Write something..." }),
       Link.configure({
         openOnClick: false,
-        HTMLAttributes: { class: "text-blue-600 underline cursor-pointer hover:text-blue-800" },
+        HTMLAttributes: { class: "text-primary underline cursor-pointer hover:text-primary/80" },
       }),
       // ✅ 1. ตั้งค่า Alignment
       TextAlign.configure({
@@ -184,7 +184,7 @@ export default function TiptapEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose-base max-w-none focus:outline-none min-h-[300px] p-4 prose-img:rounded-xl prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline",
+          "prose prose-sm sm:prose-base max-w-none focus:outline-none min-h-[300px] p-4 prose-img:rounded-xl prose-a:text-primary prose-a:no-underline hover:prose-a:underline",
       },
     },
     onUpdate: ({ editor }) => {

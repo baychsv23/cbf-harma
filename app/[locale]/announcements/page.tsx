@@ -101,13 +101,13 @@ export default function AnnouncementPage() {
             {/* --- Header --- */}
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-                    <Megaphone className="text-orange-500" />
+                    <Megaphone className="text-accent" />
                     {t(translations.Management, { name: t(translations.announcement) })}
                 </h1>
                 {hasPermission(Permission.ANNOUNCEMENT_CREATE) && ( // Ensure you have this permission or similar
                     <button
                         onClick={handleOpenCreate}
-                        className="bg-orange-600 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-orange-700 transition shadow-lg shadow-orange-200"
+                        className="bg-accent text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-accent/90 transition shadow-lg shadow-accent/20"
                     >
                         <Plus size={18} />
                         {t(translations.Create, { name: t(translations.announcement) })}
@@ -211,7 +211,7 @@ export default function AnnouncementPage() {
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-md text-xs font-bold border ${item.type === ImageType.BANNER
                                             ? "bg-purple-50 text-purple-600 border-purple-100"
-                                            : "bg-blue-50 text-blue-600 border-blue-100"
+                                            : "bg-primary/10 text-primary border-primary/20"
                                             }`}>
                                             {t(item.type)}
                                         </span>
@@ -250,7 +250,7 @@ export default function AnnouncementPage() {
                                         <div className="flex justify-end gap-2">
                                             <button
                                                 onClick={() => handleOpenEdit(item)}
-                                                className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition"
+                                                className="p-2 hover:bg-primary/10 text-primary rounded-lg transition"
                                             >
                                                 <Edit size={16} />
                                             </button>

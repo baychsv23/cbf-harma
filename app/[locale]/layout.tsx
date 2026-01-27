@@ -7,7 +7,7 @@ import SessionProvider from "@/components/provider/SessionProvider";
 import { getMessages } from "next-intl/server";
 import RouteChangeLoader from "@/components/RouteChangeLoader";
 import Sidebar from "@/components/UI/Sidebar";
-import { getSession } from "@/lib/requirePermission";
+import { getAuth } from "@/lib/requirePermission";
 import ContactFloatingBtn from "@/components/UI/ContactFloatingBtn";
 
 const notoSansLao = Noto_Sans_Lao({
@@ -49,7 +49,7 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const session = await getSession();
+  const session = await getAuth();
   const messages = await getMessages();
 
   return (

@@ -26,7 +26,7 @@ export default function ImageAttachmentGallery({
     <div className="bg-white rounded-lg shadow-md p-6 mb-6 no-print border border-gray-100">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-          <Package size={20} className="text-blue-600" />
+          <Package size={20} className="text-primary" />
           {title || t(translations.view)} ({images.length})
         </h2>
       </div>
@@ -35,7 +35,7 @@ export default function ImageAttachmentGallery({
         {images.map((img) => (
           <div
             key={img.id}
-            className="group relative aspect-square overflow-hidden rounded-xl border-2 border-gray-100 hover:border-blue-500 transition-all shadow-sm"
+            className="group relative aspect-square overflow-hidden rounded-xl border-2 border-gray-100 hover:border-primary transition-all shadow-sm"
           >
             <a
               href={img.url.replace("/uploads/", "/api/images/")}

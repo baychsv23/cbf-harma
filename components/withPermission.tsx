@@ -30,7 +30,7 @@ export function withPermission<P extends object>(
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
           <div className="flex flex-col items-center">
             <svg
-              className="animate-spin h-12 w-12 text-blue-600 mb-4"
+              className="animate-spin h-12 w-12 text-primary mb-4"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

@@ -101,12 +101,12 @@ export default function ProductPage() {
     <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-          <Pill className="text-blue-600" /> {t(translations.Management, { name: translations.product })}
+          <Pill className="text-primary" /> {t(translations.Management, { name: translations.product })}
         </h1>
         {hasPermission(Permission.PRODUCT_CREATE) && (
           <button
             onClick={handleOpenCreate}
-            className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 transition shadow-lg shadow-blue-200"
+            className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-primary/90 transition shadow-lg shadow-primary/20"
           >
             <Plus size={18} />{" "}
             {t(translations.Create, { name: t(translations.product) })}
@@ -130,7 +130,7 @@ export default function ProductPage() {
               })}
               value={search.name}
               onChange={(e) => setSearch({ ...search, name: e.target.value })}
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
             />
           </div>
 
@@ -148,7 +148,7 @@ export default function ProductPage() {
                   categorySub: "",
                 })
               }
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
             >
               <option value="">
                 {t(translations.All, { name: t(translations.category) })}
@@ -172,7 +172,7 @@ export default function ProductPage() {
                 onChange={(e) =>
                   setSearch({ ...search, categorySub: e.target.value })
                 }
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all border-blue-200 bg-blue-50/30"
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all border-primary/30 bg-primary/5"
               >
                 <option value="">
                   {t(translations.All, { name: t("ANTIBIOTICS") })}
@@ -265,7 +265,7 @@ export default function ProductPage() {
                       {t(product.category)}
                     </div>
                     {product.categorySub !== CategorySub.NONE ?
-                      <div className="text-xs text-blue-500">
+                      <div className="text-xs text-primary">
                         {t(product.categorySub)}
                       </div>
                       : ""
@@ -281,7 +281,7 @@ export default function ProductPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-bold ${product.isActive === BooleanState.TRUE ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"}`}
+                      className={`px-2 py-1 rounded-full text-xs font-bold ${product.isActive === BooleanState.TRUE ? "bg-secondary/20 text-secondary" : "bg-slate-100 text-slate-500"}`}
                     >
                       {t(product.isActive === BooleanState.TRUE ? (translations.active) : (translations.inactive))}
                     </span>
@@ -290,7 +290,7 @@ export default function ProductPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleOpenEdit(product)}
-                        className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition"
+                        className="p-2 hover:bg-primary/10 text-primary rounded-lg transition"
                       >
                         <Edit size={16} />
                       </button>

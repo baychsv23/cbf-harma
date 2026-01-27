@@ -1,17 +1,17 @@
 import { redis } from '@/lib/redis' // ไฟล์ที่เราสร้างไว้ก่อนหน้านี้
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
-    const articleId = params.id
+export async function POST(request: NextRequest,
+    { params }: { params: Promise<{ slug: string }> },) {
+    const { slug } = await params;
 
     // 1. ดึง IP Address ของผู้ใช้ (Vercel จะส่งมาใน Header)
     const headerList = headers()
-    const ip = (await headerList).get('x-forwarded-for') || '127.0.0.1'
+    const forwarded = (await headerList).get('x-forwarded-for')
+    const ip = forwarded ? forwarded.split(',')[0] : '127.0.0.1'
 
-    // 2. สร้าง Key สำหรับเช็คว่า IP นี้เคยดูบทความนี้หรือยัง
-    // ตัวอย่าง Key: view_limit:article_uuid:123.456.78.9
-    const rateLimitKey = `view_limit:${articleId}:${ip}`
+    const rateLimitKey = `view_limit:${slug}:${ip}`
 
     // 3. เช็คใน Redis ว่า Key นี้มีอยู่ไหม
     const isLimited = await redis.get(rateLimitKey)
@@ -26,7 +26,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     await redis.set(rateLimitKey, '1', { ex: 86400 })
 
     // - เพิ่มยอดวิวใน Redis คีย์หลัก (สำหรับการ Sync ลง DB)
-    await redis.incr(`article:views:${articleId}`)
+    await redis.incr(`article:views:${slug}`)
 
     return NextResponse.json({ success: true })
 }

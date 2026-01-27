@@ -10,6 +10,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   return handleApiAction(async () => {
+    const session = await requirePermission(Permission.PRODUCT_VIEW)
+
     const searchParams = request.nextUrl.searchParams;
     const page = searchParams.get("page")
       ? parseInt(searchParams.get("page")!)
@@ -20,9 +22,12 @@ export async function GET(request: NextRequest) {
 
     // ค้นหาจากชื่อ (รองรับทั้ง LA และ EN)
     const name = searchParams.get("name");
+
     const category = searchParams.get("category");
+    const isActive = searchParams.get("isActive");
 
     const where: any = {};
+    where.isActive = BooleanState.TRUE
     if (name) {
       where.OR = [
         { nameEN: { contains: name } },
@@ -31,6 +36,9 @@ export async function GET(request: NextRequest) {
       ];
     }
     if (category) where.category = category;
+    if (session) {
+      if (isActive) { where.isActive = isActive }
+    }
 
     // Pagination mode
     if (page && limit) {
@@ -72,7 +80,8 @@ export async function GET(request: NextRequest) {
 
     // Fetch all mode
     const data = await database.product.findMany({
-      where: { ...where, isActive: BooleanState.TRUE },
+      where,
+      select: { id: true, nameEN: true, nameLA: true }
     });
 
     const total = data.length;
@@ -94,8 +103,8 @@ export async function POST(req: Request) {
   return handleApiAction(async () => {
     const session = await requirePermission(Permission.PRODUCT_CREATE);
     const body = await req.json();
-
-    const creator = session.user.id;
+    if (!session) throw new ApiError(translations.forbidden, 403)
+    const createdById = session.user.id;
     if (!body.nameEN || !body.nameLA || !body.sku || !body.slug) {
       throw new ApiError(translations.allFiledRequired, 400);
     }
@@ -105,7 +114,7 @@ export async function POST(req: Request) {
       data: {
         slug: body.slug,
         sku: body.sku,
-        createdById: creator,
+        createdById,
         nameEN: body.nameEN,
         nameLA: body.nameLA,
         genericName: body.genericName,

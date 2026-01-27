@@ -55,7 +55,7 @@ export default function ArticlePage() {
     reloadData,
     applyFilters,
     clearFilters,
-  } = usePagination("/api/public/articles");
+  } = usePagination("/api/articles");
   // โหลดสินค้าทั้งหมดเพื่อมาทำ Selection (Tie-in)
   useEffect(() => {
     const fetchProducts = async () => {
@@ -285,7 +285,7 @@ export default function ArticlePage() {
                     <td className="px-6 py-4">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-bold border ${article.status === ArticleStatus.PUBLISHED
-                          ? "bg-green-50 text-green-700 border-green-200"
+                          ? "bg-secondary/10 text-secondary border-secondary/30"
                           : "bg-slate-100 text-slate-500 border-slate-200"
                           }`}
                       >

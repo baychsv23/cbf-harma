@@ -5,7 +5,7 @@ export default function NotFound() {
     return (
         <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-linear-to-br from-blue-50 via-white to-purple-50">
             {/* Background decoration */}
-            <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl" />
+            <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
             <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-purple-200/40 blur-3xl" />
 
             <div className="relative z-10 max-w-lg w-full px-6">
@@ -27,7 +27,7 @@ export default function NotFound() {
                     <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                         <Link
                             href="/"
-                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-white font-medium hover:bg-blue-700 transition"
+                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-white font-medium hover:bg-primary/90 transition"
                         >
                             <Home size={18} />
                             Go Home

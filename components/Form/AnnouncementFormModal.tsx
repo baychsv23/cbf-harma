@@ -81,8 +81,8 @@ export default function AnnouncementFormModal({
                     <div className="flex items-center gap-3">
                         <div
                             className={`p-2.5 rounded-xl ${initialData
-                                ? "bg-orange-50 text-orange-600"
-                                : "bg-blue-50 text-blue-600"
+                                ? "bg-accent/10 text-accent"
+                                : "bg-primary/10 text-primary"
                                 }`}
                         >
                             <Megaphone size={20} />
@@ -158,12 +158,12 @@ export default function AnnouncementFormModal({
                     {/* 3. Visibility (Styled like Product Form's Safety Control) */}
                     <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-green-500">
                         <div className="flex items-center gap-2 mb-2">
-                            <Eye size={16} className="text-green-500" />
-                            <label className="text-xs font-bold text-green-600 uppercase">
+                            <Eye size={16} className="text-secondary" />
+                            <label className="text-xs font-bold text-secondary uppercase">
                                 Visibility Status
                             </label>
                         </div>
-                        <label className="flex items-start gap-3 cursor-pointer p-2 hover:bg-green-50 rounded-lg transition-colors">
+                        <label className="flex items-start gap-3 cursor-pointer p-2 hover:bg-secondary/10 rounded-lg transition-colors">
                             <input
                                 type="checkbox"
                                 className="mt-1 w-4 h-4 accent-green-600"

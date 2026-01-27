@@ -268,7 +268,7 @@ export default function AccountsPage() {
                             onClick={() => handleActiveStatus(user)}
                             className={`p-2 bg-white border border-slate-200 rounded-lg transition shadow-sm ${user.isActive === BooleanState.TRUE
                               ? "text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
-                              : "text-slate-400 hover:bg-green-50 hover:text-green-600 hover:border-green-200"
+                              : "text-slate-400 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/30"
                               }`}
                             title={t(translations.manage)}
                           >
