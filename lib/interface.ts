@@ -7,6 +7,7 @@ export interface Article {
   type: string;
   slug: string;
   status: string;
-  createdAt: string;
+  createdAt: Date | string;
+  views: number;
   products?: { id: string; nameEN: string; nameLA: string }[];
 }

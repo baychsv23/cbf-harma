@@ -3,25 +3,36 @@ import Link from "next/link";
 import ArticleCard from "@/components/UI/Card/ArticleCard";
 import { Article } from "@/lib/interface";
 import apiServer from "@/lib/api-server";
+import { getArticles } from "@/lib/getData";
+import { ArticleStatus } from "@/generated/prisma/enums";
 
 // ฟังก์ชันดึงข้อมูลด้วย Axios
-async function getLatestArticles() {
-  try {
-    const response = await apiServer.get("/api/articles", {
-      params: { limit: 10 },
-      // ป้องกันการจำ Cache ถ้าต้องการข้อมูลสดใหม่เสมอ
-      headers: { "Cache-Control": "no-store" },
-    });
-    return response.data.data;
-  } catch (error) {
-    // คืนค่า array ว่าง เพื่อไม่ให้หน้าเว็บล่ม (Graceful Degradation)
-    return [];
-  }
-}
 
 export default async function Home() {
   // เรียกใช้ฟังก์ชัน (ทำงานฝั่ง Server)
-  const articles = await getLatestArticles();
+  const where: any = { status: ArticleStatus.PUBLISHED };
+
+  // ✅ LIMIT: Set to 6 or 9 to enable "Load More" functionality
+  const LIMIT = 10;
+
+  const { data: articles, total } = await getArticles({
+    where,
+    skip: 0,
+    limit: LIMIT,
+    select: {
+      id: true,
+      slug: true,
+      titleLA: true,
+      titleEN: true,
+      contentLA: true,
+      contentEN: true,
+      coverImage: true,
+      createdAt: true,
+      type: true,
+      views: true,
+      products: { select: { id: true, nameEN: true, nameLA: true } },
+    },
+  });
   return (
     <main className="min-h-screen bg-gray-50/30 pb-20">
       {/* 1. Banner Section */}
