@@ -38,25 +38,25 @@ export default function PremiumLoginForm() {
     <div className="min-h-screen relative flex items-center justify-center p-4 bg-slate-950 overflow-hidden">
       {/* Animated background orbs */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-secondary-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
       {/* Main container */}
       <div className="relative w-full max-w-md">
         {/* Glow effect behind card */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+        <div className="absolute -inset-1 bg-gradient-to-r from-primary-600 via-secondary-600 to-secondary-500 rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition duration-1000"></div>
 
         {/* Login card */}
         <div className="relative bg-slate-900 bg-opacity-80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
           {/* Top accent bar */}
-          <div className="h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500"></div>
+          <div className="h-1 bg-gradient-to-r from-primary-600 via-secondary-600 to-secondary-500"></div>
 
           <div className="p-8 sm:p-10">
             {/* Header */}
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-2xl mb-4 shadow-lg shadow-purple-500/50">
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-2xl mb-4 shadow-lg shadow-primary-600/50">
                 <Lock className="w-7 h-7 text-white" />
               </div>
               <h1 className="text-3xl font-bold text-white mb-2">
@@ -147,7 +147,7 @@ export default function PremiumLoginForm() {
               {/* Submit button */}
               <button
                 type="submit"
-                className="group relative w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-xl text-white font-semibold shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="group relative w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 rounded-xl text-white font-semibold shadow-lg shadow-primary-600/30 hover:shadow-primary-600/50 transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 <span>{t(translations.signin)}</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

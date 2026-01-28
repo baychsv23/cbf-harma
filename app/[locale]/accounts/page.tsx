@@ -103,7 +103,7 @@ export default function AccountsPage() {
       confirmButtonText: t(translations.submit),
       showCancelButton: true,
       cancelButtonText: t(translations.cancel),
-      confirmButtonColor: "#f97316", // Orange for sensitive action
+      confirmButtonColor: "#d4af37", // Accent for warning action
       width: "500px",
       preConfirm: () => {
         const newPassword = (document.getElementById("swal-new-password") as HTMLInputElement)?.value?.trim();
@@ -144,7 +144,7 @@ export default function AccountsPage() {
         {hasPermission(Permission.USER_CREATE) && (
           <Link
             href={"/accounts/create"}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-sky-600 text-white rounded-xl font-semibold hover:bg-sky-700 transition-all shadow-lg shadow-sky-200 active:scale-95"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
           >
             <Plus size={20} strokeWidth={2.5} />
             {t(translations.Create, { name: t(translations.account) })}
@@ -233,10 +233,10 @@ export default function AccountsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${user.isActive === BooleanState.TRUE
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : 'bg-red-50 text-red-600 border-red-200'
+                        ? 'bg-secondary-100 text-secondary-700 border-secondary-300'
+                        : 'bg-red-100/50 text-red-600/70 border-red-200/50'
                         }`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${user.isActive === BooleanState.TRUE ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
+                        <div className={`w-1.5 h-1.5 rounded-full ${user.isActive === BooleanState.TRUE ? 'bg-secondary-500' : 'bg-red-300'}`}></div>
                         {t(user.isActive === BooleanState.TRUE ? translations.active : translations.inactive)}
                       </span>
                     </td>
@@ -246,7 +246,7 @@ export default function AccountsPage() {
                         {hasPermission(Permission.USER_UPDATE) && (
                           <Link
                             href={`/accounts/${user.id}/edit`}
-                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-sky-50 hover:text-sky-600 hover:border-sky-200 transition shadow-sm"
+                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition shadow-sm"
                             title={t(translations.edit)}
                           >
                             <Edit size={16} />
@@ -256,7 +256,7 @@ export default function AccountsPage() {
                         {hasPermission(Permission.USER_UPDATE) && (
                           <button
                             onClick={() => showResetPasswordForm(user)}
-                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition shadow-sm"
+                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-secondary-50 hover:text-secondary-600 hover:border-secondary-200 transition shadow-sm"
                             title={t(translations.resetPassword)}
                           >
                             <KeyRound size={16} />
@@ -267,8 +267,8 @@ export default function AccountsPage() {
                           <button
                             onClick={() => handleActiveStatus(user)}
                             className={`p-2 bg-white border border-slate-200 rounded-lg transition shadow-sm ${user.isActive === BooleanState.TRUE
-                              ? "text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
-                              : "text-slate-400 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/30"
+                              ? "text-slate-600 hover:bg-red-100 hover:text-red-600 hover:border-red-200"
+                              : "text-slate-400 hover:bg-red-100/50 hover:text-red-600/70 hover:border-red-200/50"
                               }`}
                             title={t(translations.manage)}
                           >

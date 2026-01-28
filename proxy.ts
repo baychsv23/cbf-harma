@@ -8,10 +8,6 @@ import { Permission, Role } from "./generated/prisma/enums";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-// --------------------------------------------------
-// Helper functions
-// --------------------------------------------------
-
 function getLocaleAndPath(pathname: string) {
   const segments = pathname.split("/").filter(Boolean);
   const locale = segments[0];
@@ -20,7 +16,9 @@ function getLocaleAndPath(pathname: string) {
 }
 
 function isPublicRoute(path: string): boolean {
-  const PUBLIC = ["/", "/public", "/unauthorized", "/auth/signin"];
+  const PUBLIC = ["/", "/cbf", "/unauthorized", "/auth/signin"];
+
+
   return PUBLIC.some((route) => path === route || path.startsWith(route + "/"));
 }
 

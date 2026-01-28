@@ -6,13 +6,9 @@ import { Article } from "@/lib/interface";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
+import { ArticleType } from "@/generated/prisma/enums";
 
-// สมมติว่า Enum ประกาศไว้แบบนี้
-enum ArticleType {
-  NEWS = "NEWS",
-  HEALTH_KNOWLEDGE = "HEALTH_KNOWLEDGE",
-  ACTIVITY = "ACTIVITY",
-}
+
 
 export default function ArticleCard({ article }: { article: Article }) {
   const t = useTranslations();
@@ -21,12 +17,12 @@ export default function ArticleCard({ article }: { article: Article }) {
   // ✅ ฟังก์ชันแปลง Enum เป็น Path ตามเงื่อนไขที่คุณระบุ
   const formatTypeToPath = (type: string) => {
     switch (type) {
-      case "NEWS":
+      case ArticleType.NEWS:
         return "news";
-      case "ACTIVITY":
-        return "activitys"; // ตามที่คุณระบุ (เติม s)
-      case "HEALTH_KNOWLEDGE":
-        return "health-knowledges"; // ตามที่คุณระบุ (เติม s)
+      case ArticleType.ACTIVITY:
+        return "activities";
+      case ArticleType.HEALTH_KNOWLEDGE:
+        return "health-knowledge";
       default:
         return type.toLowerCase().replace(/_/g, "-");
     }
@@ -36,7 +32,7 @@ export default function ArticleCard({ article }: { article: Article }) {
   const articleTypePath = formatTypeToPath(article.type);
 
   // ✅ โครงสร้าง URL: /public/[type]/[slug]
-  const detailHref = `/public/${articleTypePath}/${article.slug}`;
+  const detailHref = `/cbf/articles/${articleTypePath}/${article.slug}`;
 
   return (
     <Link href={detailHref} className="block h-full">

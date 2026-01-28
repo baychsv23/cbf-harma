@@ -27,7 +27,6 @@ export async function GET(request: NextRequest) {
     const isActive = searchParams.get("isActive");
 
     const where: any = {};
-    where.isActive = BooleanState.TRUE
     if (name) {
       where.OR = [
         { nameEN: { contains: name } },
@@ -36,9 +35,13 @@ export async function GET(request: NextRequest) {
       ];
     }
     if (category) where.category = category;
+    if (!session) {
+      where.isActive = BooleanState.TRUE
+    }
     if (session) {
       if (isActive) { where.isActive = isActive }
     }
+
 
     // Pagination mode
     if (page && limit) {

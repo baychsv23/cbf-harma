@@ -28,7 +28,7 @@ import { isEnglish } from "@/lib/constant";
 
 export default function ProductPage() {
   const t = useTranslations();
-  const local = useLocale();
+  const locale = useLocale();
   const { showConfirm, showProcessing } = useAlert();
   const api = useApiWithAlert();
   const { hasPermission } = useAuth();
@@ -97,16 +97,35 @@ export default function ProductPage() {
   };
   // Helper to get enum translations or raw keys
 
+  const handleActiveStatus = async (product: any) => {
+    const nextStatus =
+      product.isActive === BooleanState.TRUE
+        ? BooleanState.FALSE
+        : BooleanState.TRUE; // Fixed logic to toggle correctly
+
+    const text = t(translations.MessageManageIsActive, {
+      status: t(nextStatus === BooleanState.FALSE ? translations.inactive : translations.active),
+      name: isEnglish(locale) ? product.nameEN : product.nameLA,
+    });
+
+    const confirm = await showConfirm(text);
+
+    if (confirm) {
+      showProcessing();
+      await api.put(`/api/products/${product.id}`, { isActive: nextStatus });
+      reloadData()
+    }
+  };
   return (
     <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-          <Pill className="text-primary" /> {t(translations.Management, { name: translations.product })}
+          <Pill className="text-primary" /> {t(translations.Management, { name: t(translations.product) })}
         </h1>
         {hasPermission(Permission.PRODUCT_CREATE) && (
           <button
             onClick={handleOpenCreate}
-            className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-primary/90 transition shadow-lg shadow-primary/20"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
           >
             <Plus size={18} />{" "}
             {t(translations.Create, { name: t(translations.product) })}
@@ -248,14 +267,14 @@ export default function ProductPage() {
                   <td className="px-6 py-4">{product.stt}</td>
                   <td className="px-6 py-4">
                     <div className="font-bold text-slate-900">
-                      {isEnglish(local) ? product.nameEN : product.nameLA}
+                      {isEnglish(locale) ? product.nameEN : product.nameLA}
                     </div>
                     <div className="text-xs text-slate-500 flex items-center gap-1">
                       <Stethoscope size={12} /> {product.genericName} •{" "}
                       {product.dosage}
                     </div>
                     {product.isPrescription === BooleanState.TRUE && (
-                      <span className="mt-1 inline-block text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded border border-red-100 font-bold">
+                      <span className="mt-1 inline-block text-[10px] bg-secondary-100 text-secondary-700 px-1.5 py-0.5 rounded border border-secondary-300 font-bold">
                         RX REQUIRED
                       </span>
                     )}
@@ -280,23 +299,25 @@ export default function ProductPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-bold ${product.isActive === BooleanState.TRUE ? "bg-secondary/20 text-secondary" : "bg-slate-100 text-slate-500"}`}
-                    >
-                      {t(product.isActive === BooleanState.TRUE ? (translations.active) : (translations.inactive))}
+                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${product.isActive === BooleanState.TRUE
+                      ? 'bg-secondary-100 text-secondary-700 border-secondary-300'
+                      : 'bg-red-100/50 text-red-600/70 border-red-200/50'
+                      }`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${product.isActive === BooleanState.TRUE ? 'bg-secondary-500' : 'bg-red-300'}`}></div>
+                      {t(product.isActive === BooleanState.TRUE ? translations.active : translations.inactive)}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleOpenEdit(product)}
-                        className="p-2 hover:bg-primary/10 text-primary rounded-lg transition"
+                        className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm"
                       >
                         <Edit size={16} />
                       </button>
                       <button
-                        // onClick={() => handleActiveStatus(product)}
-                        className="p-2 hover:bg-slate-100 text-slate-600 rounded-lg transition"
+                        onClick={() => handleActiveStatus(product)}
+                        className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition shadow-sm"
                       >
                         <Settings2 size={16} />
                       </button>
@@ -320,7 +341,7 @@ export default function ProductPage() {
       }
       <ProductFormModal
         t={t}
-        local={local}
+        local={locale}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSaveProduct}

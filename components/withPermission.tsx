@@ -3,9 +3,9 @@
 
 import React from "react";
 import { useAuth } from "@/app/hooks/useAuth";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Permission } from "@/generated/prisma/enums";
+import { useRouter } from "@/i18n/routing";
 
 export function withPermission<P extends object>(
   WrappedComponent: React.ComponentType<P>,

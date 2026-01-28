@@ -140,5 +140,18 @@
   "actions": "Actions",
   "Info": "{name} info",
   "title": "Title",
-  "preview": "Preview"
+  "preview": "Preview",
+  "service": "Service",
+  "description": "We provide the best health products and knowledge for your better life. Trusted by thousands of customers.",
+  "quickLinks": "Quick Links",
+  "products": "Products",
+  "articles": "Articles",
+  "contactUs": "Contact Us",
+  "newsletter": "Newsletter",
+  "newsletterDesc": "Subscribe to get the latest updates and special offers.",
+  "emailPlaceholder": "Your email address",
+  "subscribe": "Subscribe",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "addressCompany": "123 ຖະໜົນສີຂຽວ, ເມືອງປາກເຊ, ແຂວງຈຳປາສັກ, ສປປ ລາວ"
 }

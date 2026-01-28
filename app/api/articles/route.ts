@@ -22,7 +22,10 @@ export async function GET(request: NextRequest) {
     const title = searchParams.get("title");
     const type = searchParams.get("type");
     const status = searchParams.get("status");
-    const where: any = { status: ArticleStatus.PUBLISHED };
+    const where: any = {};
+    if (!session) {
+      where.status = ArticleStatus.PUBLISHED
+    }
     if (session) {
       if (status) where.status = status;
     }

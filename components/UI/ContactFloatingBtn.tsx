@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MessageCircleQuestion } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import { FB_LINK, WA_LINK } from "@/lib/constant";
 
 // --- Custom Brand Icons (SVGs) ---
 const FacebookIcon = () => (
@@ -22,8 +23,7 @@ export default function ContactFloatingBtn() {
     const t = useTranslations();
     const [isOpen, setIsOpen] = useState(false);
 
-    const FB_LINK = "https://www.facebook.com/cbfpharmalao";
-    const WA_LINK = "https://wa.me/8562098989689";
+
 
     // Mobile Logic: First click opens menu, Second click navigates to /contact
     const handleMainClick = (e: React.MouseEvent) => {
@@ -53,7 +53,7 @@ export default function ContactFloatingBtn() {
                     href={WA_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 pl-4 pr-5 py-2.5 bg-[#25D366] text-white rounded-full shadow-lg shadow-green-500/30 hover:scale-105 transition-all origin-right"
+                    className="flex items-center gap-3 pl-4 pr-5 py-2.5 bg-secondary-500 text-white rounded-full shadow-lg shadow-secondary-500/30 hover:scale-105 transition-all origin-right"
                 >
                     <WhatsAppIcon />
                     <span className="font-bold text-sm">WhatsApp</span>
@@ -74,15 +74,15 @@ export default function ContactFloatingBtn() {
             {/* --- Main Contact Button --- */}
             <div
                 className="relative flex items-center gap-3 pl-4 pr-5 py-3.5 
-                   bg-gradient-to-r from-blue-600 to-indigo-600 text-white 
-                   rounded-full shadow-lg shadow-blue-600/30 
-                   hover:shadow-blue-600/50 hover:scale-105 active:scale-95 
+                   bg-gradient-to-r from-primary-600 to-secondary-600 text-white 
+                   rounded-full shadow-lg shadow-primary-600/30 
+                   hover:shadow-primary-600/50 hover:scale-105 active:scale-95 
                    transition-all duration-300 ease-out z-10"
             >
                 {/* Pulse Animation Layer */}
                 <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-secondary-500"></span>
                 </span>
 
                 {/* Icon */}
@@ -92,7 +92,7 @@ export default function ContactFloatingBtn() {
 
                 {/* Text */}
                 <div className="flex flex-col items-start leading-none">
-                    <span className="text-[10px] font-medium text-blue-100 uppercase tracking-wider opacity-80 mb-0.5">
+                    <span className="text-[10px] font-medium text-secondary-100 uppercase tracking-wider opacity-80 mb-0.5">
                         Support
                     </span>
                     <span className="text-sm font-bold tracking-wide">

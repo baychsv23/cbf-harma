@@ -11,8 +11,8 @@ export default function UnauthorizedPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-6">
       <div className="bg-white shadow-md rounded-2xl p-8 text-center max-w-md w-full">
         <div className="flex justify-center mb-4">
-          <div className="bg-red-100 p-4 rounded-full">
-            <ShieldAlert className="h-10 w-10 text-red-500" />
+          <div className="bg-secondary-100 p-4 rounded-full">
+            <ShieldAlert className="h-10 w-10 text-secondary-600" />
           </div>
         </div>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">
@@ -32,7 +32,7 @@ export default function UnauthorizedPage() {
           </button>
           <button
             onClick={() => router.push("/")}
-            className="w-full sm:w-auto px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-md font-medium transition"
+            className="w-full sm:w-auto px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-md font-medium transition"
           >
             Go to Home
           </button>

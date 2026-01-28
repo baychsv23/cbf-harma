@@ -1,3 +1,4 @@
+// api/articles/slug/[slug]/countView
 import { redis } from '@/lib/redis' // ไฟล์ที่เราสร้างไว้ก่อนหน้านี้
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'

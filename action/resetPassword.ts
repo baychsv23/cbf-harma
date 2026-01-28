@@ -11,6 +11,7 @@ export async function resetPassword(id: string, newPassword: string) {
   return handleAction(
     async () => {
       const session = await requirePermission(Permission.USER_UPDATE);
+      if (!session) throw new Error(translations.forbidden)
       const isAdmin = session.user.role === Role.ADMIN;
       if (!isAdmin) throw new Error(translations.forbidden);
       const hashed = await bcrypt.hash(newPassword, 10);

@@ -85,8 +85,6 @@ export default function AnnouncementPage() {
         }
     };
 
-
-
     const handleFilter = () => {
         applyFilters({ type: filterType });
     };
@@ -95,6 +93,13 @@ export default function AnnouncementPage() {
         setFilterType("");
         clearFilters();
     };
+    const bannerCount =
+        announcements.filter(item => item.type === ImageType.BANNER).length;
+
+    const announcementCount =
+        announcements.filter(item => item.type === ImageType.ANNOUNCEMENT).length;
+    const shouldHideButton =
+        bannerCount >= 5 && announcementCount >= 1;
 
     return (
         <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
@@ -104,10 +109,10 @@ export default function AnnouncementPage() {
                     <Megaphone className="text-accent" />
                     {t(translations.Management, { name: t(translations.announcement) })}
                 </h1>
-                {hasPermission(Permission.ANNOUNCEMENT_CREATE) && ( // Ensure you have this permission or similar
+                {hasPermission(Permission.ANNOUNCEMENT_CREATE) && !shouldHideButton && ( // Ensure you have this permission or similar
                     <button
                         onClick={handleOpenCreate}
-                        className="bg-accent text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-accent/90 transition shadow-lg shadow-accent/20"
+                        className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
                     >
                         <Plus size={18} />
                         {t(translations.Create, { name: t(translations.announcement) })}
@@ -135,7 +140,7 @@ export default function AnnouncementPage() {
                             className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                         >
                             <option value="">
-                                {t(translations.All, { name: t(translations.announcement) })}
+                                {t(translations.All, { name: "" })}
                             </option>
                             {Object.values(ImageType).map((type) => (
                                 <option key={type} value={type}>
@@ -199,6 +204,7 @@ export default function AnnouncementPage() {
                                                     src={item.image}
                                                     alt="Banner"
                                                     fill
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                     className="object-cover"
                                                 />
                                             ) : (
@@ -227,7 +233,7 @@ export default function AnnouncementPage() {
                                                     text-xs font-semibold
                                                     transition-colors
                                                     ${item.isPublic === BooleanState.TRUE
-                                                    ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                                                    ? "bg-secondary-100 text-secondary-700 hover:bg-secondary-200"
                                                     : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                                                 }
                                         `}
@@ -250,13 +256,13 @@ export default function AnnouncementPage() {
                                         <div className="flex justify-end gap-2">
                                             <button
                                                 onClick={() => handleOpenEdit(item)}
-                                                className="p-2 hover:bg-primary/10 text-primary rounded-lg transition"
+                                                className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm"
                                             >
                                                 <Edit size={16} />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(item.id)}
-                                                className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition"
+                                                className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition shadow-sm"
                                             >
                                                 <Trash2 size={16} />
                                             </button>

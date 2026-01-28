@@ -79,7 +79,7 @@ export default function SymptomPage() {
           <style>
              .field-label { font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.5rem; display: block; }
              .swal2-input-custom { width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.9rem; transition: all 0.2s; background: white; }
-             .swal2-input-custom:focus { border-color: #10b981; ring: 3px rgba(16, 185, 129, 0.1); outline: none; }
+             .swal2-input-custom:focus { border-color: var(--color-secondary-500); ring: 3px rgba(108, 191, 111, 0.1); outline: none; }
           </style>
 
           <div class="flex flex-col gap-4">
@@ -100,7 +100,7 @@ export default function SymptomPage() {
         ? t(translations.update)
         : t(translations.create),
       cancelButtonText: t(translations.cancel),
-      confirmButtonColor: "#10b981", // สีเขียว Emerald
+      confirmButtonColor: "var(--color-secondary-500)", // Secondary color
       reverseButtons: false, // ปุ่มยืนยันอยู่ซ้าย (ตามที่คุณขอใน Product)
       preConfirm: () => {
         const getVal = (id: string) =>
@@ -267,7 +267,7 @@ export default function SymptomPage() {
                         {hasPermission(Permission.SYMPTOM_UPDATE) && (
                           <button
                             onClick={() => showSymptomForm(symptom)}
-                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition shadow-sm"
+                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm"
                             title={t(translations.edit)}
                           >
                             <Edit size={16} />

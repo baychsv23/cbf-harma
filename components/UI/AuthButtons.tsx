@@ -32,7 +32,7 @@ export default function AuthButtons() {
           className="flex items-center gap-1.5 md:gap-2 px-2 md:px-4 py-1 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
         >
           {/* ปรับขนาด Avatar เล็กลงนิดหน่อยบนมือถือ */}
-          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs md:text-sm">
+          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-600 flex items-center justify-center text-white font-semibold text-xs md:text-sm">
             {user?.userName?.charAt(0).toUpperCase() || "U"}
           </div>
           {/* ซ่อนชื่อ User บนมือถือ (แสดงใน Dropdown แทน) */}
@@ -85,7 +85,7 @@ export default function AuthButtons() {
       {/* Sign In - ซ่อน text บนจอมือถือเล็กมากๆ (แคบกว่า 400px) */}
       <Link
         href="/auth/signin"
-        className="flex items-center gap-2 px-2.5 py-2 md:px-4 md:py-2 text-sm font-medium text-white bg-linear-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-sm"
+        className="flex items-center gap-2 px-2.5 py-2 md:px-4 md:py-2 text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg hover:from-primary-700 hover:to-secondary-700 transition-all shadow-sm"
       >
         <LogIn className="w-4 h-4" />
         <span className="hidden sm:inline">{t(translations.signin)}</span>

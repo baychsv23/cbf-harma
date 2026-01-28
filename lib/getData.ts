@@ -1,3 +1,4 @@
+import { ArticleStatus } from "@/generated/prisma/enums";
 import { database } from "@/lib/prisma";
 
 
@@ -72,3 +73,26 @@ export async function getProducts({
 
     return { data, total };
 }
+
+export async function getArticleBySlug(slug: string) {
+    return await database.article.findUnique({
+        where: {
+            slug: slug,
+            status: ArticleStatus.PUBLISHED // ดึงเฉพาะที่ Publish แล้ว
+        },
+        select: {
+            id: true,
+            slug: true,
+            titleEN: true,
+            titleLA: true,
+            type: true,
+            contentEN: true,
+            contentLA: true,
+            coverImage: true,
+            createdAt: true,
+            views: true,
+            products: { select: { id: true, nameEN: true, nameLA: true, productImage: true } }, // ดึงสินค้าที่เกี่ยวข้อง
+        },
+    });
+}
+

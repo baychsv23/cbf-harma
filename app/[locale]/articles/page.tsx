@@ -131,7 +131,7 @@ export default function ArticlePage() {
         {hasPermission(Permission.ARTICLE_CREATE) && (
           <button
             onClick={handleOpenCreate}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
           >
             <Plus size={20} strokeWidth={2.5} />
             {t(translations.Create, { name: t(translations.article) })}
@@ -199,7 +199,7 @@ export default function ArticlePage() {
             </button>
             <button
               onClick={handleApplyFilters}
-              className="flex items-center gap-2 px-6 py-2.5 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-900 transition-all shadow-md"
+              className="flex items-center gap-2 px-6 py-2.5 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-all shadow-md"
             >
               <Search size={18} />
 
@@ -248,7 +248,7 @@ export default function ArticlePage() {
                 (articles as any[]).map((article) => (
                   <tr
                     key={article.id}
-                    className="hover:bg-indigo-50/30 transition-colors group"
+                    className="hover:bg-primary-50/30 transition-colors group"
                   >
                     <td className="px-6 py-4">{article.stt}</td>
                     <td className="px-6 py-4">
@@ -285,7 +285,7 @@ export default function ArticlePage() {
                     <td className="px-6 py-4">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-bold border ${article.status === ArticleStatus.PUBLISHED
-                          ? "bg-secondary/10 text-secondary border-secondary/30"
+                          ? "bg-secondary-100/80 text-secondary-700 border-secondary-300"
                           : "bg-slate-100 text-slate-500 border-slate-200"
                           }`}
                       >

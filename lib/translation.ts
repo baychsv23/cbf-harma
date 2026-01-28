@@ -122,5 +122,11 @@ export const translations = {
   Info: "Info",
   title: "title",
   preview: "preview",
-  loginSuccessful: 'loginSuccessful'
+  loginSuccessful: 'loginSuccessful',
+  service: "service",
+
+  news: "NEWS",
+  healthKnowLedge: "HEALTH_KNOWLEDGE",
+  activity: "ACTIVITY"
+
 } as const;

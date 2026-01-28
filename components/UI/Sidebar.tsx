@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ChevronDown, LayoutDashboard, FileText, Menu, X } from "lucide-react";
 import { translations } from "@/lib/translation";
@@ -15,10 +14,13 @@ import {
   PERMISSION_MENUS,
   DROPDOWN_GROUPS,
   type MenuItem,
+  COMMON_PUBLIC,
 } from "@/lib/menu-config";
 import { Role } from "@/generated/prisma/enums";
+import { usePathname } from "@/i18n/routing";
+import Image from "next/image";
 
-const COMMON_PUBLIC = [{ title: translations.home, href: "/" }];
+
 
 function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -105,7 +107,6 @@ function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
 export default function Sidebar() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
-  const pathWithoutLocale = pathname.replace(/^\/(en|lo)/, "") || "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   if (status === "loading") return null;
@@ -178,7 +179,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-b border-slate-200 z-50 flex items-center justify-between px-4 md:px-6 shadow-md">
+      <div className="fixed top-0 left-0 right-0 h-16 bg-primary-200 border-b border-slate-200 z-50 flex items-center justify-between px-4 md:px-6 shadow-md">
         <div className="flex items-center gap-3">
           {/* Hamburger Menu Button - Mobile Only */}
           <button
@@ -192,13 +193,19 @@ export default function Sidebar() {
               <Menu className="w-6 h-6 text-slate-700" />
             )}
           </button>
-
-          <div className="w-9 h-9 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center shadow-lg shadow-purple-300/50">
-            <LayoutDashboard className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-2">
+            {/* ใส่ Logo ของคุณตรงนี้ */}
+            <div className="w-10 h-10 relative bg-white rounded-lg flex items-center justify-center">
+              <Image
+                src="/images/logo.svg"
+                alt="About CBF"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+            <span className="text-2xl font-bold text-green-900 text-accent">CBF Pharma Co., Ltd</span>
           </div>
-          <h1 className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-700 via-purple-700 to-pink-700 bg-clip-text text-transparent">
-            CBF Pharma Co., Ltd
-          </h1>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           <AuthButtons />
@@ -218,7 +225,7 @@ export default function Sidebar() {
       <aside
         className={`
                 fixed top-16 left-0 bottom-0 w-64 
-                bg-gradient-to-b from-slate-50 via-blue-50/30 to-purple-50/20 
+                bg-gradient-to-b from-slate-50 via-primary-50/30 to-secondary-50/20 
                 border-r border-slate-200 z-40 overflow-hidden flex flex-col shadow-lg
                 transition-transform duration-300 ease-in-out
                 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
@@ -228,7 +235,7 @@ export default function Sidebar() {
         <div className="flex-1 overflow-y-auto p-3 space-y-1">
           {menuItems.map((item, index) => (
             <div key={index} onClick={() => setIsMobileMenuOpen(false)}>
-              <SidebarItem item={item} pathname={pathWithoutLocale} />
+              <SidebarItem item={item} pathname={pathname} />
             </div>
           ))}
         </div>

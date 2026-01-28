@@ -71,7 +71,7 @@ export default function BannerSection() {
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-6 group">
-      <div className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-blue-900/20 border border-white/60 transform transition-all hover:scale-[1.005] duration-500">
+      <div className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-primary-900/20 border border-white/60 transform transition-all hover:scale-[1.005] duration-500">
         {!isLoading && banners.length > 0 && (
           <Swiper
             key={banners.length}
@@ -152,7 +152,7 @@ export default function BannerSection() {
                       </p>
 
                       <div className="pt-1 opacity-0 translate-y-8 transition-all duration-700 delay-700 slide-content-btn">
-                        <button className="inline-flex items-center gap-2 px-5 py-2 bg-white/20 hover:bg-white text-white hover:text-primary rounded-full backdrop-blur-md border border-white/30 transition-all font-semibold text-xs md:text-sm group/btn">
+                        <button className="inline-flex items-center gap-2 px-5 py-2 bg-white/20 hover:bg-white text-white hover:text-primary-600 rounded-full backdrop-blur-md border border-white/30 transition-all font-semibold text-xs md:text-sm group/btn">
                           Explore More
                           <ArrowRight
                             size={16}

@@ -6,6 +6,7 @@ import {
   Stethoscope,
   FileText,
   Pill,
+  Newspaper,
 } from "lucide-react";
 import { translations } from "./translation";
 import { Permission } from "@/generated/prisma/enums";
@@ -18,6 +19,7 @@ export const ICON_MAP: Record<string, any> = {
   product: Pill, // Changed to Pill for pharma
   symptom: Stethoscope,
   article: FileText,
+  news: Newspaper
 };
 
 // Color themes for different menu categories
@@ -26,35 +28,34 @@ export const COLOR_THEMES: Record<
   { gradient: string; hover: string; shadow: string; icon: string }
 > = {
   symptom: {
-    gradient: "from-purple-600 to-purple-700",
-    hover: "from-purple-50 to-purple-100 text-purple-700",
-    shadow: "shadow-purple-200",
-    icon: "group-hover:text-purple-600",
+    gradient: "from-primary-600 to-primary-700",
+    hover: "from-primary-50 to-primary-100 text-primary-700",
+    shadow: "shadow-primary-200",
+    icon: "group-hover:text-primary-600",
   },
   product: {
-    // Added for your new Product Page
-    gradient: "from-blue-600 to-blue-700",
-    hover: "from-blue-50 to-blue-100 text-blue-700",
-    shadow: "shadow-blue-200",
-    icon: "group-hover:text-blue-600",
+    gradient: "from-secondary-500 to-secondary-600",
+    hover: "from-secondary-50 to-secondary-100 text-secondary-700",
+    shadow: "shadow-secondary-200",
+    icon: "group-hover:text-secondary-600",
   },
   article: {
-    gradient: "from-emerald-600 to-emerald-700",
-    hover: "from-emerald-50 to-emerald-100 text-emerald-700",
-    shadow: "shadow-emerald-200",
-    icon: "group-hover:text-emerald-600",
+    gradient: "from-primary-500 to-secondary-600",
+    hover: "from-secondary-50 to-secondary-100 text-primary-700",
+    shadow: "shadow-secondary-200",
+    icon: "group-hover:text-secondary-600",
   },
   account: {
-    gradient: "from-indigo-600 to-indigo-700",
-    hover: "from-indigo-50 to-indigo-100 text-indigo-700",
-    shadow: "shadow-indigo-200",
-    icon: "group-hover:text-indigo-600",
+    gradient: "from-primary-700 to-primary-800",
+    hover: "from-primary-50 to-primary-100 text-primary-800",
+    shadow: "shadow-primary-200",
+    icon: "group-hover:text-primary-700",
   },
   default: {
-    gradient: "from-slate-600 to-slate-700",
-    hover: "from-slate-50 to-slate-100 text-slate-700",
-    shadow: "shadow-slate-200",
-    icon: "group-hover:text-slate-600",
+    gradient: "from-primary-600 to-primary-700",
+    hover: "from-primary-50 to-primary-100 text-primary-700",
+    shadow: "shadow-primary-200",
+    icon: "group-hover:text-primary-600",
   },
 };
 // Menu item type definition
@@ -67,6 +68,18 @@ export type MenuItem = {
 // Common public menu items
 export const COMMON_PUBLIC: MenuItem[] = [
   { title: translations.home, href: "/" },
+  {
+    title: translations.article,
+    children:
+      [{ title: translations.news, href: "/cbf/articles/news" },
+      { title: translations.healthKnowLedge, href: "/cbf/articles/health-knowledge" },
+      { title: translations.activity, href: "/cbf/articles/activities" }],
+  },
+  { title: translations.product, href: "/cbf/products" },
+  { title: translations.service, href: "/cbf/service" },
+
+
+  { title: translations.about, href: "/cbf/about" },
 ];
 
 // Role-based menu configurations
@@ -119,3 +132,5 @@ export const DROPDOWN_GROUPS = {
   //   ],
   // },
 };
+
+

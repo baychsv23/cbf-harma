@@ -141,7 +141,7 @@ export default function CreateAccountPage() {
               <div className="bg-white border border-gray-200 rounded-[2rem] p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-gray-900 mb-5 pb-2 border-b border-gray-50 flex items-center gap-2">
                   <span className="w-2 h-6 bg-amber-400 rounded-full"></span>
-                  Access & Plan
+                  {t(translations.role)}
                 </h3>
                 <div className="space-y-4">
                   <div>
@@ -217,7 +217,7 @@ export default function CreateAccountPage() {
                                       type="checkbox"
                                       checked={isPermissionSelected(permission as Permission)}
                                       onChange={() => togglePermission(permission as Permission)}
-                                      className="w-5 h-5 text-indigo-500 border-gray-300 rounded-lg focus:ring-indigo-500 transition-all cursor-pointer"
+                                      className="w-5 h-5 text-primary-600 border-gray-300 rounded-lg focus:ring-primary-600 transition-all cursor-pointer"
                                     />
                                   ) : (
                                     <div className="flex justify-center items-center">
@@ -237,7 +237,7 @@ export default function CreateAccountPage() {
                 <div className="p-6 mt-auto bg-gray-50 border-t border-gray-100 flex justify-end">
                   <button
                     type="submit"
-                    className="px-10 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2"
+                    className="px-10 py-3.5 bg-primary-600 text-white font-bold rounded-2xl shadow-lg shadow-primary-200 hover:bg-primary-700 active:scale-95 transition-all flex items-center gap-2"
                   >
                     {t(translations.create)}
                   </button>

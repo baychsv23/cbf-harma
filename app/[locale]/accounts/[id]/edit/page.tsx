@@ -182,20 +182,7 @@ export default function EditAccountPage({ params }: any) {
                       className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
                     />
                   </div>
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">{t(translations.role)}</label>
-                    <select
-                      name="role"
-                      value={formUser.role}
-                      onChange={handleChange}
-                      className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none cursor-pointer"
-                    >
-                      <option value="" disabled>-- {t(translations.Select, { name: t(translations.role) })} --</option>
-                      {Object.values(Role).map((role) => (
-                        <option key={role} value={role}>{t(role)}</option>
-                      ))}
-                    </select>
-                  </div>
+
                 </div>
               </div>
 
@@ -203,14 +190,22 @@ export default function EditAccountPage({ params }: any) {
               <div className="bg-white border border-gray-200 rounded-[2rem] p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-gray-900 mb-5 pb-2 border-b border-gray-50 flex items-center gap-2">
                   <span className="w-2 h-6 bg-amber-400 rounded-full"></span>
-                  Subscription Status
+                  {t(translations.role)}
                 </h3>
-                <div className="space-y-5">
-                  <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100">
-                    <p className="text-xs font-bold text-amber-700 uppercase">Current Expiry</p>
-                    <p className="text-lg font-black text-amber-900">
-                      {formUser.expiryAt ? new Date(formUser.expiryAt).toLocaleDateString() : "-"}
-                    </p>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">{t(translations.role)} *</label>
+                    <select
+                      name="role"
+                      value={formUser.role}
+                      required
+                      className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none appearance-none cursor-pointer"
+                    >
+                      <option value="" disabled>-- {t(translations.Select, { name: t(translations.role) })} --</option>
+                      {Object.values(Role).map((role) => (
+                        <option key={role} value={role}>{t(role)}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
