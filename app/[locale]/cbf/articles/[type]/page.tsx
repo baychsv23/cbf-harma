@@ -2,7 +2,8 @@
 import ArticleFeed from "@/components/UI/Card/ArticleFeed";
 import { ArticleStatus, ArticleType } from "@/generated/prisma/enums";
 import { getArticles } from "@/lib/getData";
-import { Article } from "@/lib/interface";
+import { ArticleCBF } from "@/lib/interface";
+import { selectDataOfArticle } from "@/lib/selectData";
 import { Metadata } from "next";
 
 // Helper stays the same
@@ -30,7 +31,7 @@ export async function generateMetadata({
   return { title: `${title} | CBF` };
 }
 
-export default async function ArticlesPage({
+export default async function ArticlesCBFWithTypePage({
   params,
 }: {
   params: Promise<{ type?: string }>;
@@ -48,12 +49,13 @@ export default async function ArticlesPage({
     where,
     skip: 0,
     limit: LIMIT,
+    select: selectDataOfArticle
   });
 
   return (
     <main className="min-h-screen bg-gray-50">
       <ArticleFeed
-        initialArticles={data as unknown as Article[]}
+        initialArticles={data as ArticleCBF[]}
         totalArticles={total} // Pass total count to calculate hasMore
         currentType={typeEnum}
         limit={LIMIT}

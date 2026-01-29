@@ -1,16 +1,14 @@
 "use client";
 
-import { isEnglish } from "@/lib/constant";
 import { formatDate } from "@/lib/formateData";
-import { Article } from "@/lib/interface";
+import { ArticleCBF } from "@/lib/interface";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { ArticleType } from "@/generated/prisma/enums";
+import { isEnglish } from "@/lib/utils/locale";
 
-
-
-export default function ArticleCard({ article }: { article: Article }) {
+export default function ArticleCard({ article }: { article: ArticleCBF }) {
   const t = useTranslations();
   const local = useLocale();
 
@@ -24,7 +22,7 @@ export default function ArticleCard({ article }: { article: Article }) {
       case ArticleType.HEALTH_KNOWLEDGE:
         return "health-knowledge";
       default:
-        return type.toLowerCase().replace(/_/g, "-");
+        return "news";
     }
   };
 
@@ -44,6 +42,7 @@ export default function ArticleCard({ article }: { article: Article }) {
               src={article.coverImage}
               alt={title || "Article Image"}
               fill
+              loading="eager"
               className="object-cover group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               priority={false}

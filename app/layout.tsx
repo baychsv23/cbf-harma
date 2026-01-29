@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/images/logo.svg",
     shortcut: "/images/logo.png",
-    apple: "/images/icon.png",
+    apple: "/images/logo.png",
   },
 };
 export default function RootLayout({
@@ -18,7 +18,8 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}</body>
     </html>
   );
 }

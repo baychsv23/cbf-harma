@@ -42,6 +42,7 @@ export default function AboutPage() {
                   alt="About CBF"
                   fill
                   className="object-contain"
+                  loading="eager"
                   priority
                   sizes="(max-width: 768px) 90vw, (max-width: 1024px) 50vw, 50vw"
                 />

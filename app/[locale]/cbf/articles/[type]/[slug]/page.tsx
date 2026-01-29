@@ -1,14 +1,17 @@
-import { getArticleBySlug } from "@/lib/getData";
-import { isEnglish } from "@/lib/constant";
+
 import { formatDate } from "@/lib/formateData";
 import { Link } from "@/i18n/routing";
-import { useLocale } from "next-intl";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Calendar, User, ArrowLeft, Tag, Share2 } from "lucide-react";
+import { Calendar, ArrowLeft, Tag } from "lucide-react";
 import { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import ArticleViewCounter from "@/components/ArticleViewCounter";
+import { ArticleStatus } from "@/generated/prisma/enums";
+import { getArticleBySlug } from "@/lib/getDataSlug";
+import { isEnglish } from "@/lib/utils/locale";
+import { ArticleCBF } from "@/lib/interface";
+import { selectDataOfArticle } from "@/lib/selectData";
 
 // 1. Generate Metadata for SEO (Facebook/Google Show this)
 export async function generateMetadata({
@@ -17,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug, { where: { status: ArticleStatus.PUBLISHED } });
 
   if (!article) return { title: "Article Not Found" };
 
@@ -30,7 +33,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function ArticleSinglePage({
+export default async function ArticleSingleCBFPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -40,7 +43,9 @@ export default async function ArticleSinglePage({
   const locale = await getLocale();
 
   // 2. Fetch Data directly from DB
-  const article = await getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug, {
+    where: { status: ArticleStatus.PUBLISHED }, select: selectDataOfArticle
+  }) as ArticleCBF;
 
   // 3. Handle 404
   if (!article) {
@@ -53,7 +58,7 @@ export default async function ArticleSinglePage({
   return (
     <main className="min-h-screen bg-gray-50 py-10">
       <div className="container mx-auto px-4 max-w-5xl">
-        <ArticleViewCounter slug={slug} />
+        {/* <ArticleViewCounter slug={slug} /> */}
         {/* Back Button */}
         <Link
           href="/cbf/articles"
@@ -71,6 +76,7 @@ export default async function ArticleSinglePage({
                 src={article.coverImage}
                 alt={title}
                 fill
+                loading="eager"
                 className="object-cover"
                 priority
               />
@@ -128,9 +134,10 @@ export default async function ArticleSinglePage({
                       <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0 relative overflow-hidden">
                         {p.productImage ? (
                           <Image
-                            src={p.productImage}
+                            src={p.productImage || "default.png"}
                             alt={title}
                             fill
+                            loading="eager"
                             className="object-cover"
                             priority
                           />

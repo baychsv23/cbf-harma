@@ -24,6 +24,7 @@ import { Link } from "@/i18n/routing";
 import { BooleanState, Permission, Role } from "@/generated/prisma/enums";
 import { activeAccount } from "@/action/accounts";
 import { resetPassword } from "@/action/resetPassword";
+import { FilterActions } from "@/components/UI/FilterActions";
 
 export default function AccountsPage() {
   const t = useTranslations();
@@ -168,20 +169,10 @@ export default function AccountsPage() {
             />
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={handleClearFilters}
-              className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
-            >
-              <RefreshCcw size={18} />
-            </button>
-            <button
-              onClick={handleApplyFilters}
-              className="flex items-center gap-2 px-6 py-2.5 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-900 transition-all shadow-md"
-            >
-              <Search size={18} />
-            </button>
-          </div>
+          <FilterActions
+            onClear={handleClearFilters}
+            onApply={handleApplyFilters}
+          />
         </div>
       </div>
 

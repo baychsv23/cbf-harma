@@ -198,7 +198,7 @@ export default function EditAccountPage({ params }: any) {
                     <select
                       name="role"
                       value={formUser.role}
-                      required
+                      onChange={handleChange}
                       className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none appearance-none cursor-pointer"
                     >
                       <option value="" disabled>-- {t(translations.Select, { name: t(translations.role) })} --</option>

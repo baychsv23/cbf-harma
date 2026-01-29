@@ -7,6 +7,7 @@ import { translations } from "@/lib/translation";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
+import { getProductById } from "@/lib/getDataById";
 
 export async function PUT(
     req: Request,
@@ -24,10 +25,7 @@ export async function PUT(
             });
             return { ...updatedStatus, message: translations.updatedSuccess };
         }
-        const existingProduct = await database.product.findUnique({
-            where: { id },
-            select: { productImage: true, productImagePublicId: true },
-        });
+        const existingProduct = await getProductById(id, { select: { productImage: true, productImagePublicId: true } })
 
         if (!existingProduct) {
             throw new ApiError(translations.notFound, 404);
@@ -79,10 +77,7 @@ export async function DELETE(
     const { id } = await params;
 
     await requirePermission(Permission.PRODUCT_DELETE);
-    const existingProduct = await database.product.findUnique({
-        where: { id },
-        select: { productImagePublicId: true }
-    });
+    const existingProduct = await getProductById(id, { select: { productImage: true, productImagePublicId: true } })
     if (!existingProduct) {
         throw new ApiError(translations.notFound, 404);
     }

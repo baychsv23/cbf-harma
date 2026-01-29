@@ -3,16 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Search, Filter, X, Loader2 } from "lucide-react";
-import { Article } from "@/lib/interface";
-import { isEnglish } from "@/lib/constant";
+import { ArticleCBF } from "@/lib/interface";
 import ArticleCard from "./ArticleCard";
-import { ArticleType } from "@/generated/prisma/enums";
+import { ArticleStatus, ArticleType } from "@/generated/prisma/enums";
 import { translations } from "@/lib/translation";
 import { Link } from "@/i18n/routing";
 import axios from "axios"; // Ensure axios is installed
 
 interface ArticleFeedProps {
-    initialArticles: Article[];
+    initialArticles: ArticleCBF[];
     totalArticles: number; // New Prop
     currentType: string;
     limit: number; // New Prop
@@ -23,10 +22,9 @@ export default function ArticleFeed({ initialArticles, totalArticles, currentTyp
     const local = useLocale();
 
     // State
-    const [articles, setArticles] = useState<Article[]>(initialArticles);
+    const [articles, setArticles] = useState<ArticleCBF[]>(initialArticles);
     const [page, setPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
-    const [loading, setLoading] = useState(false);
 
     // Calculate if we have more data based on current list length vs total
     // Note: This simple calculation works best for the initial load. 
@@ -49,37 +47,31 @@ export default function ArticleFeed({ initialArticles, totalArticles, currentTyp
 
     // ✅ Function to Fetch Articles (API)
     const fetchArticles = async (pageParam: number, searchParam: string, shouldAppend: boolean) => {
-        setLoading(true);
-        try {
-            const params: any = {
-                page: pageParam,
-                limit: limit,
-                status: "PUBLISHED"
-            };
 
-            if (currentType !== "ALL") params.type = currentType;
-            if (searchParam) params.title = searchParam;
+        const params: any = {
+            page: pageParam,
+            limit: limit,
+        };
 
-            const response = await axios.get("/api/articles", { params }); // Adjust path if needed
+        if (currentType !== "ALL") params.type = currentType;
+        if (searchParam) params.title = searchParam;
 
-            if (response.data.success) {
-                const newArticles = response.data.data;
-                const pagination = response.data.pagination;
+        const response = await axios.get("/api/articles/list", { params }); // Adjust path if needed
 
-                if (shouldAppend) {
-                    setArticles((prev) => [...prev, ...newArticles]);
-                } else {
-                    setArticles(newArticles);
-                }
+        if (response.data.success) {
+            const newArticles = response.data.data;
+            const pagination = response.data.pagination;
 
-                // Update hasMore based on API response
-                setHasMore(pagination.hasNext);
+            if (shouldAppend) {
+                setArticles((prev) => [...prev, ...newArticles]);
+            } else {
+                setArticles(newArticles);
             }
-        } catch (error) {
-            console.error("Failed to fetch articles", error);
-        } finally {
-            setLoading(false);
+
+            // Update hasMore based on API response
+            setHasMore(pagination.hasNext);
         }
+
     };
 
     // ✅ Handle Load More
@@ -162,8 +154,6 @@ export default function ArticleFeed({ initialArticles, totalArticles, currentTyp
                         {t(translations.All, { name: "" })}
                     </Link>
                     {Object.entries(ArticleType).map(([key, value]) => {
-                        // console.log(currentType)
-                        // console.log(value)
                         const isActive = currentType === value;
 
                         return (
@@ -197,19 +187,10 @@ export default function ArticleFeed({ initialArticles, totalArticles, currentTyp
                             <div className="mt-12 text-center">
                                 <button
                                     onClick={handleLoadMore}
-                                    disabled={loading}
+
                                     className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {loading ? (
-                                        <>
-                                            <Loader2 className="h-4 w-4 animate-spin" />
-                                            Loading...
-                                        </>
-                                    ) : (
-                                        <>
-                                            Load More Articles
-                                        </>
-                                    )}
+                                    More Articles
                                 </button>
                             </div>
                         )}

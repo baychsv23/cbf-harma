@@ -7,6 +7,7 @@ import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
 import { NextRequest, NextResponse } from "next/server";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
+import { getArticleById } from "@/lib/getDataById";
 
 export async function PUT(
     request: NextRequest,
@@ -18,7 +19,7 @@ export async function PUT(
         // 1. ตรวจสอบสิทธิ์ (User ต้องมีสิทธิ์แก้ไขบทความ)
         const session = await requirePermission(Permission.ARTICLE_UPDATE);
         if (!session) throw new ApiError(translations.forbidden, 403)
-        const updatedById = session.user.id;
+
 
         // 2. รับข้อมูลจาก Body
         const body = await request.json();
@@ -29,10 +30,8 @@ export async function PUT(
         }
 
         // ตรวจสอบว่ามีบทความนี้อยู่จริงไหม
-        const existingArticle = await database.article.findUnique({
-            where: { id },
-            select: { publishedAt: true, coverImage: true, coverImagePublicId: true }
-        });
+        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true } })
+
         if (!existingArticle) {
             throw new ApiError(translations.notFound, 404);
         }
@@ -73,7 +72,7 @@ export async function PUT(
                 status: body.status,
 
                 publishedAt: newPublishedAt,
-                updatedById,
+                updatedById: session.user.id,
                 products: {
                     set: productIds?.map((pid: string) => ({ id: pid })) || [],
                 },
@@ -93,10 +92,8 @@ export async function DELETE(
     const { id } = await params;
     const session = await requirePermission(Permission.ARTICLE_DELETE);
     if (!session) throw new ApiError(translations.forbidden, 403)
-    const existingArticle = await database.article.findUnique({
-        where: { id },
-        select: { coverImagePublicId: true }
-    });
+    const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true } })
+
     if (!existingArticle) {
         throw new ApiError(translations.notFound, 404);
     }

@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { ShieldAlert } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function UnauthorizedPage() {
   const router = useRouter();
-
+  const t = useTranslations("Unauthorized")
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-6">
       <div className="bg-white shadow-md rounded-2xl p-8 text-center max-w-md w-full">
@@ -16,11 +16,10 @@ export default function UnauthorizedPage() {
           </div>
         </div>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">
-          Unauthorized Access
+          {t("title")}
         </h1>
         <p className="text-gray-600 mb-6">
-          You don’t have permission to view this page. Please contact your
-          administrator if you think this is a mistake.
+          {t("description")}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -28,18 +27,18 @@ export default function UnauthorizedPage() {
             onClick={() => router.back()}
             className="w-full sm:w-auto px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md font-medium transition"
           >
-            Go Back
+            {t("goBack")}
           </button>
           <button
             onClick={() => router.push("/")}
             className="w-full sm:w-auto px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-md font-medium transition"
           >
-            Go to Home
+            {t("goHome")}
           </button>
         </div>
       </div>
       <p className="mt-6 text-sm text-gray-500">
-        © {new Date().getFullYear()} Your Customer. All rights reserved.
+        {t("footer", { year: new Date().getFullYear() })}
       </p>
     </div>
   );

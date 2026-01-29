@@ -17,7 +17,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { translations } from "@/lib/translation";
 import { Permission } from "@/generated/prisma/enums"; // อย่าลืมเพิ่ม Permission.SYMPTOM_MANAGE ใน Enum
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
-import { isEnglish } from "@/lib/constant";
+import { isEnglish } from "@/lib/utils/locale";
+import { FilterActions } from "@/components/UI/FilterActions";
 
 interface Symptom {
   id: string;
@@ -119,22 +120,14 @@ export default function SymptomPage() {
 
     if (formData) {
       showProcessing();
-      try {
-        const response = symptom
-          ? await api.put(`/api/symptoms/${symptom.id}`, formData)
-          : await api.post("/api/symptoms", formData);
-
-        closeProcessing();
-        if (response.data.success) {
-          reloadData();
-          showSuccess(t(response.data.message));
-        } else {
-          showError(t(response.data.message));
-        }
-      } catch (error: any) {
-        closeProcessing();
-        showError(t(error?.response?.data?.message || translations.unknown));
+      if (symptom) {
+        await api.put(`/api/symptoms/${symptom.id}`, formData)
       }
+      else {
+        await api.post("/api/symptoms", formData);
+      }
+      reloadData()
+
     }
   };
 
@@ -195,21 +188,10 @@ export default function SymptomPage() {
             />
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={handleClearFilters}
-              className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
-            >
-              <RefreshCcw size={18} />
-            </button>
-            <button
-              onClick={handleApplyFilters}
-              className="flex items-center gap-2 px-6 py-2.5 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-900 transition-all shadow-md"
-            >
-              <Search size={18} />
-
-            </button>
-          </div>
+          <FilterActions
+            onClear={handleClearFilters}
+            onApply={handleApplyFilters}
+          />
         </div>
       </div>
 

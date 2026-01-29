@@ -37,6 +37,7 @@ export default function Footer() {
                                     src="/images/logo.svg"
                                     alt="About CBF"
                                     fill
+                                    loading="eager"
                                     className="object-contain"
                                     priority
                                 />

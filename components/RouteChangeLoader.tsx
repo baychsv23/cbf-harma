@@ -36,8 +36,8 @@ export default function RouteChangeLoader() {
           duration-300
           ease-out
           bg-gradient-to-r
-          from-pink-500 via-purple-500 to-indigo-500
-          shadow-[0_0_16px_rgba(168,85,247,0.9)]
+          from-primary-400 via-primary-500 to-primary-600
+          shadow-[0_0_16px_rgba(21,79,48,0.9)]
         "
         style={{ width: `${progress}%` }}
       />

@@ -23,6 +23,7 @@ import Image from "next/image";
 import { translations } from "@/lib/translation";
 import AnnouncementFormModal from "@/components/Form/AnnouncementFormModal";
 import { formatDate } from "@/lib/formateData";
+import { FilterActions } from "@/components/UI/FilterActions";
 
 export default function AnnouncementPage() {
     const t = useTranslations();
@@ -85,11 +86,11 @@ export default function AnnouncementPage() {
         }
     };
 
-    const handleFilter = () => {
+    const handleApplyFilters = () => {
         applyFilters({ type: filterType });
     };
 
-    const handleClear = () => {
+    const handleClearFilters = () => {
         setFilterType("");
         clearFilters();
     };
@@ -152,21 +153,10 @@ export default function AnnouncementPage() {
 
                     {/* Spacer divs to keep grid alignment consistent if you add more filters later */}
                     <div className="hidden md:block"></div>
-                    <div className="flex justify-end mt-6 gap-3">
-                        <button
-                            onClick={handleClear}
-                            className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
-                        >
-                            <RefreshCcw size={18} />
-                        </button>
-                        <button
-                            onClick={handleFilter}
-                            className="flex items-center gap-2 px-8 py-2.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-all shadow-md"
-                        >
-                            <Search size={18} />
-
-                        </button>
-                    </div>
+                    <FilterActions
+                        onClear={handleClearFilters}
+                        onApply={handleApplyFilters}
+                    />
                 </div>
 
             </div>
@@ -206,6 +196,7 @@ export default function AnnouncementPage() {
                                                     fill
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                     className="object-cover"
+                                                    loading="eager"
                                                 />
                                             ) : (
                                                 <div className="flex items-center justify-center h-full text-slate-400">

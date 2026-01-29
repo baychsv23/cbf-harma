@@ -22,12 +22,14 @@ export default function ServicesPage() {
       <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
         {/* Background Overlay */}
         <div className="absolute inset-0 bg-primary-900/90 z-10" />
+
         <div className="absolute inset-0 z-0">
           {/* ใส่รูปโรงงาน หรือ รูปคลังสินค้าที่ดูอลังการ */}
           <Image
-            src="/images/service-hero.jpg"
+            src="/images/logo.svg"
             alt="CBF Services"
             fill
+            loading="eager"
             className="object-cover opacity-50"
           />
         </div>
@@ -116,6 +118,7 @@ export default function ServicesPage() {
                   alt="Network Map"
                   fill
                   priority
+                  loading="eager"
                   className="object-cover"
                   sizes="100vw"
                 />

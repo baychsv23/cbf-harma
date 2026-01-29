@@ -154,23 +154,17 @@
   "privacyPolicy": "Privacy Policy",
   "termsOfService": "Terms of Service",
   "addressCompany": "123 ຖະໜົນສີຂຽວ, ເມືອງປາກເຊ, ແຂວງຈຳປາສັກ, ສປປ ລາວ",
-
   "heroBadge": "Comprehensive Healthcare Solutions",
   "heroTitle": "Manufacturing, Distribution & Logistics",
   "heroDesc": "We are committed to delivering high-quality pharmaceutical products to every corner of Laos through our integrated supply chain.",
-    
   "coreServicesTitle": "Our Expertise",
   "coreServicesSubtitle": "End-to-end solutions for the pharmaceutical industry.",
-    
   "productionTitle": "Pharmaceutical Manufacturing",
   "productionDesc": "State-of-the-art production facilities complying with GMP standards to ensure safety and efficacy in every pill.",
-    
   "distributionTitle": "Wholesale & Retail",
   "distributionDesc": "Supplying pharmacies, hospitals, and clinics with a wide range of essential medicines and health products.",
-    
   "logisticsTitle": "Cold Chain Logistics",
   "logisticsDesc": "Standardized delivery fleet ensuring temperature control and timely delivery to all provinces.",
-    
   "networkTitle": "Serving Customers",
   "networkHighlight": "Nationwide",
   "networkDesc": "With our extensive network of branches and distribution centers, we bridge the gap between quality healthcare and communities.",
@@ -179,14 +173,25 @@
   "networkFeat3": "Professional pharmacist consultation available",
   "findBranchBtn": "Find a Branch Near You",
   "totalBranches": "Total Locations",
-
   "whyPartnerTitle": "Why Partner With Us?",
   "qualityTitle": "Certified Quality",
   "qualityDesc": "100% Authentic products directly from manufacturers.",
   "speedTitle": "Fast & Reliable",
   "speedDesc": "Optimized routes for quickest delivery times.",
   "supportTitle": "Expert Support",
-  "supportDesc": "Dedicated team to assist with orders and product info."
-
-  
+  "supportDesc": "Dedicated team to assist with orders and product info.",
+  "Forbidden": {
+    "title": "Access Forbidden",
+    "description": "You are signed in, but you don’t have permission to access this resource. If you believe this is an error, please contact your administrator.",
+    "goBack": "Go Back",
+    "goHome": "Go to Home",
+    "footer": "© {year}  CBF. All rights reserved."
+  },
+  "Unauthorized": {
+    "title": "Unauthorized Access",
+    "description": "You don’t have permission to view this page. Please contact your administrator if you think this is a mistake.",
+    "goBack": "Go Back",
+    "goHome": "Go to Home",
+    "footer": "© {year}  CBF. All rights reserved."
+  }
 }

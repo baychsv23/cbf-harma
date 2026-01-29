@@ -9,11 +9,10 @@ import {
   AlertCircle,
   Search,
 } from "lucide-react";
-import { CldUploadWidget } from "next-cloudinary";
 import { BooleanState, Category, CategorySub } from "@/generated/prisma/enums";
 import { translations } from "@/lib/translation";
 import ImageUpload from "./ImageUpload";
-import { isEnglish } from "@/lib/constant";
+import { isEnglish } from "@/lib/utils/locale";
 
 interface ProductFormProps {
   isOpen: boolean;

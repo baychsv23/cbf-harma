@@ -1,26 +1,24 @@
-import { ArticleStatus } from "@/generated/prisma/enums";
+import { Announcement, Article, Product, Symptom, User } from "@/generated/prisma/client";
 import { database } from "@/lib/prisma";
 
 
-export async function getArticles({
-    where,
-    skip,
-    limit,
-    include,
-    select,
-}: {
-    where?: any;
+interface GetDataParams<T = any> {
+    where?: T;
     skip?: number;
     limit?: number;
     include?: any;
     select?: any;
-}) {
+    orderBy?: any;
+}
 
+async function getData<T>(
+    model: any,
+    { where, skip, limit, include, select, orderBy }: GetDataParams,
+): Promise<{ data: T[]; total: number }> {
     const query: any = {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
     };
 
     // Prisma rule: select OR include (not both)
@@ -30,69 +28,27 @@ export async function getArticles({
         query.include = include;
     }
 
-    const [data, total] = await Promise.all([
-        database.article.findMany(query),
-        database.article.count({ where }),
-    ]);
-
-    return { data, total };
-}
-
-export async function getProducts({
-    where,
-    skip,
-    limit,
-    include,
-    select,
-}: {
-    where?: any;
-    skip?: number;
-    limit?: number;
-    include?: any;
-    select?: any;
-}) {
-
-    const query: any = {
-        where,
-        skip,
-        take: limit,
-        orderBy: { createdAt: "desc" },
-    };
-
-    // Prisma rule: select OR include (not both)
-    if (select) {
-        query.select = select;
-    } else if (include) {
-        query.include = include;
+    if (orderBy) {
+        query.orderBy = orderBy;
     }
 
     const [data, total] = await Promise.all([
-        database.product.findMany(query),
-        database.product.count({ where }),
+        model.findMany(query),
+        model.count({ where }),
     ]);
 
     return { data, total };
 }
+export const getProducts = (params: GetDataParams) =>
+    getData<Product>(database.product, params);
+export const getArticles = (params: GetDataParams) =>
+    getData<Article>(database.article, params);
+export const getSymptoms = (params: GetDataParams) =>
+    getData<Symptom>(database.symptom, params);
 
-export async function getArticleBySlug(slug: string) {
-    return await database.article.findUnique({
-        where: {
-            slug: slug,
-            status: ArticleStatus.PUBLISHED // ดึงเฉพาะที่ Publish แล้ว
-        },
-        select: {
-            id: true,
-            slug: true,
-            titleEN: true,
-            titleLA: true,
-            type: true,
-            contentEN: true,
-            contentLA: true,
-            coverImage: true,
-            createdAt: true,
-            views: true,
-            products: { select: { id: true, nameEN: true, nameLA: true, productImage: true } }, // ดึงสินค้าที่เกี่ยวข้อง
-        },
-    });
-}
+export const getAnnouncements = (params: GetDataParams) =>
+    getData<Announcement>(database.announcement, params);
+export const getAccounts = (params: GetDataParams) =>
+    getData<User>(database.user, params);
+
 

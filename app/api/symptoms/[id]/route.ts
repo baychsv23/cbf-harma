@@ -12,7 +12,8 @@ export async function PUT(
   return handleApiAction(async () => {
     const { id } = await params;
     const body = await req.json();
-    await requirePermission(Permission.SYMPTOM_UPDATE);
+    const session = await requirePermission(Permission.SYMPTOM_UPDATE);
+    if (!session) throw new ApiError(translations.forbidden, 403)
 
     const updated = await database.symptom.update({
       where: { id: id },
@@ -32,7 +33,8 @@ export async function DELETE(
 ) {
   return handleApiAction(async () => {
     const { id } = await params;
-    await requirePermission(Permission.SYMPTOM_DELETE);
+    const session = await requirePermission(Permission.SYMPTOM_DELETE);
+    if (!session) throw new ApiError(translations.forbidden, 403)
     await database.symptom.delete({ where: { id: id } });
     return { message: translations.deletedSuccess };
   });

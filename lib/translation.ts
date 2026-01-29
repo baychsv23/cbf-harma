@@ -129,4 +129,5 @@ export const translations = {
   healthKnowLedge: "HEALTH_KNOWLEDGE",
   activity: "ACTIVITY"
 
+
 } as const;

@@ -56,9 +56,10 @@ export async function handleApiAction<T>(handler: ApiHandler<T>) {
         }
         const message = error.message
         const status = error.status
+        console.log(error)
         // 2. จัดการเรื่องสิทธิ์ (Permission Level)
         if (
-            message?.includes(translations.unauthorized)
+            status === 401 && message?.includes(translations.unauthorized)
         ) {
             return NextResponse.json(
                 { success: false, error: translations.unauthorized },
@@ -67,7 +68,7 @@ export async function handleApiAction<T>(handler: ApiHandler<T>) {
         }
 
         if (
-            message?.includes(translations.forbidden)
+            status === 403 && message?.includes(translations.forbidden)
         ) {
             return NextResponse.json(
                 { success: false, error: translations.forbidden },

@@ -78,10 +78,9 @@ export default function ImageUpload({
             className={`
               group relative w-full overflow-hidden rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center
               ${aspectRatio === 1 ? "aspect-square" : "aspect-video"} 
-              ${
-                disabled
-                  ? "opacity-50 cursor-not-allowed border-slate-200 bg-slate-100"
-                  : "cursor-pointer border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-orange-400"
+              ${disabled
+                ? "opacity-50 cursor-not-allowed border-slate-200 bg-slate-100"
+                : "cursor-pointer border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-orange-400"
               }
             `}
           >
@@ -91,6 +90,7 @@ export default function ImageUpload({
                   src={value}
                   alt="Upload Preview"
                   fill
+                  loading="eager"
                   className="object-cover"
                 />
                 {!disabled && (

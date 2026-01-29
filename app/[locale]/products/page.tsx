@@ -1,14 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import {
-  Search,
   Plus,
   Edit,
   Settings2,
   Pill,
-  Activity,
   Stethoscope,
-  RefreshCcw,
 } from "lucide-react";
 import Pagination from "@/components/UI/Pagination";
 import { useAlert } from "@/app/hooks/useAlert";
@@ -24,7 +21,8 @@ import {
 } from "@/generated/prisma/enums";
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 import ProductFormModal from "@/components/Form/ProductFormModal";
-import { isEnglish } from "@/lib/constant";
+import { isEnglish } from "@/lib/utils/locale";
+import { FilterActions } from "@/components/UI/FilterActions";
 
 export default function ProductPage() {
   const t = useTranslations();
@@ -78,7 +76,7 @@ export default function ProductPage() {
 
   useEffect(() => {
     const fetchSymptoms = async () => {
-      const { data } = await api.get("/api/symptoms"); // ต้องมี API นี้
+      const { data } = await api.get("/api/symptoms/list"); // ต้องมี API นี้
       setAllSymptoms(data.data || []);
     };
     fetchSymptoms();
@@ -206,23 +204,13 @@ export default function ProductPage() {
               </select>
             </div>
           )}
+          <FilterActions
+            onClear={handleClearFilters}
+            onApply={handleApplyFilters}
+          />
         </div>
 
-        <div className="flex justify-end mt-6 gap-3">
-          <button
-            onClick={handleClearFilters}
-            className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
-          >
-            <RefreshCcw size={18} />
-          </button>
-          <button
-            onClick={handleApplyFilters}
-            className="flex items-center gap-2 px-8 py-2.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-all shadow-md"
-          >
-            <Search size={18} />
 
-          </button>
-        </div>
       </div>
 
       {/* Table Redesign */}

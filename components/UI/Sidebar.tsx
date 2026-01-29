@@ -200,6 +200,7 @@ export default function Sidebar() {
                 src="/images/logo.svg"
                 alt="About CBF"
                 fill
+                loading="eager"
                 className="object-contain"
                 priority
               />

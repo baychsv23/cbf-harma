@@ -115,6 +115,7 @@ export default function BannerSection() {
                     src={banner.image}
                     alt={banner.title || "Banner"}
                     fill
+
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
                     // ✅ แก้ไขจุดที่ 2: ใช้ object-contain เพื่อให้เห็น "รูปเต็ม" โดยไม่โดนตัด
                     // (ถ้าอยากให้เต็มกรอบโดยยอมตัดขอบภาพบ้าง ให้เปลี่ยนเป็น object-cover)
@@ -129,6 +130,7 @@ export default function BannerSection() {
                       alt="bg-blur"
                       loading="eager"
                       fill
+
                       className="object-cover"
                     />
                   </div>
@@ -225,6 +227,7 @@ export default function BannerSection() {
                       <Image
                         src={announcement.image}
                         alt="Announcement"
+                        loading="eager"
                         fill
                         className="object-cover rounded-xl"
                       />

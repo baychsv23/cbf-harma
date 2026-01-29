@@ -53,7 +53,11 @@ const ROUTES: Record<string, RouteConfig> = {
 
   // Permission-based
   "/accounts": { permissions: [Permission.USER_VIEW] },
-  "/products": { permissions: [Permission.PRODUCT_VIEW] }
+  "/products": { permissions: [Permission.PRODUCT_VIEW] },
+  "/articles": { permissions: [Permission.ARTICLE_VIEW] },
+  "/symptoms": { permissions: [Permission.SYMPTOM_VIEW] },
+  "/announcements": { permissions: [Permission.ANNOUNCEMENT_VIEW] }
+
 };
 
 // --------------------------------------------------
@@ -91,9 +95,9 @@ export async function proxy(request: NextRequest) {
 
   // 3️⃣ Authentication required for all other routes
   if (!token) {
-    const signInUrl = new URL(`/${locale}/auth/signin`, request.url);
-    signInUrl.searchParams.set("callbackUrl", pathWithoutLocale);
-    return NextResponse.redirect(signInUrl);
+    return NextResponse.redirect(
+      new URL(`/${locale}/unauthorized`, request.url)
+    );
   }
 
   // 4️⃣ Unified route check
@@ -102,14 +106,14 @@ export async function proxy(request: NextRequest) {
       // Role-based restriction
       if (config.roles && !config.roles.includes(token.role as Role)) {
         return NextResponse.redirect(
-          new URL(`/${locale}/unauthorized`, request.url)
+          new URL(`/${locale}/forbidden`, request.url)
         );
       }
 
       // Permission check
       if (config.permissions && !hasPermission(token, config.permissions)) {
         return NextResponse.redirect(
-          new URL(`/${locale}/unauthorized`, request.url)
+          new URL(`/${locale}/forbidden`, request.url)
         );
       }
 

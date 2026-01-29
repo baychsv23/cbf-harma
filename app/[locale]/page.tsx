@@ -2,7 +2,6 @@ import BannerSection from "@/components/UI/BannerSection";
 import Link from "next/link";
 import ArticleCard from "@/components/UI/Card/ArticleCard";
 import { Article } from "@/lib/interface";
-import apiServer from "@/lib/api-server";
 import { getArticles } from "@/lib/getData";
 import { ArticleStatus } from "@/generated/prisma/enums";
 

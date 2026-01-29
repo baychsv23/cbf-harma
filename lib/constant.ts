@@ -61,10 +61,5 @@ export const modules = [
   }
 ];
 
-
-export const isEnglish = (locale: string) => {
-  return locale === "en"
-}
-
 export const FB_LINK = "https://www.facebook.com/cbfpharmalao";
 export const WA_LINK = "https://wa.me/8562098989689";

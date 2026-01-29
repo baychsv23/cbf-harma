@@ -19,11 +19,6 @@ enum Role {
   USER
 }
 
-enum ActiveState {
-  ACTIVE
-  INACTIVE
-}
-
 enum ArticleStatus {
   DRAFT
   PUBLISHED
@@ -109,7 +104,6 @@ model User {
 
 model Product {
   id                   String       @id @default(uuid())
-  status               ActiveState  @default(ACTIVE)
   slug                 String       @unique // URL ທີ່ສວຍງາມ (SEO) e.g., freecold-paracetamol
   sku                  String       @unique
   nameEN               String
@@ -127,7 +121,7 @@ model Product {
   categorySub          CategorySub
 
   articles Article[] // MedThai Concept: ບົດຄວາມສຸຂະພາບທີ່ກ່ຽວຂ້ອງ (Many-to-Many)
-  symptom  Symptom[] // Smart Search: ຢານີ້ແກ້ອາການ
+  symptoms Symptom[] // Smart Search: ຢານີ້ແກ້ອາການ
 
   createdAt   DateTime @default(now())
   createdById String

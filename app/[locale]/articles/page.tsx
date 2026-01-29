@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
-  Search,
   Plus,
   Edit,
   Trash2,
@@ -9,10 +8,8 @@ import {
   Eye,
   Globe,
   Calendar,
-  RefreshCcw,
 } from "lucide-react";
 import Pagination from "@/components/UI/Pagination";
-import Swal from "sweetalert2";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useAuth } from "@/app/hooks/useAuth";
 import { usePagination } from "@/app/hooks/usePagination";
@@ -26,7 +23,8 @@ import {
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 import { formatDate } from "@/lib/formateData";
 import ArticleFormModal from "@/components/Form/ArticleFormModal";
-import { isEnglish } from "@/lib/constant";
+import { isEnglish } from "@/lib/utils/locale";
+import { FilterActions } from "@/components/UI/FilterActions";
 
 export default function ArticlePage() {
   const t = useTranslations();
@@ -34,11 +32,8 @@ export default function ArticlePage() {
   const api = useApiWithAlert();
 
   const {
-    showSuccess,
-    showError,
     showConfirm,
     showProcessing,
-    closeProcessing,
   } = useAlert();
   const { hasPermission } = useAuth();
 
@@ -59,7 +54,7 @@ export default function ArticlePage() {
   // โหลดสินค้าทั้งหมดเพื่อมาทำ Selection (Tie-in)
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data } = await api.get("/api/products");
+      const { data } = await api.get("/api/products/list");
       setAllProducts(data.data || []);
     };
     fetchProducts();
@@ -189,22 +184,10 @@ export default function ArticlePage() {
             </select>
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={handleClearFilters}
-              className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-all"
-            >
-              <RefreshCcw size={18} />
-
-            </button>
-            <button
-              onClick={handleApplyFilters}
-              className="flex items-center gap-2 px-6 py-2.5 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-all shadow-md"
-            >
-              <Search size={18} />
-
-            </button>
-          </div>
+          <FilterActions
+            onClear={handleClearFilters}
+            onApply={handleApplyFilters}
+          />
         </div>
       </div>
 

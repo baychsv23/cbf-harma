@@ -14,7 +14,7 @@ import { ArticleType, ArticleStatus } from "@/generated/prisma/enums";
 import TiptapEditor from "@/components/Editor/TiptapEditor";
 import { translations } from "@/lib/translation";
 import ImageUpload from "./ImageUpload";
-import { isEnglish } from "@/lib/constant";
+import { isEnglish } from "@/lib/utils/locale";
 
 interface ArticleFormProps {
   isOpen: boolean;

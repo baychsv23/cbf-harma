@@ -7,28 +7,22 @@ import { handleApiAction } from "@/lib/handleApiAction";
 import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
+import { DEFAULT_LIMIT, DEFAULT_PAGE, paginatedResponse } from "@/lib/utils/pagination";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   return handleApiAction(async () => {
-    const session = await requirePermission(Permission.ARTICLE_VIEW);
+    const session = await requirePermission(Permission.ARTICLE_VIEW)
+    if (!session) throw new ApiError(translations.forbidden, 403)
     const searchParams = request.nextUrl.searchParams;
-    const page = searchParams.get("page")
-      ? parseInt(searchParams.get("page")!)
-      : undefined;
-    const limit = searchParams.get("limit")
-      ? parseInt(searchParams.get("limit")!)
-      : undefined;
+    const page = parseInt(searchParams.get("page") || DEFAULT_PAGE.toString());
+    const limit = parseInt(
+      searchParams.get("limit") || DEFAULT_LIMIT.toString(),
+    );
     const title = searchParams.get("title");
     const type = searchParams.get("type");
     const status = searchParams.get("status");
     const where: any = {};
-    if (!session) {
-      where.status = ArticleStatus.PUBLISHED
-    }
-    if (session) {
-      if (status) where.status = status;
-    }
 
     if (title) {
       where.OR = [
@@ -36,55 +30,23 @@ export async function GET(request: NextRequest) {
         { titleLA: { contains: title } },
       ];
     }
-
+    if (status) where.status = status;
     if (type) where.type = type;
 
-    if (page && limit) {
-      const skip = (page - 1) * limit;
 
-      const { data, total } = await getArticles({
-        where,
-        skip,
-        limit,
-        include: {
-          products: { select: { id: true, nameEN: true, nameLA: true } },
-          createdBy: { select: { fullName: true } },
-          updatedBy: { select: { fullName: true } },
-        },
-      });
+    const skip = (page - 1) * limit;
 
-      const totalPages = Math.max(1, Math.ceil(total / limit));
-      const dataWithStt = data.map((item, index) => ({
-        ...item,
-        stt: skip + index + 1,
-      }));
-
-      return NextResponse.json({
-        success: true,
-        data: dataWithStt,
-        pagination: {
-          currentPage: page,
-          totalPages,
-          totalItems: total,
-          hasNext: page < totalPages,
-          hasPrev: page > 1,
-        },
-      });
-    }
-
-    const { data, total } = await getArticles({ where });
-
-    return NextResponse.json({
-      success: true,
-      data: data,
-      pagination: {
-        currentPage: 1,
-        totalPages: 1,
-        totalItems: total,
-        hasNext: false,
-        hasPrev: false,
+    const { data, total } = await getArticles({
+      where,
+      skip,
+      limit,
+      include: {
+        products: { select: { id: true, nameEN: true, nameLA: true } },
+        createdBy: { select: { fullName: true } },
+        updatedBy: { select: { fullName: true } },
       },
     });
+    return NextResponse.json(paginatedResponse(data, total, page, limit));
   });
 }
 export async function POST(req: Request) {
