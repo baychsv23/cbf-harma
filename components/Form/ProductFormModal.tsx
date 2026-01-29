@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   X,
   Image as ImageIcon,
@@ -21,7 +21,9 @@ interface ProductFormProps {
   onSubmit: (data: any) => void;
   initialData?: any;
   allSymptoms: any[];
-  local: string
+  local: string;
+  onLoadMoreSymptoms: () => void;
+  hasMoreSymptoms: boolean
 }
 
 export default function ProductFormModal({
@@ -31,8 +33,29 @@ export default function ProductFormModal({
   initialData,
   allSymptoms,
   t,
-  local
+  local,
+  onLoadMoreSymptoms,
+  hasMoreSymptoms
 }: ProductFormProps) {
+
+
+  const observerTarget = useRef(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreSymptoms) {
+          onLoadMoreSymptoms();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasMoreSymptoms, onLoadMoreSymptoms]);
   // --- STATE ---
   const [formData, setFormData] = useState<{
     nameEN: string;
@@ -141,10 +164,10 @@ export default function ProductFormModal({
     onSubmit({ ...formData, slug: finalSlug });
   };
 
-  const filteredProducts = allSymptoms.filter(
-    (p) =>
-      p.nameEN.toLowerCase().includes(symptomSearch.toLowerCase()) ||
-      p.nameLA.toLowerCase().includes(symptomSearch.toLowerCase()),
+  const filteredSymptoms = allSymptoms.filter(
+    (s) =>
+      s.nameEN.toLowerCase().includes(symptomSearch.toLowerCase()) ||
+      s.nameLA.toLowerCase().includes(symptomSearch.toLowerCase()),
   );
 
   return (
@@ -260,7 +283,7 @@ export default function ProductFormModal({
                 </div>
 
                 <div className="flex-1 max-h-[250px] overflow-y-auto space-y-1 custom-scrollbar pr-1">
-                  {filteredProducts.length > 0 ? (filteredProducts.map((s) => (
+                  {filteredSymptoms.length > 0 ? <>{filteredSymptoms.map((s) => (
                     <label
                       key={s.id}
                       className="flex items-center gap-2 p-1.5 hover:bg-purple-50 rounded cursor-pointer"
@@ -288,7 +311,21 @@ export default function ProductFormModal({
                         {isEnglish(local) ? s.nameEN : s.nameLA}
                       </span>
                     </label>
-                  ))) : (
+                  ))}
+                    <div ref={observerTarget} className="py-4 flex justify-center">
+                      {hasMoreSymptoms ? (
+                        <button
+                          type="button"
+                          onClick={onLoadMoreSymptoms}
+                          className="text-[10px] text-indigo-600 font-bold hover:underline"
+                        >
+                          Show more products
+                        </button>
+                      ) : (
+                        <span className="text-[10px] text-slate-400">End of list</span>
+                      )}
+                    </div>
+                  </> : (
                     <div className="text-center py-4 text-xs text-slate-400">
                       {t(translations.notFound)}
                     </div>

@@ -2,20 +2,20 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Search, Filter, X, Loader2 } from "lucide-react";
+import { Search, Filter, X, Loader2 } from "lucide-react"; // Added Loader2 for loading state
 import { ArticleCBF } from "@/lib/interface";
 import ArticleCard from "./ArticleCard";
 import { ArticleType } from "@/generated/prisma/enums";
 import { translations } from "@/lib/translation";
 import { Link } from "@/i18n/routing";
-import axios from "axios"; // Ensure axios is installed
+import axios from "axios";
 import { TYPE_SLUG_MAP } from "@/lib/constant";
 
 interface ArticleFeedProps {
   initialArticles: ArticleCBF[];
-  totalArticles: number; // New Prop
+  totalArticles: number;
   currentType: string;
-  limit: number; // New Prop
+  limit: number;
 }
 
 export default function ArticleFeed({
@@ -31,15 +31,9 @@ export default function ArticleFeed({
   const [articles, setArticles] = useState<ArticleCBF[]>(initialArticles);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Added loading state for better UX
+  const [hasMore, setHasMore] = useState(initialArticles.length < totalArticles);
 
-  // Calculate if we have more data based on current list length vs total
-  // Note: This simple calculation works best for the initial load.
-  // For search, we will update 'hasMore' dynamically.
-  const [hasMore, setHasMore] = useState(
-    initialArticles.length < totalArticles,
-  );
-
-  // Debounce Search Ref
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Helper: Generate Link Paths
@@ -55,6 +49,7 @@ export default function ArticleFeed({
     searchParam: string,
     shouldAppend: boolean,
   ) => {
+    setIsLoading(true);
     const params: any = {
       page: pageParam,
       limit: limit,
@@ -63,45 +58,38 @@ export default function ArticleFeed({
     if (currentType !== "ALL") params.type = currentType;
     if (searchParam) params.title = searchParam;
 
-    const response = await axios.get("/api/articles/list", { params }); // Adjust path if needed
+    try {
+      const response = await axios.get("/api/articles/list", { params });
 
-    if (response.data.success) {
-      const newArticles = response.data.data;
-      const pagination = response.data.pagination;
+      if (response.data.success) {
+        const newArticles = response.data.data;
+        const pagination = response.data.pagination;
 
-      if (shouldAppend) {
-        setArticles((prev) => [...prev, ...newArticles]);
-      } else {
-        setArticles(newArticles);
+        if (shouldAppend) {
+          setArticles((prev) => [...prev, ...newArticles]);
+        } else {
+          setArticles(newArticles);
+        }
+        setHasMore(pagination.hasNext);
       }
-
-      // Update hasMore based on API response
-      setHasMore(pagination.hasNext);
+    } catch (error) {
+      console.error("Failed to fetch articles", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // ✅ Handle Load More
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
     fetchArticles(nextPage, searchQuery, true);
   };
 
-  // ✅ Handle Search (Server-Side)
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-
-    // Debounce: Wait 500ms before calling API
-    searchTimeout.current = setTimeout(() => {
-      setPage(1); // Reset to page 1
-      fetchArticles(1, query, false); // Fetch new data, do NOT append
-    }, 500);
+  const handleSearchClick = () => {
+    setPage(1);
+    fetchArticles(1, searchQuery, false);
   };
 
-  // Reset State when Category Changes (Handled by Link navigation, but good practice)
   useEffect(() => {
     setArticles(initialArticles);
     setPage(1);
@@ -110,69 +98,86 @@ export default function ArticleFeed({
   }, [initialArticles, totalArticles, currentType]);
 
   return (
-    <section className="py-12 bg-gray-50/50 min-h-screen">
+    // Reduced vertical padding on mobile (py-6) vs desktop (md:py-12)
+    <section className="py-6 md:py-12 bg-gray-50/50 min-h-screen">
       <div className="container mx-auto px-4 max-w-7xl">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {t(translations.title)}
-            </h1>
-          </div>
 
-          {/* Search Bar */}
-          <div className="relative w-full md:w-80">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder={t(translations.SearchBy, {
-                name: t(translations.article),
-              })}
-              className="block w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-white shadow-sm"
-              value={searchQuery}
-              onChange={handleSearch}
-            />
-            {searchQuery && (
+        {/* --- Header & Search --- */}
+        <div className="flex flex-col gap-4 mb-6 md:mb-10">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center md:text-left">
+            {t(translations.title)}
+          </h1>
+
+          {/* Search Wrapper: Centered on mobile, aligned on desktop */}
+          <div className="flex items-center gap-2 w-full md:w-auto md:ml-auto md:absolute md:right-4 md:top-12 lg:static">
+            {/* Note: I kept your structure but made the wrapper full width on mobile */}
+            <div className="relative w-full md:w-80 flex gap-2">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                </div>
+
+                <input
+                  type="text"
+                  placeholder={t(translations.SearchBy, {
+                    name: t(translations.Name, { name: t(translations.title) }),
+                  })}
+                  // Adjusted padding and font size for cleaner mobile look
+                  className="block w-full pl-9 pr-9 py-2 md:py-2.5 border border-gray-200 rounded-xl text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-white shadow-sm"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
+                />
+
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      setPage(1);
+                      fetchArticles(1, "", false);
+                    }}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
               <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setPage(1);
-                  fetchArticles(1, "", false);
-                }}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                onClick={handleSearchClick}
+                className="px-4 py-2 md:px-5 md:py-2.5 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition shrink-0"
               >
-                <X className="h-4 w-4" />
+                <Search size={16} className="md:w-[18px] md:h-[18px]" />
               </button>
-            )}
+            </div>
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8 border-b border-gray-200 pb-4">
+        {/* --- Filter Tabs (Horizontal Scroll) --- */}
+        {/* Mobile: overflow-x-auto allows scrolling left/right. 
+                    no-scrollbar hides the ugly bar.
+                    -mx-4 px-4 allows items to scroll to the very edge of the screen.
+                */}
+        <div className="flex overflow-x-auto pb-2 md:pb-4 mb-6 md:mb-8 border-b border-gray-200 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap gap-2">
           <Link
             href="/cbf/articles"
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-              currentType === "ALL"
+            className={`whitespace-nowrap px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-200 flex-shrink-0 ${currentType === "ALL"
                 ? "bg-primary text-white shadow-md shadow-primary/25"
                 : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-            }`}
+              }`}
           >
             {t(translations.All, { name: "" })}
           </Link>
           {Object.entries(ArticleType).map(([key, value]) => {
             const isActive = currentType === value;
-
             return (
               <Link
                 key={value}
                 href={getTypePath(value)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                  isActive
+                className={`whitespace-nowrap px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-200 flex-shrink-0 ${isActive
                     ? "bg-primary text-white shadow-md shadow-primary/25"
                     : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-                }`}
+                  }`}
               >
                 {t(key)}
               </Link>
@@ -180,10 +185,10 @@ export default function ArticleFeed({
           })}
         </div>
 
-        {/* Article Grid */}
+        {/* --- Article Grid --- */}
         {articles.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {articles.map((article, index) => (
                 <div key={index} className="h-full">
                   <ArticleCard article={article} />
@@ -191,39 +196,44 @@ export default function ArticleFeed({
               ))}
             </div>
 
-            {/* ✅ Load More Button */}
+            {/* --- Load More Button --- */}
             {hasMore && (
-              <div className="mt-12 text-center">
+              <div className="mt-8 md:mt-12 text-center pb-8">
                 <button
                   onClick={handleLoadMore}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
+                  className="w-full md:w-auto inline-flex justify-center items-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  More Articles
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Loading...</span>
+                    </>
+                  ) : (
+                    "More Articles"
+                  )}
                 </button>
               </div>
             )}
           </>
         ) : (
-          /* Empty State */
-          <div className="flex flex-col items-center justify-center py-20 text-center">
+          /* --- Empty State --- */
+          <div className="flex flex-col items-center justify-center py-12 md:py-20 text-center">
             <div className="bg-gray-100 p-4 rounded-full mb-4">
-              <Filter className="h-8 w-8 text-gray-400" />
+              <Filter className="h-6 w-6 md:h-8 md:w-8 text-gray-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-base md:text-lg font-semibold text-gray-900">
               {t(translations.notFound)}
             </h3>
-            <p className="text-gray-500 max-w-sm mt-1">
-              No articles found matching "{searchQuery}".
-            </p>
             <button
               onClick={() => {
                 setSearchQuery("");
                 setPage(1);
                 fetchArticles(1, "", false);
               }}
-              className="mt-4 text-primary font-medium hover:underline"
+              className="mt-4 text-primary-500 font-medium hover:underline text-sm md:text-base"
             >
-              Clear search
+              {t(translations.clear)}
             </button>
           </div>
         )}

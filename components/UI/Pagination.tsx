@@ -5,6 +5,8 @@ type PaginationProps = {
     currentPage: number;
     totalPages: number;
     totalItems: number;
+    hasPrev: boolean;
+    hasNext: boolean;
   };
   page: number;
   setPage: (page: number) => void;
@@ -31,14 +33,14 @@ export default function Pagination({
       <div className="flex gap-2">
         <button
           onClick={() => setPage(page - 1)}
-          disabled={!(page > 1)}
+          disabled={!pagination.hasPrev}
           className="px-4 py-2 bg-gray-100 rounded-lg disabled:opacity-50 hover:bg-gray-200 transition"
         >
           Previous
         </button>
         <button
           onClick={() => setPage(page + 1)}
-          disabled={!(page < pagination.totalPages)}
+          disabled={!pagination.hasNext}
           className="px-4 py-2 bg-gray-100 rounded-lg disabled:opacity-50 hover:bg-gray-200 transition"
         >
           Next

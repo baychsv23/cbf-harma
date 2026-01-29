@@ -20,6 +20,7 @@ export const selectDataOfArticle = {
 };
 
 export const selectDataOfProduct = {
+  id: true,
   slug: true,
   nameLA: true,
   nameEN: true,

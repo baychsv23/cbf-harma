@@ -1,17 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/lib/utils/pagination";
 
 interface Pagination {
   currentPage: number;
   totalPages: number;
   totalItems: number;
+  hasNext: boolean;
+  hasPrev: boolean;
 }
 
-interface PaginationResult<T = any> {
-  data: T[];
-  pagination: Pagination;
-}
 
 interface Filters {
   [key: string]: any;
@@ -32,8 +29,8 @@ interface UsePaginatedDataResult<T = any> {
 export function usePagination<T = any>(
   apiUrl: string,
   defaultFilters: Filters = {},
-  defaultPage = DEFAULT_PAGE,
-  defaultLimit = DEFAULT_LIMIT,
+  defaultPage = 1,
+  defaultLimit = 50
 ): UsePaginatedDataResult<T> {
   const [items, setItems] = useState<T[]>([]);
   const api = useApiWithAlert();
@@ -41,6 +38,8 @@ export function usePagination<T = any>(
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
+    hasNext: false,
+    hasPrev: false,
   });
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(defaultPage);
@@ -70,6 +69,8 @@ export function usePagination<T = any>(
           currentPage: 1,
           totalPages: 1,
           totalItems: 0,
+          hasNext: false,
+          hasPrev: false,
         });
       }
     } catch (err) {
@@ -78,6 +79,8 @@ export function usePagination<T = any>(
         currentPage: 1,
         totalPages: 1,
         totalItems: 0,
+        hasNext: false,
+        hasPrev: false,
       });
     } finally {
       setLoading(false);

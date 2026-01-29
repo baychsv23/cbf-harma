@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
         { titleLA: { contains: title } },
       ];
     }
+
     if (status) where.status = status;
     if (type) where.type = type;
 

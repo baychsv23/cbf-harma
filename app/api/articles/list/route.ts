@@ -3,7 +3,7 @@ import { getArticles } from "@/lib/getData";
 import { handleApiAction } from "@/lib/handleApiAction";
 import { selectDataOfArticle } from "@/lib/selectData";
 
-import { DEFAULT_LIMIT, DEFAULT_PAGE, simpleResponse } from "@/lib/utils/pagination";
+import { DEFAULT_LIMIT, DEFAULT_PAGE, paginatedResponse } from "@/lib/utils/pagination";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -13,17 +13,26 @@ export async function GET(request: NextRequest) {
         const limit = parseInt(
             searchParams.get("limit") || DEFAULT_LIMIT.toString(),
         );
+        const title = searchParams.get("title");
+        const type = searchParams.get("type");
         const skip = (page - 1) * limit;
 
         const where: any = {
             status: ArticleStatus.PUBLISHED
         };
-        const { data } = await getArticles({
+        if (type) where.type = type;
+        if (title) {
+            where.OR = [
+                { titleEN: { contains: title } },
+                { titleLA: { contains: title } },
+            ];
+        }
+        const { data, total } = await getArticles({
             where,
             skip,
             limit,
             select: selectDataOfArticle
         });
-        return NextResponse.json(simpleResponse(data));
+        return NextResponse.json(paginatedResponse(data, total, page, limit));
     });
 }

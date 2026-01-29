@@ -15,7 +15,7 @@ import { isEnglish } from "@/lib/utils/locale";
 import { ProductCBF } from "@/lib/interface";
 // You might need to create this getter similar to getArticleBySlug
 import { getProductBySlug } from "@/lib/getDataSlug";
-import { BooleanState } from "@/generated/prisma/enums";
+import { BooleanState, CategorySub } from "@/generated/prisma/enums";
 import { selectDataOfProduct } from "@/lib/selectData";
 import { translations } from "@/lib/translation";
 
@@ -88,32 +88,49 @@ export default async function ProductSingleCBFPage({
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-8">
           <div className="flex flex-col md:flex-row">
             {/* Left: Product Image */}
-            <div className="w-full md:w-2/5 bg-gray-50 relative min-h-[300px] md:min-h-[400px] flex items-center justify-center p-8 border-b md:border-b-0 md:border-r border-gray-100">
+            <div className="w-full md:w-2/5 bg-gray-50/50 relative min-h-[350px] md:min-h-[500px] flex items-center justify-center p-6 md:p-10 border-b md:border-b-0 md:border-r border-gray-100 group overflow-hidden">
+
+              {/* --- 1. Badges Area (แก้เรื่องทับกัน) --- */}
+              <div className="absolute top-4 left-4 z-10 flex flex-col items-start gap-2">
+                {/* Main Category */}
+                <span className="inline-flex items-center px-3 py-1 rounded-lg bg-white border border-gray-200 text-xs font-bold uppercase tracking-wider text-gray-900 shadow-sm">
+                  {t(product.category)}
+                </span>
+
+                {/* Sub Category (เช็คก่อนว่ามีค่าไหม) */}
+                {product.categorySub !== CategorySub.NONE && (
+                  <span className="inline-flex items-center px-3 py-1 rounded-lg bg-primary/10 border border-primary/10 text-xs font-bold uppercase tracking-wider text-primary shadow-sm backdrop-blur-sm">
+                    {t(product.categorySub)}
+                  </span>
+                )}
+              </div>
+
+              {/* --- 2. Image Area --- */}
               {product.productImage ? (
-                <div className="relative w-full h-full min-h-[250px]">
+                <div className="relative w-full h-full min-h-[280px] md:min-h-[350px]">
                   <Image
                     src={product.productImage}
-                    alt={name}
+                    alt={name} // ตรวจสอบว่าตัวแปร name มีค่าถูกส่งมานะครับ
                     fill
-                    className="object-contain hover:scale-105 transition-transform duration-500"
+                    className="object-contain drop-shadow-sm transition-transform duration-700 ease-out group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, 40vw"
                     priority
                   />
                 </div>
               ) : (
-                <div className="text-gray-400 flex flex-col items-center">
-                  <Package className="w-12 h-12 mb-2 opacity-50" />
-                  <span>No Image Available</span>
+                /* กรณีไม่มีรูป */
+                <div className="flex flex-col items-center justify-center text-gray-300 gap-3">
+                  <div className="p-4 rounded-full bg-gray-100">
+                    <Package className="w-10 h-10 opacity-50" />
+                  </div>
+                  <span className="text-sm font-medium">No Image Available</span>
                 </div>
               )}
 
-              {/* Category Badge */}
-              <span className="absolute top-4 left-4 bg-white/90 backdrop-blur border border-gray-200 text-gray-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
-                {t(product.category)}
-              </span>
-              <span className="absolute top-4 left-4 bg-white/90 backdrop-blur border border-gray-200 text-gray-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
-                {t(product.categorySub)}
-              </span>
+              {/* (Optional) Decoration: ปุ่มขยายรูป หรือลายน้ำจางๆ */}
+              {/* <div className="absolute bottom-4 right-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
+       <ZoomIn className="w-5 h-5" />
+  </div> */}
             </div>
 
             {/* Right: Product Details */}

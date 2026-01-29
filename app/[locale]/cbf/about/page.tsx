@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import {
   CheckCircle2,
   Leaf,
@@ -9,6 +12,8 @@ import {
 } from "lucide-react";
 
 export default function AboutPage() {
+  const t = useTranslations("About");
+
   return (
     <main className="min-h-screen bg-gray-50">
       {/* 1. Hero Section */}
@@ -17,18 +22,15 @@ export default function AboutPage() {
           <div className="flex flex-col lg:flex-row items-center gap-12">
             {/* Text Content */}
             <div className="lg:w-1/2 space-y-6 z-10">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-green-100 text-primary font-bold text-sm tracking-wide">
-                SINCE 2010
+              <span className="inline-block px-4 py-1.5 rounded-full bg-green-100 text-primary font-bold text-sm tracking-wide uppercase">
+                {t("Hero.since")}
               </span>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-                Driving Health & <br />
-                <span className="text-primary">Sustainable Growth</span>
+                {t("Hero.titlePart1")} <br />
+                <span className="text-primary">{t("Hero.titlePart2")}</span>
               </h1>
               <p className="text-lg text-gray-600 leading-relaxed">
-                At CBF, we are dedicated to providing high-quality health
-                products rooted in nature. We bridge the gap between traditional
-                wisdom and modern wellness, ensuring a better life for our
-                community.
+                {t("Hero.description")}
               </p>
               <div className="pt-4">
                 <div className="h-1 w-20 bg-accent rounded-full"></div>
@@ -49,13 +51,13 @@ export default function AboutPage() {
               </div>
 
               {/* Decorative Floating Element */}
-              <div className=" md:flex absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-lg border-l-4 border-accent items-center gap-4">
+              <div className="md:flex absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-lg border-l-4 border-accent items-center gap-4 hidden">
                 <div className="bg-green-100 p-3 rounded-full text-primary">
                   <Award className="w-8 h-8" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900">15+</p>
-                  <p className="text-sm text-gray-500">Awards Won</p>
+                  <p className="text-sm text-gray-500">{t("Hero.awards")}</p>
                 </div>
               </div>
             </div>
@@ -67,10 +69,10 @@ export default function AboutPage() {
       <section className="bg-primary text-white py-16">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-green-800/50">
-            <StatItem number="10+" label="Years Experience" />
-            <StatItem number="5k+" label="Happy Customers" />
-            <StatItem number="50+" label="Premium Products" />
-            <StatItem number="24/7" label="Support" />
+            <StatItem number="10+" label={t("Stats.yearsExperience")} />
+            <StatItem number="5k+" label={t("Stats.happyCustomers")} />
+            <StatItem number="50+" label={t("Stats.premiumProducts")} />
+            <StatItem number="24/7" label={t("Stats.support")} />
           </div>
         </div>
       </section>
@@ -85,12 +87,10 @@ export default function AboutPage() {
                 <Target className="w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Our Mission
+                {t("Mission.title")}
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                To deliver accessible, natural, and safe health solutions to
-                every household in Laos, empowering people to take control of
-                their well-being through knowledge and quality products.
+                {t("Mission.desc")}
               </p>
             </div>
 
@@ -100,12 +100,10 @@ export default function AboutPage() {
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Our Vision
+                {t("Vision.title")}
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                To become the leading health innovation hub in the region,
-                recognized for integrity, sustainability, and our commitment to
-                community development.
+                {t("Vision.desc")}
               </p>
             </div>
           </div>
@@ -117,29 +115,28 @@ export default function AboutPage() {
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Why Choose CBF?
+              {t("WhyChoose.title")}
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto">
-              We don't just sell products; we build relationships based on trust
-              and quality.
+              {t("WhyChoose.subtitle")}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             <FeatureCard
               icon={<Leaf className="w-6 h-6" />}
-              title="100% Natural"
-              desc="Our products are sourced from the finest natural ingredients without harmful chemicals."
+              title={t("WhyChoose.Natural.title")}
+              desc={t("WhyChoose.Natural.desc")}
             />
             <FeatureCard
               icon={<ShieldCheck className="w-6 h-6" />}
-              title="Quality Certified"
-              desc="Every product undergoes rigorous testing to meet international safety standards."
+              title={t("WhyChoose.Quality.title")}
+              desc={t("WhyChoose.Quality.desc")}
             />
             <FeatureCard
               icon={<Users className="w-6 h-6" />}
-              title="Expert Team"
-              desc="Our team consists of health professionals ready to guide you on your journey."
+              title={t("WhyChoose.Expert.title")}
+              desc={t("WhyChoose.Expert.desc")}
             />
           </div>
         </div>
@@ -148,7 +145,7 @@ export default function AboutPage() {
   );
 }
 
-// --- Sub Components for cleaner code ---
+// --- Sub Components ---
 
 function StatItem({ number, label }: { number: string; label: string }) {
   return (

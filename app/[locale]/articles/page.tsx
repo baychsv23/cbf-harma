@@ -35,8 +35,6 @@ export default function ArticlePage() {
   const { hasPermission } = useAuth();
 
   const [search, setSearch] = useState({ title: "", type: "", status: "" });
-  const [allProducts, setAllProducts] = useState<any[]>([]); // สำหรับเลือก Tie-in Products
-
   // โหลด Pagination
   const {
     items: articles,
@@ -48,14 +46,33 @@ export default function ArticlePage() {
     applyFilters,
     clearFilters,
   } = usePagination("/api/articles");
+
+
+
+  const [allProducts, setAllProducts] = useState<any[]>([]);
+  const [productPage, setProductPage] = useState(1);
+  const [hasMoreProducts, setHasMoreProducts] = useState(true);
   // โหลดสินค้าทั้งหมดเพื่อมาทำ Selection (Tie-in)
+
+
+  const fetchProducts = async (page: number) => {
+    const { data } = await api.get(`/api/products/list?page=${page}`);
+    if (data.success) {
+      setAllProducts((prev) => (page === 1 ? data.data : [...prev, ...data.data]));
+      setHasMoreProducts(data.pagination.hasNext);
+    }
+  };
+  // โหลดครั้งแรก
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data } = await api.get("/api/products/list");
-      setAllProducts(data.data || []);
-    };
-    fetchProducts();
+
+    fetchProducts(1);
   }, []);
+
+  const handleLoadMoreProducts = () => {
+    const nextPage = productPage + 1;
+    setProductPage(nextPage);
+    fetchProducts(nextPage);
+  };
 
   const handleApplyFilters = () => {
     applyFilters({
@@ -280,11 +297,10 @@ export default function ArticlePage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-bold border ${
-                          article.status === ArticleStatus.PUBLISHED
-                            ? "bg-secondary-100/80 text-secondary-700 border-secondary-300"
-                            : "bg-slate-100 text-slate-500 border-slate-200"
-                        }`}
+                        className={`px-2 py-1 rounded-full text-xs font-bold border ${article.status === ArticleStatus.PUBLISHED
+                          ? "bg-secondary-100/80 text-secondary-700 border-secondary-300"
+                          : "bg-slate-100 text-slate-500 border-slate-200"
+                          }`}
                       >
                         {t(article.status)}
                       </span>
@@ -346,6 +362,8 @@ export default function ArticlePage() {
         onSubmit={handleSaveArticle}
         initialData={selectedArticle}
         allProducts={allProducts}
+        onLoadMoreProducts={handleLoadMoreProducts} // ส่งฟังก์ชันไปให้ Modal
+        hasMoreProducts={hasMoreProducts}
       />
     </div>
   );

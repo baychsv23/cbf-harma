@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import {
   X,
   Image as ImageIcon,
@@ -24,6 +24,8 @@ interface ArticleFormProps {
   allProducts: any[];
   t: any;
   local: string;
+  onLoadMoreProducts: () => void;
+  hasMoreProducts: boolean;
 }
 
 export default function ArticleFormModal({
@@ -34,7 +36,28 @@ export default function ArticleFormModal({
   allProducts,
   t,
   local,
+  onLoadMoreProducts,
+  hasMoreProducts,
 }: ArticleFormProps) {
+
+  const observerTarget = useRef(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreProducts) {
+          onLoadMoreProducts();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasMoreProducts, onLoadMoreProducts]);
+
   // --- STATE ---
   const [activeTab, setActiveTab] = useState<"EN" | "LA">("LA");
   const [productSearch, setProductSearch] = useState("");
@@ -218,11 +241,10 @@ export default function ArticleFormModal({
                         status: e.target.value as ArticleStatus,
                       })
                     }
-                    className={`w-full text-sm p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium ${
-                      formData.status === ArticleStatus.PUBLISHED
-                        ? "bg-secondary/10 text-secondary border-secondary/30"
-                        : "bg-slate-50 text-slate-600"
-                    }`}
+                    className={`w-full text-sm p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium ${formData.status === ArticleStatus.PUBLISHED
+                      ? "bg-secondary/10 text-secondary border-secondary/30"
+                      : "bg-slate-50 text-slate-600"
+                      }`}
                   >
                     {Object.values(ArticleStatus).map((s) => (
                       <option key={s} value={s}>
@@ -265,23 +287,21 @@ export default function ArticleFormModal({
               {/* Product List */}
               <div className="flex-1 overflow-y-auto pr-1 space-y-1 custom-scrollbar">
                 {filteredProducts.length > 0 ? (
-                  filteredProducts.map((p) => {
+                  <>{filteredProducts.map((p) => {
                     const isSelected = formData.productIds.includes(p.id);
                     return (
                       <label
                         key={p.id}
-                        className={`flex items-start gap-3 p-2 rounded-lg cursor-pointer border transition-all ${
-                          isSelected
-                            ? "bg-indigo-50 border-indigo-200"
-                            : "bg-white border-transparent hover:bg-slate-50 hover:border-slate-200"
-                        }`}
+                        className={`flex items-start gap-3 p-2 rounded-lg cursor-pointer border transition-all ${isSelected
+                          ? "bg-indigo-50 border-indigo-200"
+                          : "bg-white border-transparent hover:bg-slate-50 hover:border-slate-200"
+                          }`}
                       >
                         <div
-                          className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                            isSelected
-                              ? "bg-indigo-600 border-indigo-600"
-                              : "bg-white border-slate-300"
-                          }`}
+                          className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${isSelected
+                            ? "bg-indigo-600 border-indigo-600"
+                            : "bg-white border-slate-300"
+                            }`}
                         >
                           {isSelected && (
                             <CheckCircle2 size={10} className="text-white" />
@@ -327,12 +347,27 @@ export default function ArticleFormModal({
                         </div>
                       </label>
                     );
-                  })
+                  })}
+                    <div ref={observerTarget} className="py-4 flex justify-center">
+                      {hasMoreProducts ? (
+                        <button
+                          type="button"
+                          onClick={onLoadMoreProducts}
+                          className="text-[10px] text-indigo-600 font-bold hover:underline"
+                        >
+                          Show more products
+                        </button>
+                      ) : (
+                        <span className="text-[10px] text-slate-400">End of list</span>
+                      )}
+                    </div>
+                  </>
                 ) : (
                   <div className="text-center py-4 text-xs text-slate-400">
                     {t(translations.notFound)}
                   </div>
                 )}
+
               </div>
             </div>
           </div>
@@ -343,11 +378,10 @@ export default function ArticleFormModal({
             <div className="flex items-center gap-1 px-6 pt-4 border-b border-slate-200 bg-white">
               <button
                 onClick={() => setActiveTab("LA")}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${
-                  activeTab === "LA"
-                    ? "border-indigo-600 text-indigo-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
-                }`}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${activeTab === "LA"
+                  ? "border-indigo-600 text-indigo-600"
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
+                  }`}
               >
                 <span className="text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">
                   LA
@@ -356,11 +390,10 @@ export default function ArticleFormModal({
               </button>
               <button
                 onClick={() => setActiveTab("EN")}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${
-                  activeTab === "EN"
-                    ? "border-indigo-600 text-indigo-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
-                }`}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${activeTab === "EN"
+                  ? "border-indigo-600 text-indigo-600"
+                  : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
+                  }`}
               >
                 <span className="text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">
                   EN

@@ -180,8 +180,6 @@
   "speedDesc": "Optimized routes for quickest delivery times.",
   "supportTitle": "Expert Support",
   "supportDesc": "Dedicated team to assist with orders and product info.",
-
-
   "Forbidden": {
     "title": "Access Forbidden",
     "description": "You are signed in, but you don’t have permission to access this resource. If you believe this is an error, please contact your administrator.",
@@ -196,6 +194,45 @@
     "goHome": "Go to Home",
     "footer": "© {year}  CBF. All rights reserved."
   },
-  "indication":"Indication and Usage",
-  "content":"Content"
+  "About": {
+    "Hero": {
+      "since": "SINCE 2010",
+      "titlePart1": "Driving Health &",
+      "titlePart2": "Sustainable Growth",
+      "description": "At CBF, we are dedicated to providing high-quality health products rooted in nature. We bridge the gap between traditional wisdom and modern wellness, ensuring a better life for our community.",
+      "awards": "Awards Won"
+    },
+    "Stats": {
+      "yearsExperience": "Years Experience",
+      "happyCustomers": "Happy Customers",
+      "premiumProducts": "Premium Products",
+      "support": "Support"
+    },
+    "Mission": {
+      "title": "Our Mission",
+      "desc": "To deliver accessible, natural, and safe health solutions to every household in Laos, empowering people to take control of their well-being through knowledge and quality products."
+    },
+    "Vision": {
+      "title": "Our Vision",
+      "desc": "To become the leading health innovation hub in the region, recognized for integrity, sustainability, and our commitment to community development."
+    },
+    "WhyChoose": {
+      "title": "Why Choose CBF?",
+      "subtitle": "We don't just sell products; we build relationships based on trust and quality.",
+      "Natural": {
+        "title": "100% Natural",
+        "desc": "Our products are sourced from the finest natural ingredients without harmful chemicals."
+      },
+      "Quality": {
+        "title": "Quality Certified",
+        "desc": "Every product undergoes rigorous testing to meet international safety standards."
+      },
+      "Expert": {
+        "title": "Expert Team",
+        "desc": "Our team consists of health professionals ready to guide you on your journey."
+      }
+    }
+  },
+  "indication": "Indication and Usage",
+  "content": "Content"
 }

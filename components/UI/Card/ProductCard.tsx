@@ -33,7 +33,7 @@ export default function ProductCard({ product }: { product: ProductCBF }) {
         {/* Image Section */}
         <div className="relative h-52 w-full bg-gray-50 overflow-hidden flex items-center justify-center">
           <Image
-            src={product.productImage || "default.png"}
+            src={product.productImage || "/images/default.png"}
             alt={title || "Product"}
             fill
             className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"

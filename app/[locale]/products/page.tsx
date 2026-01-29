@@ -31,7 +31,8 @@ export default function ProductPage() {
     categorySub: "",
   });
   const [allSymptoms, setAllSymptoms] = useState<any[]>([]);
-
+  const [symptomPage, setSymptomPage] = useState(1);
+  const [hasMoreSymptoms, setHasMoreSymptoms] = useState(true);
   const {
     items: products,
     pagination,
@@ -42,6 +43,26 @@ export default function ProductPage() {
     applyFilters,
     clearFilters,
   } = usePagination("/api/products");
+
+
+  const fetchSymptoms = async (page: number) => {
+    const { data } = await api.get(`/api/symptoms/list?page=${page}`);
+    if (data.success) {
+      setAllSymptoms((prev) => (page === 1 ? data.data : [...prev, ...data.data]));
+      setHasMoreSymptoms(data.pagination.hasNext);
+    }
+  };
+  // โหลดครั้งแรก
+  useEffect(() => {
+    fetchSymptoms(1);
+  }, []);
+
+  const handleLoadMoreSymptoms = () => {
+    const nextPage = symptomPage + 1;
+    setSymptomPage(nextPage);
+    fetchSymptoms(nextPage);
+  };
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -67,13 +88,6 @@ export default function ProductPage() {
     reloadData();
   };
 
-  useEffect(() => {
-    const fetchSymptoms = async () => {
-      const { data } = await api.get("/api/symptoms/list"); // ต้องมี API นี้
-      setAllSymptoms(data.data || []);
-    };
-    fetchSymptoms();
-  }, []);
   const handleApplyFilters = () => {
     applyFilters({
       name: search.name,
@@ -288,11 +302,10 @@ export default function ProductPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${
-                        product.isActive === BooleanState.TRUE
-                          ? "bg-secondary-100 text-secondary-700 border-secondary-300"
-                          : "bg-red-100/50 text-red-600/70 border-red-200/50"
-                      }`}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${product.isActive === BooleanState.TRUE
+                        ? "bg-secondary-100 text-secondary-700 border-secondary-300"
+                        : "bg-red-100/50 text-red-600/70 border-red-200/50"
+                        }`}
                     >
                       <div
                         className={`w-1.5 h-1.5 rounded-full ${product.isActive === BooleanState.TRUE ? "bg-secondary-500" : "bg-red-300"}`}
@@ -342,6 +355,8 @@ export default function ProductPage() {
         onSubmit={handleSaveProduct}
         initialData={selectedProduct}
         allSymptoms={allSymptoms}
+        onLoadMoreSymptoms={handleLoadMoreSymptoms} // ส่งฟังก์ชันไปให้ Modal
+        hasMoreSymptoms={hasMoreSymptoms}
       />
     </div>
   );

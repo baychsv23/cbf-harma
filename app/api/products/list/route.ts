@@ -1,7 +1,9 @@
+//api/products/list
 import { BooleanState } from "@/generated/prisma/enums";
 import { getProducts } from "@/lib/getData";
 import { handleApiAction } from "@/lib/handleApiAction";
-import { DEFAULT_LIMIT, DEFAULT_PAGE, MAX_LIMIT, simpleResponse } from "@/lib/utils/pagination";
+import { selectDataOfProduct } from "@/lib/selectData";
+import { DEFAULT_LIMIT, DEFAULT_PAGE, paginatedResponse } from "@/lib/utils/pagination";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -11,17 +13,26 @@ export async function GET(request: NextRequest) {
         const limit = parseInt(
             searchParams.get("limit") || DEFAULT_LIMIT.toString(),
         );
+        const name = searchParams.get("name")
+        const category = searchParams.get("category");
         const skip = (page - 1) * limit;
         const where: any = {
             isActive: BooleanState.TRUE,
         };
-        const { data } = await getProducts({
+        if (category) where.category = category
+        if (name) {
+            where.OR = [
+                { nameLA: { contains: name } },
+                { nameEN: { contains: name } },
+            ];
+        }
+        const { data, total } = await getProducts({
             where,
             skip,
             limit,
-            select: { id: true, nameLA: true, nameEN: true }
+            select: selectDataOfProduct
         });
 
-        return NextResponse.json(simpleResponse(data));
+        return NextResponse.json(paginatedResponse(data, total, page, limit));
     });
 }

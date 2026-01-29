@@ -26,9 +26,12 @@ export async function GET(request: NextRequest) {
     );
     const name = searchParams.get("name");
     const isActive = searchParams.get("isActive");
+    const category = searchParams.get("category");
+    const categorySub = searchParams.get("categorySub")
 
     const where: any = {};
-
+    if (category) where.category = category
+    if (categorySub) where.categorySub = categorySub
     if (name) {
       where.OR = [
         { nameLA: { contains: name } },

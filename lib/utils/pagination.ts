@@ -10,12 +10,6 @@ const addSequenceNumbers = <T>(
     }));
 };
 
-export const simpleResponse = <T>(data: T[]) => {
-    return {
-        success: true,
-        data: data,
-    };
-};
 
 export const paginatedResponse = <T>(
     data: T[],
@@ -23,17 +17,20 @@ export const paginatedResponse = <T>(
     page: number,
     limit: number,
 ) => {
+    const totalPages = Math.ceil(total / limit);
     return {
         success: true,
         data: addSequenceNumbers(data, page, limit),
         pagination: {
             currentPage: page,
-            totalPages: Math.ceil(total / limit),
+            totalPages: totalPages,
             totalItems: total,
+            hasNext: page < totalPages,
+            hasPrev: page > 1,
         },
     };
 };
 
-export const DEFAULT_LIMIT = 50;
+export const DEFAULT_LIMIT = 2;
 export const DEFAULT_PAGE = 1;
 export const MAX_LIMIT = 1000;

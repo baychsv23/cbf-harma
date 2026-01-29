@@ -6,22 +6,22 @@ import {
   Calendar,
   ArrowLeft,
   Tag,
-  Share2,
   Clock,
   ShoppingBag,
   ChevronRight,
+  Eye,
 } from "lucide-react";
 import { Metadata } from "next";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 // import ArticleViewCounter from "@/components/ArticleViewCounter"; // Uncomment when ready
 import { ArticleStatus, Category } from "@/generated/prisma/enums";
 import { getArticleBySlug } from "@/lib/getDataSlug";
 import { isEnglish } from "@/lib/utils/locale";
 import { ArticleCBF } from "@/lib/interface";
 import { selectDataOfArticle } from "@/lib/selectData";
-import { CATEGORY_SLUG_MAP } from "@/lib/constant"; // Assuming you have this from previous steps
+import { CATEGORY_SLUG_MAP } from "@/lib/constant";
 
-// 1. Generate Metadata
+// 1. Generate Metadata (คงเดิม)
 export async function generateMetadata({
   params,
 }: {
@@ -50,7 +50,7 @@ export default async function ArticleSingleCBFPage({
 }) {
   const { slug } = await params;
   const locale = await getLocale();
-
+  const t = await getTranslations()
   const article = (await getArticleBySlug(slug, {
     where: { status: ArticleStatus.PUBLISHED },
     select: selectDataOfArticle,
@@ -75,148 +75,157 @@ export default async function ArticleSingleCBFPage({
     <main className="min-h-screen bg-white text-gray-800 pb-20">
       {/* <ArticleViewCounter slug={slug} /> */}
 
-      {/* --- 1. Top Navigation Bar --- */}
-      <div className="border-b border-gray-100 sticky top-0 bg-white/80 backdrop-blur-md z-20">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+      {/* --- 1. Top Navigation Bar (Sticky & Glassmorphism) --- */}
+      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-gray-100 shadow-sm transition-all duration-300">
+        <div className="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
           <Link
             href="/cbf/articles"
-            className="group inline-flex items-center text-sm font-medium text-gray-500 hover:text-primary transition-colors"
+            className="group flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center mr-2 group-hover:bg-primary/10 transition-colors">
+            <div className="p-2 rounded-full group-hover:bg-primary/10 transition-colors">
               <ArrowLeft className="w-4 h-4" />
             </div>
-            Back to Articles
+            <span className="hidden sm:inline">Back to Articles</span>
           </Link>
-
-          <div className="flex items-center gap-3">
-            {/* Share Button Placeholder */}
-            <button className="p-2 text-gray-400 hover:text-primary hover:bg-gray-50 rounded-full transition-all">
-              <Share2 className="w-4 h-4" />
-            </button>
-          </div>
         </div>
       </div>
 
-      <article className="container mx-auto px-4 max-w-6xl mt-8 md:mt-12">
-        {/* --- 2. Article Header --- */}
-        <div className="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-8 md:gap-12 items-start mb-10 border-b border-gray-100 pb-10">
-          {/* LEFT: Title & Metadata */}
-          <div className="flex flex-col justify-center h-full">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider mb-4 w-fit">
+      <article className="container mx-auto px-4 max-w-6xl mt-6 md:mt-10">
+
+        {/* --- 2. Hero Section --- */}
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 mb-12 items-start">
+
+          {/* Left: Content Header */}
+          <div className="flex-1 order-2 lg:order-1 flex flex-col justify-center">
+            {/* Tag */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wide mb-5 w-fit border border-blue-100">
               <Tag className="w-3 h-3" />
-              {article.type.replace(/_/g, " ")}
+              {t(article.type)}
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+            {/* Title */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6 leading-[1.2] tracking-tight">
               {title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
+            {/* Meta Info */}
+            <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-sm text-gray-500 font-medium">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-400" />
-                <span>{formatDate(article.publishedAt)}</span>
+                <span className="text-gray-700">{formatDate(article.publishedAt)}</span>
               </div>
+              <div className="w-1 h-1 rounded-full bg-gray-300 hidden sm:block" />
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-gray-400" />
-                <span>{article.views} Views</span>
+                <Eye className="w-4 h-4 text-gray-400" />
+                <span>{article.views.toLocaleString()} Reads</span>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: Image (Half Size) */}
-          {/* I changed aspect ratio to video (16:9) so it's not too tall */}
-          <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-sm bg-gray-100 order-first md:order-last">
-            {article.coverImage ? (
-              <Image
-                src={article.coverImage}
-                alt={title}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 100vw, 600px"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-                No Cover Image
-              </div>
-            )}
+          {/* Right: Cover Image */}
+          <div className="w-full lg:w-[45%] order-1 lg:order-2">
+            <div className="relative aspect-video lg:aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-lg bg-gray-100 ring-1 ring-black/5">
+              {article.coverImage ? (
+                <Image
+                  src={article.coverImage}
+                  alt={title}
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-700"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 600px"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                    <Tag className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <span className="text-sm">No Cover Image</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-12">
-          {/* LEFT: Main Content */}
+        {/* --- 3. Main Layout: Content + Sidebar --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 lg:gap-16">
+
+          {/* LEFT: Article Body */}
           <div className="min-w-0">
-            <div className="prose prose-lg prose-stone hover:prose-a:text-primary max-w-none leading-loose">
+            {/* Prose Configuration for Beautiful Typography */}
+            <div className="
+              prose prose-lg md:prose-xl prose-stone max-w-none 
+              prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-gray-900
+              prose-p:leading-relaxed prose-p:text-gray-600
+              prose-a:text-primary prose-a:font-medium prose-a:no-underline hover:prose-a:underline
+              prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8
+              prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+              prose-li:marker:text-primary
+            ">
               <div dangerouslySetInnerHTML={{ __html: content || "" }} />
             </div>
           </div>
 
-          {/* RIGHT: Sidebar (Stays the same) */}
-          <aside className="space-y-8">
-            <aside className="space-y-8">
-              {/* Widget: Related Products */}
-              {products.length > 0 && (
-                <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100 sticky top-24">
-                  <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-200">
-                    <ShoppingBag className="w-5 h-5 text-primary" />
-                    <h3 className="font-bold text-gray-900">
-                      Related Products
-                    </h3>
+          {/* RIGHT: Sidebar (Sticky) */}
+          <aside className="space-y-8 h-fit lg:sticky lg:top-24">
+            {products.length > 0 && (
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm ring-4 ring-gray-50/50">
+                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                  <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                    <ShoppingBag className="w-5 h-5" />
                   </div>
-
-                  <div className="flex flex-col gap-4">
-                    {products.map((p) => (
-                      <Link
-                        key={p.slug}
-                        href={getProductLink(p)}
-                        className="group flex gap-4 items-start bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/30 transition-all"
-                      >
-                        {/* Product Thumb */}
-                        <div className="relative w-16 h-16 bg-gray-50 rounded-lg overflow-hidden shrink-0 border border-gray-100">
-                          {p.productImage ? (
-                            <Image
-                              src={p.productImage}
-                              alt={isEn ? p.nameEN : p.nameLA}
-                              fill
-                              className="object-contain p-1"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-300">
-                              <ShoppingBag className="w-6 h-6" />
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Product Info */}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold text-primary uppercase mb-0.5 tracking-wide">
-                            {p.category.replace(/_/g, " ")}
-                          </p>
-                          <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
-                            {isEn ? p.nameEN : p.nameLA}
-                          </h4>
-                          <div className="flex items-center gap-1 text-xs text-gray-400 mt-2 font-medium">
-                            View details <ChevronRight className="w-3 h-3" />
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
+                  <h3 className="font-bold text-gray-900 text-lg">
+                    Related Products
+                  </h3>
                 </div>
-              )}
 
-              {/* Optional Widget: Newsletter or Share (Visual Only) */}
-            </aside>
+                <div className="flex flex-col gap-4">
+                  {products.map((p) => (
+                    <Link
+                      key={p.slug}
+                      href={getProductLink(p)}
+                      className="group flex gap-4 items-center bg-white p-3 rounded-xl border border-gray-100 hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                    >
+                      {/* Product Thumb */}
+                      <div className="relative w-16 h-16 bg-gray-50 rounded-lg overflow-hidden shrink-0 border border-gray-100 group-hover:border-primary/20">
+                        {p.productImage ? (
+                          <Image
+                            src={p.productImage}
+                            alt={isEn ? p.nameEN : p.nameLA}
+                            fill
+                            className="object-contain p-1 group-hover:scale-110 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-300">
+                            <ShoppingBag className="w-6 h-6" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Product Info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold text-primary uppercase mb-0.5 tracking-wider">
+                          {p.category.replace(/_/g, " ")}
+                        </p>
+                        <h4 className="text-sm font-bold text-gray-800 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+                          {isEn ? p.nameEN : p.nameLA}
+                        </h4>
+                      </div>
+
+                      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors -ml-2" />
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-gray-100 text-center">
+                  <Link href="/cbf/products" className="text-xs font-bold text-gray-500 hover:text-primary uppercase tracking-wide transition-colors">
+                    View All Products
+                  </Link>
+                </div>
+              </div>
+            )}
           </aside>
         </div>
       </article>
-
-      {/* --- 5. Mobile Only: Related Products (If you want them at bottom on mobile) --- */}
-      {/* The Grid layout above handles stacking automatically, but if you want a specific visual break: */}
-      <div className="lg:hidden container mx-auto px-4 mt-12 pt-8 border-t border-gray-100">
-        {/* You can duplicate the Related Products here if you feel the sidebar gets pushed too far down on mobile, 
-             or just rely on the flex stacking order. Currently, it stacks nicely below content. */}
-      </div>
     </main>
   );
 }
