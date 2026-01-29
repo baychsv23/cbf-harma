@@ -19,7 +19,7 @@ export const ICON_MAP: Record<string, any> = {
   product: Pill, // Changed to Pill for pharma
   symptom: Stethoscope,
   article: FileText,
-  news: Newspaper
+  news: Newspaper,
 };
 
 // Color themes for different menu categories
@@ -70,14 +70,49 @@ export const COMMON_PUBLIC: MenuItem[] = [
   { title: translations.home, href: "/" },
   {
     title: translations.article,
-    children:
-      [{ title: translations.news, href: "/cbf/articles/news" },
-      { title: translations.healthKnowLedge, href: "/cbf/articles/health-knowledge" },
-      { title: translations.activity, href: "/cbf/articles/activities" }],
+    children: [
+      { title: "NEWS", href: "/cbf/articles/news" },
+      {
+        title: "HEALTH_KNOWLEDGE",
+        href: "/cbf/articles/health-knowledge",
+      },
+      { title: "ACTIVITY", href: "/cbf/articles/activity" },
+    ],
   },
-  { title: translations.product, href: "/cbf/products" },
+  {
+    title: translations.product,
+    children: [
+      {
+        title: "NUTRITION_ELECTROLYTE",
+        href: "/cbf/products/nutrition-electrolyte",
+      },
+      {
+        title: "ANTIBIOTICS",
+        href: "/cbf/products/antibiotics",
+      },
+      { title: "ANTI_PARASITIC", href: "/cbf/products/anti-parasitic" },
+      { title: "GASTROINTESTINAL", href: "/cbf/products/gastrointestinal" },
+      { title: "CARDIOVASCULAR", href: "/cbf/products/cardiovascular" },
+      { title: "ANTI_DIABETIC", href: "/cbf/products/anti-diabetic" },
+      { title: "RESPIRATORY", href: "/cbf/products/respiratory" },
+      { title: "ANTI_ALLERGIC", href: "/cbf/products/anti-allergic" },
+      {
+        title: "EFFECTIVE_TO_PSYCHOTIC",
+        href: "/cbf/products/effective-to-psychotic",
+      },
+      {
+        title: "ANALGESIC_ANTIPYRETIC",
+        href: "/cbf/products/analgesic-antipyretic",
+      },
+      { title: "VITAMINS_MINERALS", href: "/cbf/products/vitamins-minerals" },
+      {
+        title: "DISINFECTANTS_ANTISEPTIC",
+        href: "/cbf/products/disinfectants-antiseptic",
+      },
+      { title: "OTHERS", href: "/cbf/products/others" },
+    ],
+  },
   { title: translations.service, href: "/cbf/service" },
-
 
   { title: translations.about, href: "/cbf/about" },
 ];
@@ -102,9 +137,7 @@ export const PERMISSION_MENUS: Record<string, MenuItem[]> = {
   [Permission.ARTICLE_VIEW]: [
     { title: translations.product, href: "/products" },
   ],
-  [Permission.USER_VIEW]: [
-    { title: translations.account, href: "/accounts" },
-  ],
+  [Permission.USER_VIEW]: [{ title: translations.account, href: "/accounts" }],
   [Permission.SYMPTOM_VIEW]: [
     { title: translations.symptom, href: "/symptoms" },
   ],
@@ -132,5 +165,3 @@ export const DROPDOWN_GROUPS = {
   //   ],
   // },
 };
-
-

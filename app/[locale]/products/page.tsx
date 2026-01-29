@@ -1,12 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  Plus,
-  Edit,
-  Settings2,
-  Pill,
-  Stethoscope,
-} from "lucide-react";
+import { Plus, Edit, Settings2, Pill, Stethoscope } from "lucide-react";
 import Pagination from "@/components/UI/Pagination";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useAuth } from "@/app/hooks/useAuth";
@@ -63,7 +57,7 @@ export default function ProductPage() {
   };
 
   const handleSaveProduct = async (formData: any) => {
-    showProcessing()
+    showProcessing();
     if (selectedProduct) {
       await api.put(`/api/products/${selectedProduct.id}`, formData);
     } else {
@@ -71,7 +65,6 @@ export default function ProductPage() {
     }
     setIsModalOpen(false);
     reloadData();
-
   };
 
   useEffect(() => {
@@ -102,7 +95,11 @@ export default function ProductPage() {
         : BooleanState.TRUE; // Fixed logic to toggle correctly
 
     const text = t(translations.MessageManageIsActive, {
-      status: t(nextStatus === BooleanState.FALSE ? translations.inactive : translations.active),
+      status: t(
+        nextStatus === BooleanState.FALSE
+          ? translations.inactive
+          : translations.active,
+      ),
       name: isEnglish(locale) ? product.nameEN : product.nameLA,
     });
 
@@ -111,14 +108,15 @@ export default function ProductPage() {
     if (confirm) {
       showProcessing();
       await api.put(`/api/products/${product.id}`, { isActive: nextStatus });
-      reloadData()
+      reloadData();
     }
   };
   return (
     <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-          <Pill className="text-primary" /> {t(translations.Management, { name: t(translations.product) })}
+          <Pill className="text-primary" />{" "}
+          {t(translations.Management, { name: t(translations.product) })}
         </h1>
         {hasPermission(Permission.PRODUCT_CREATE) && (
           <button
@@ -130,15 +128,16 @@ export default function ProductPage() {
           </button>
         )}
       </div>
+
       <div className="mb-8 bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
         <h2 className="text-lg font-semibold text-slate-700 mb-4">
           {t(translations.Filter, { name: t(translations.product) })}
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* ค้นหาด้วยชื่อ */}
-          <div className="flex flex-col gap-1">
+        <div className="flex flex-col md:flex-row gap-4 items-end">
+          <div className="flex-1 w-full">
             <label className="text-xs font-bold text-slate-500 ml-1">
-              {t(translations.Name, { name: t(translations.product) })} / {t(translations.sku)}
+              {t(translations.Name, { name: t(translations.product) })} /{" "}
+              {t(translations.sku)}
             </label>
             <input
               type="text"
@@ -209,8 +208,6 @@ export default function ProductPage() {
             onApply={handleApplyFilters}
           />
         </div>
-
-
       </div>
 
       {/* Table Redesign */}
@@ -218,7 +215,9 @@ export default function ProductPage() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="px-6 py-4 text-xs font-bold text-slate-500">{t(translations.stt)}</th>
+              <th className="px-6 py-4 text-xs font-bold text-slate-500">
+                {t(translations.stt)}
+              </th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
                 {t(translations.Info, { name: t(translations.product) })}
               </th>
@@ -271,12 +270,13 @@ export default function ProductPage() {
                     <div className="text-sm font-medium text-slate-700">
                       {t(product.category)}
                     </div>
-                    {product.categorySub !== CategorySub.NONE ?
+                    {product.categorySub !== CategorySub.NONE ? (
                       <div className="text-xs text-primary">
                         {t(product.categorySub)}
                       </div>
-                      : ""
-                    }
+                    ) : (
+                      ""
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-xs font-mono bg-slate-100 px-2 py-1 rounded inline-block">
@@ -287,12 +287,21 @@ export default function ProductPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${product.isActive === BooleanState.TRUE
-                      ? 'bg-secondary-100 text-secondary-700 border-secondary-300'
-                      : 'bg-red-100/50 text-red-600/70 border-red-200/50'
-                      }`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${product.isActive === BooleanState.TRUE ? 'bg-secondary-500' : 'bg-red-300'}`}></div>
-                      {t(product.isActive === BooleanState.TRUE ? translations.active : translations.inactive)}
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${
+                        product.isActive === BooleanState.TRUE
+                          ? "bg-secondary-100 text-secondary-700 border-secondary-300"
+                          : "bg-red-100/50 text-red-600/70 border-red-200/50"
+                      }`}
+                    >
+                      <div
+                        className={`w-1.5 h-1.5 rounded-full ${product.isActive === BooleanState.TRUE ? "bg-secondary-500" : "bg-red-300"}`}
+                      ></div>
+                      {t(
+                        product.isActive === BooleanState.TRUE
+                          ? translations.active
+                          : translations.inactive,
+                      )}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -317,16 +326,14 @@ export default function ProductPage() {
           </tbody>
         </table>
       </div>
-      {
-        !loading && pagination.totalPages > 1 && (
-          <Pagination
-            pagination={pagination}
-            page={page}
-            setPage={setPage}
-            loading={loading}
-          />
-        )
-      }
+      {!loading && pagination.totalPages > 1 && (
+        <Pagination
+          pagination={pagination}
+          page={page}
+          setPage={setPage}
+          loading={loading}
+        />
+      )}
       <ProductFormModal
         t={t}
         local={locale}
@@ -336,6 +343,6 @@ export default function ProductPage() {
         initialData={selectedProduct}
         allSymptoms={allSymptoms}
       />
-    </div >
+    </div>
   );
 }

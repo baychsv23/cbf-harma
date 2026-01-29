@@ -7,7 +7,11 @@ import { handleApiAction } from "@/lib/handleApiAction";
 import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
-import { DEFAULT_LIMIT, DEFAULT_PAGE, paginatedResponse } from "@/lib/utils/pagination";
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_PAGE,
+  paginatedResponse,
+} from "@/lib/utils/pagination";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -21,10 +25,9 @@ export async function GET(request: NextRequest) {
       searchParams.get("limit") || DEFAULT_LIMIT.toString(),
     );
     const name = searchParams.get("name");
-    const isActive = searchParams.get("isActive")
+    const isActive = searchParams.get("isActive");
 
-    const where: any = {
-    };
+    const where: any = {};
 
     if (name) {
       where.OR = [
@@ -32,7 +35,7 @@ export async function GET(request: NextRequest) {
         { nameEN: { contains: name } },
       ];
     }
-    if (isActive) where.isActive = isActive
+    if (isActive) where.isActive = isActive;
 
     const skip = (page - 1) * limit;
 
@@ -49,7 +52,7 @@ export async function POST(req: Request) {
   return handleApiAction(async () => {
     const session = await requirePermission(Permission.PRODUCT_CREATE);
     const body = await req.json();
-    if (!session) throw new ApiError(translations.forbidden, 403)
+    if (!session) throw new ApiError(translations.forbidden, 403);
     const createdById = session.user.id;
     if (!body.nameEN || !body.nameLA || !body.sku || !body.slug) {
       throw new ApiError(translations.allFiledRequired, 400);
@@ -73,7 +76,7 @@ export async function POST(req: Request) {
         productImage: body.productImage,
         productImagePublicId: body.productImagePublicId,
         isPrescription: body.isPrescription || BooleanState.FALSE,
-        symptom: {
+        symptoms: {
           connect: symptomIds.map((id: string) => ({ id })),
         },
       },

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, LayoutDashboard, FileText, Menu, X } from "lucide-react";
+import { ChevronDown, FileText, Menu, X } from "lucide-react";
 import { translations } from "@/lib/translation";
 import AuthButtons from "./AuthButtons";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -12,17 +12,23 @@ import {
   COLOR_THEMES,
   ROLE_MENUS,
   PERMISSION_MENUS,
-  DROPDOWN_GROUPS,
-  type MenuItem,
   COMMON_PUBLIC,
+  type MenuItem,
 } from "@/lib/menu-config";
 import { Role } from "@/generated/prisma/enums";
 import { usePathname } from "@/i18n/routing";
 import Image from "next/image";
 
-
-
-function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
+// 1. Add onNavigate prop to the interface
+function SidebarItem({
+  item,
+  pathname,
+  onNavigate,
+}: {
+  item: MenuItem;
+  pathname: string;
+  onNavigate?: () => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const t = useTranslations();
 
@@ -32,28 +38,35 @@ function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
   const isActive = pathname === item.href || hasActiveChild;
 
   const Icon = ICON_MAP[item.title] || ICON_MAP.home;
-
   const colorTheme = COLOR_THEMES[item.title] || COLOR_THEMES.default;
 
   if (item.children) {
     return (
       <div>
         <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
-            ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
-            : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
-            }`}
+          // 2. ONLY toggle state here, do NOT call onNavigate
+          onClick={(e) => {
+            e.stopPropagation(); // Good practice to prevent bubbling
+            setIsOpen(!isOpen);
+          }}
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+            isActive
+              ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
+              : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
+          }`}
         >
           <Icon
-            className={`w-5 h-5 ${isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`}`}
+            className={`w-5 h-5 ${
+              isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`
+            }`}
           />
           <span className="flex-1 text-left text-sm font-medium">
             {t(item.title)}
           </span>
           <ChevronDown
-            className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-              }`}
+            className={`w-4 h-4 transition-transform duration-200 ${
+              isOpen ? "rotate-180" : ""
+            }`}
           />
         </button>
         {isOpen && (
@@ -67,19 +80,28 @@ function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
               const childIsActive = pathname === child.href;
               const ChildIcon = ICON_MAP[child.title] || FileText;
               return (
-                <AntiSpamLink
-                  key={child.href}
-                  href={child.href}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 group ${childIsActive
-                    ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-sm`
-                    : `text-slate-600 hover:bg-gradient-to-r ${colorTheme.hover}`
+                <div key={child.href} onClick={onNavigate}>
+                  {/* 3. Wrap child link in a div or pass onClick to Link to close menu */}
+                  <AntiSpamLink
+                    href={child.href}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 group ${
+                      childIsActive
+                        ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-sm`
+                        : `text-slate-600 hover:bg-gradient-to-r ${colorTheme.hover}`
                     }`}
-                >
-                  <ChildIcon
-                    className={`w-4 h-4 ${childIsActive ? "text-white" : `text-slate-400 ${colorTheme.icon}`}`}
-                  />
-                  <span className="text-sm font-medium">{t(child.title)}</span>
-                </AntiSpamLink>
+                  >
+                    <ChildIcon
+                      className={`w-4 h-4 ${
+                        childIsActive
+                          ? "text-white"
+                          : `text-slate-400 ${colorTheme.icon}`
+                      }`}
+                    />
+                    <span className="text-sm font-medium">
+                      {t(child.title)}
+                    </span>
+                  </AntiSpamLink>
+                </div>
               );
             })}
           </div>
@@ -88,19 +110,25 @@ function SidebarItem({ item, pathname }: { item: MenuItem; pathname: string }) {
     );
   }
 
+  // 4. Single items (no children) SHOULD close the menu
   return (
-    <AntiSpamLink
-      href={item.href!}
-      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
-        ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
-        : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
+    <div onClick={onNavigate}>
+      <AntiSpamLink
+        href={item.href!}
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+          isActive
+            ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md ${colorTheme.shadow}`
+            : `text-slate-700 hover:bg-gradient-to-r ${colorTheme.hover}`
         }`}
-    >
-      <Icon
-        className={`w-5 h-5 ${isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`}`}
-      />
-      <span className="text-sm font-medium">{t(item.title)}</span>
-    </AntiSpamLink>
+      >
+        <Icon
+          className={`w-5 h-5 ${
+            isActive ? "text-white" : `text-slate-500 ${colorTheme.icon}`
+          }`}
+        />
+        <span className="text-sm font-medium">{t(item.title)}</span>
+      </AntiSpamLink>
+    </div>
   );
 }
 
@@ -181,7 +209,6 @@ export default function Sidebar() {
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 h-16 bg-primary-200 border-b border-slate-200 z-50 flex items-center justify-between px-4 md:px-6 shadow-md">
         <div className="flex items-center gap-3">
-          {/* Hamburger Menu Button - Mobile Only */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden p-2 hover:bg-white/50 rounded-lg transition-colors"
@@ -194,7 +221,6 @@ export default function Sidebar() {
             )}
           </button>
           <div className="flex items-center gap-2">
-            {/* ใส่ Logo ของคุณตรงนี้ */}
             <div className="w-10 h-10 relative bg-white rounded-lg flex items-center justify-center">
               <Image
                 src="/images/logo.svg"
@@ -205,7 +231,9 @@ export default function Sidebar() {
                 priority
               />
             </div>
-            <span className="text-2xl font-bold text-green-900 text-accent">CBF Pharma Co., Ltd</span>
+            <span className="text-2xl font-bold text-green-900 text-accent">
+              CBF Pharma Co., Ltd
+            </span>
           </div>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
@@ -226,7 +254,7 @@ export default function Sidebar() {
       <aside
         className={`
                 fixed top-16 left-0 bottom-0 w-64 
-                bg-gradient-to-b from-slate-50 via-primary-50/30 to-secondary-50/20 
+                bg-white
                 border-r border-slate-200 z-40 overflow-hidden flex flex-col shadow-lg
                 transition-transform duration-300 ease-in-out
                 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
@@ -235,19 +263,19 @@ export default function Sidebar() {
       >
         <div className="flex-1 overflow-y-auto p-3 space-y-1">
           {menuItems.map((item, index) => (
-            <div key={index} onClick={() => setIsMobileMenuOpen(false)}>
-              <SidebarItem item={item} pathname={pathname} />
-            </div>
+            // 5. REMOVE the onClick wrapper from here
+            <SidebarItem
+              key={index}
+              item={item}
+              pathname={pathname}
+              // 6. Pass the close function down
+              onNavigate={() => setIsMobileMenuOpen(false)}
+            />
           ))}
         </div>
-
-        {/* User Info at Bottom */}
       </aside>
 
-      {/* Main Content Spacer */}
-      <div className="lg:pl-64 lg:pt-16">
-        {/* Your main content goes here */}
-      </div>
+      <div className="lg:pl-64 lg:pt-16">{/* Main Content */}</div>
     </>
   );
 }

@@ -180,6 +180,8 @@
   "speedDesc": "Optimized routes for quickest delivery times.",
   "supportTitle": "Expert Support",
   "supportDesc": "Dedicated team to assist with orders and product info.",
+
+
   "Forbidden": {
     "title": "Access Forbidden",
     "description": "You are signed in, but you don’t have permission to access this resource. If you believe this is an error, please contact your administrator.",
@@ -193,5 +195,7 @@
     "goBack": "Go Back",
     "goHome": "Go to Home",
     "footer": "© {year}  CBF. All rights reserved."
-  }
+  },
+  "indication":"Indication and Usage",
+  "content":"Content"
 }

@@ -10,9 +10,8 @@ import { Metadata } from "next";
 const getCategoryFromType = (type?: string) => {
   if (!type || type.length === 0) return "ALL";
   const path = type;
-  console.log(path);
   if (path === "news") return ArticleType.NEWS;
-  if (path === "activities") return ArticleType.ACTIVITY;
+  if (path === "activity") return ArticleType.ACTIVITY;
   if (path === "health-knowledge") return ArticleType.HEALTH_KNOWLEDGE;
   return "ALL";
 };
@@ -23,11 +22,7 @@ export async function generateMetadata({
   params: Promise<{ type?: string }>;
 }): Promise<Metadata> {
   const { type } = await params;
-  const category = getCategoryFromType(type);
-  const title =
-    category === "ALL"
-      ? "All Articles"
-      : `${category.replace("_", " ")} Articles`;
+  const title = type === "ALL" ? "All Articles" : `${type} Articles`;
   return { title: `${title} | CBF` };
 }
 
@@ -49,7 +44,7 @@ export default async function ArticlesCBFWithTypePage({
     where,
     skip: 0,
     limit: LIMIT,
-    select: selectDataOfArticle
+    select: selectDataOfArticle,
   });
 
   return (

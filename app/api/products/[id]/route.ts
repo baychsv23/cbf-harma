@@ -61,7 +61,7 @@ export async function PUT(
                 indicationEN: body.indicationEN,
                 productImage: body.productImage,
                 updatedById,
-                symptom: {
+                symptoms: {
                     connect: symptomIds.map((id: string) => ({ id })),
                 },
             },

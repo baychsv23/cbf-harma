@@ -31,10 +31,7 @@ export default function ArticlePage() {
   const local = useLocale();
   const api = useApiWithAlert();
 
-  const {
-    showConfirm,
-    showProcessing,
-  } = useAlert();
+  const { showConfirm, showProcessing } = useAlert();
   const { hasPermission } = useAuth();
 
   const [search, setSearch] = useState({ title: "", type: "", status: "" });
@@ -61,7 +58,11 @@ export default function ArticlePage() {
   }, []);
 
   const handleApplyFilters = () => {
-    applyFilters({ title: search.title, type: search.type, status: search.status });
+    applyFilters({
+      title: search.title,
+      type: search.type,
+      status: search.status,
+    });
   };
 
   const handleClearFilters = () => {
@@ -84,11 +85,10 @@ export default function ArticlePage() {
 
   // --- FORM LOGIC ---
   const handleSaveArticle = async (formData: any) => {
-    showProcessing()
+    showProcessing();
     if (selectedArticle) {
-      await api.put(`/api/articles/${selectedArticle.id}`, formData)
-    }
-    else {
+      await api.put(`/api/articles/${selectedArticle.id}`, formData);
+    } else {
       await api.post("/api/articles", formData);
     }
     setIsModalOpen(false);
@@ -107,8 +107,6 @@ export default function ArticlePage() {
       showProcessing();
 
       await api.delete(`/api/articles/${article.id}`);
-
-
     }
   };
 
@@ -120,7 +118,9 @@ export default function ArticlePage() {
           <div className="bg-indigo-100 p-2 rounded-xl">
             <FileText className="text-indigo-600 w-6 h-6" />
           </div>
-          <span>{t(translations.Management, { name: t(translations.article) })} </span>
+          <span>
+            {t(translations.Management, { name: t(translations.article) })}{" "}
+          </span>
         </h1>
 
         {hasPermission(Permission.ARTICLE_CREATE) && (
@@ -136,6 +136,9 @@ export default function ArticlePage() {
 
       {/* Filter */}
       <div className="mb-6 bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
+        <h2 className="text-lg font-semibold text-slate-700 mb-4">
+          {t(translations.Filter, { name: t(translations.article) })}
+        </h2>
         <div className="flex flex-col md:flex-row gap-4 items-end">
           <div className="flex-1 w-full">
             <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
@@ -143,7 +146,9 @@ export default function ArticlePage() {
             </label>
             <input
               type="text"
-              placeholder={t(translations.SearchBy, { name: t(translations.title) })}
+              placeholder={t(translations.SearchBy, {
+                name: t(translations.title),
+              })}
               value={search.title}
               onChange={(e) => setSearch({ ...search, title: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
@@ -158,7 +163,9 @@ export default function ArticlePage() {
               onChange={(e) => setSearch({ ...search, type: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
             >
-              <option value="">{t(translations.All, { name: t(translations.article) })}</option>
+              <option value="">
+                {t(translations.All, { name: t(translations.article) })}
+              </option>
               {Object.values(ArticleType).map((type) => (
                 <option key={type} value={type}>
                   {t(type)}
@@ -175,7 +182,9 @@ export default function ArticlePage() {
               onChange={(e) => setSearch({ ...search, status: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
             >
-              <option value="">{t(translations.All, { name: t(translations.status) })}</option>
+              <option value="">
+                {t(translations.All, { name: t(translations.status) })}
+              </option>
               {Object.values(ArticleStatus).map((s) => (
                 <option key={s} value={s}>
                   {t(s)}
@@ -251,11 +260,15 @@ export default function ArticlePage() {
                         </div>
                         <div>
                           <div className="text-sm font-bold text-slate-800 line-clamp-1">
-                            {isEnglish(local) ? article.titleEN : article.titleLA}
+                            {isEnglish(local)
+                              ? article.titleEN
+                              : article.titleLA}
                           </div>
                           <div className="text-xs text-slate-500 flex items-center gap-1">
                             <Globe size={10} />{" "}
-                            {isEnglish(local) ? article.titleLA : article.titleEN}
+                            {isEnglish(local)
+                              ? article.titleLA
+                              : article.titleEN}
                           </div>
                         </div>
                       </div>
@@ -267,16 +280,18 @@ export default function ArticlePage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-bold border ${article.status === ArticleStatus.PUBLISHED
-                          ? "bg-secondary-100/80 text-secondary-700 border-secondary-300"
-                          : "bg-slate-100 text-slate-500 border-slate-200"
-                          }`}
+                        className={`px-2 py-1 rounded-full text-xs font-bold border ${
+                          article.status === ArticleStatus.PUBLISHED
+                            ? "bg-secondary-100/80 text-secondary-700 border-secondary-300"
+                            : "bg-slate-100 text-slate-500 border-slate-200"
+                        }`}
                       >
                         {t(article.status)}
                       </span>
                       {article.publishedAt && (
                         <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                          <Calendar size={10} /> {formatDate(article.publishedAt)}
+                          <Calendar size={10} />{" "}
+                          {formatDate(article.publishedAt)}
                         </div>
                       )}
                     </td>

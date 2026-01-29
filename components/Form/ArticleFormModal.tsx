@@ -22,8 +22,8 @@ interface ArticleFormProps {
   onSubmit: (data: any) => void;
   initialData?: any;
   allProducts: any[];
-  t: any
-  local: string
+  t: any;
+  local: string;
 }
 
 export default function ArticleFormModal({
@@ -33,7 +33,7 @@ export default function ArticleFormModal({
   initialData,
   allProducts,
   t,
-  local
+  local,
 }: ArticleFormProps) {
   // --- STATE ---
   const [activeTab, setActiveTab] = useState<"EN" | "LA">("LA");
@@ -45,7 +45,7 @@ export default function ArticleFormModal({
     contentEN: string;
     contentLA: string;
     coverImage: string;
-    coverImagePublicId: string,
+    coverImagePublicId: string;
     type: ArticleType;
     status: ArticleStatus;
     slug: string;
@@ -76,7 +76,7 @@ export default function ArticleFormModal({
         status: initialData.status || ArticleStatus.DRAFT,
         slug: initialData.slug || "",
         productIds: initialData.products?.map((p: any) => p.id) || [],
-        coverImagePublicId: initialData.coverImagePublicId || ""
+        coverImagePublicId: initialData.coverImagePublicId || "",
       });
     } else {
       setFormData({
@@ -89,9 +89,9 @@ export default function ArticleFormModal({
         status: ArticleStatus.DRAFT,
         slug: "",
         productIds: [],
-        coverImagePublicId: ""
+        coverImagePublicId: "",
       });
-      setActiveTab("EN"); // Reset tab to EN for new article
+      setActiveTab("LA"); // Reset tab to EN for new article
     }
   }, [initialData, isOpen]);
 
@@ -131,7 +131,9 @@ export default function ArticleFormModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-800 leading-none">
-                {initialData ? t(translations.Edit, { name: t(translations.article) }) : t(translations.Create, { name: t(translations.article) })}
+                {initialData
+                  ? t(translations.Edit, { name: t(translations.article) })
+                  : t(translations.Create, { name: t(translations.article) })}
               </h2>
               <p className="text-xs text-slate-500 mt-1">
                 {initialData
@@ -162,7 +164,7 @@ export default function ArticleFormModal({
               </label>
               <ImageUpload
                 value={formData.coverImage}
-                aspectRatio={1.78}     // 16:9 for Banners
+                aspectRatio={1.78} // 16:9 for Banners
                 label="Click to Upload Article 16:9"
                 onChange={(result) =>
                   setFormData((prev) => ({
@@ -172,7 +174,6 @@ export default function ArticleFormModal({
                   }))
                 }
               />
-
             </div>
 
             {/* Publishing Settings */}
@@ -217,12 +218,11 @@ export default function ArticleFormModal({
                         status: e.target.value as ArticleStatus,
                       })
                     }
-                    className={`w-full text-sm p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium ${formData.status === ArticleStatus.PUBLISHED
-                      ? "bg-secondary/10 text-secondary border-secondary/30"
-                      : "bg-slate-50 text-slate-600"
-                      }`}
-
-
+                    className={`w-full text-sm p-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all font-medium ${
+                      formData.status === ArticleStatus.PUBLISHED
+                        ? "bg-secondary/10 text-secondary border-secondary/30"
+                        : "bg-slate-50 text-slate-600"
+                    }`}
                   >
                     {Object.values(ArticleStatus).map((s) => (
                       <option key={s} value={s}>
@@ -232,7 +232,6 @@ export default function ArticleFormModal({
                   </select>
                 </div>
               </div>
-
             </div>
 
             {/* Related Products */}
@@ -254,7 +253,9 @@ export default function ArticleFormModal({
                 />
                 <input
                   type="text"
-                  placeholder={t(translations.SearchBy, { name: t(translations.product) })}
+                  placeholder={t(translations.SearchBy, {
+                    name: t(translations.product),
+                  })}
                   value={productSearch}
                   onChange={(e) => setProductSearch(e.target.value)}
                   className="w-full text-xs py-2 pl-8 pr-3 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none transition-all"
@@ -269,16 +270,18 @@ export default function ArticleFormModal({
                     return (
                       <label
                         key={p.id}
-                        className={`flex items-start gap-3 p-2 rounded-lg cursor-pointer border transition-all ${isSelected
-                          ? "bg-indigo-50 border-indigo-200"
-                          : "bg-white border-transparent hover:bg-slate-50 hover:border-slate-200"
-                          }`}
+                        className={`flex items-start gap-3 p-2 rounded-lg cursor-pointer border transition-all ${
+                          isSelected
+                            ? "bg-indigo-50 border-indigo-200"
+                            : "bg-white border-transparent hover:bg-slate-50 hover:border-slate-200"
+                        }`}
                       >
                         <div
-                          className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${isSelected
-                            ? "bg-indigo-600 border-indigo-600"
-                            : "bg-white border-slate-300"
-                            }`}
+                          className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                            isSelected
+                              ? "bg-indigo-600 border-indigo-600"
+                              : "bg-white border-slate-300"
+                          }`}
                         >
                           {isSelected && (
                             <CheckCircle2 size={10} className="text-white" />
@@ -307,11 +310,17 @@ export default function ArticleFormModal({
                         <div className="flex-1 min-w-0">
                           {/* กำหนดค่าสีไว้ที่ตัวแปรเดียว เพื่อลดความซ้ำซ้อน */}
                           {/* เพิ่มความแตกต่างของสีระหว่างชื่อหลักและชื่อรองให้ชัดเจนขึ้น (Opacity) */}
-                          <div className={isSelected ? "text-indigo-700" : "text-slate-700"}>
+                          <div
+                            className={
+                              isSelected ? "text-indigo-700" : "text-slate-700"
+                            }
+                          >
                             <p className="text-sm font-medium truncate">
                               {isEnglish(local) ? p.nameEN : p.nameLA}
                             </p>
-                            <p className={`text-xs truncate ${isSelected ? "text-indigo-500/80" : "text-slate-400"}`}>
+                            <p
+                              className={`text-xs truncate ${isSelected ? "text-indigo-500/80" : "text-slate-400"}`}
+                            >
                               {isEnglish(local) ? p.nameLA : p.nameEN}
                             </p>
                           </div>
@@ -333,28 +342,30 @@ export default function ArticleFormModal({
             {/* Language Tabs */}
             <div className="flex items-center gap-1 px-6 pt-4 border-b border-slate-200 bg-white">
               <button
-                onClick={() => setActiveTab("EN")}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${activeTab === "EN"
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
-                  }`}
-              >
-                <span className="text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">
-                  EN
-                </span>{" "}
-                English
-              </button>
-              <button
                 onClick={() => setActiveTab("LA")}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${activeTab === "LA"
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
-                  }`}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${
+                  activeTab === "LA"
+                    ? "border-indigo-600 text-indigo-600"
+                    : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
+                }`}
               >
                 <span className="text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">
                   LA
                 </span>{" "}
                 Lao
+              </button>
+              <button
+                onClick={() => setActiveTab("EN")}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all ${
+                  activeTab === "EN"
+                    ? "border-indigo-600 text-indigo-600"
+                    : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-t-lg"
+                }`}
+              >
+                <span className="text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">
+                  EN
+                </span>{" "}
+                English
               </button>
             </div>
 
@@ -364,7 +375,8 @@ export default function ArticleFormModal({
                 {/* Title Input */}
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                   <label className="block text-xs font-bold text-slate-500 uppercase mb-2">
-                    Article Title ({activeTab === "EN" ? "English" : "Lao"}){" "}
+                    {t(translations.title)} (
+                    {activeTab === "EN" ? "English" : "Lao"}){" "}
                     <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -379,11 +391,9 @@ export default function ArticleFormModal({
                       }))
                     }
                     className="w-full text-2xl font-bold placeholder:text-slate-300 border-none focus:ring-0 p-0 text-slate-800"
-                    placeholder={
-                      activeTab === "EN"
-                        ? "Enter article headline..."
-                        : "ໃສ່ຫົວຂໍ້ບົດຄວາມ..."
-                    }
+                    placeholder={t(translations.Placeholder, {
+                      name: t(translations.title),
+                    })}
                   />
                 </div>
 
@@ -391,7 +401,8 @@ export default function ArticleFormModal({
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden min-h-[400px] flex flex-col">
                   <div className="px-6 py-3 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
                     <span className="text-xs font-bold text-slate-500 uppercase">
-                      Content Body
+                      {t(translations.content)} (
+                      {activeTab === "EN" ? "English" : "Lao"}){" "}
                     </span>
                     <Globe size={14} className="text-slate-400" />
                   </div>
@@ -437,10 +448,8 @@ export default function ArticleFormModal({
             </button>
             <button
               onClick={handleSubmit}
-
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-2.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all shadow-lg shadow-indigo-200 disabled:opacity-70 disabled:pointer-events-none text-sm"
             >
-
               <Save size={18} />
               {initialData ? t(translations.update) : t(translations.create)}
             </button>

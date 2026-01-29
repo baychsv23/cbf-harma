@@ -106,7 +106,7 @@ model Product {
   id                   String       @id @default(uuid())
   slug                 String       @unique // URL ທີ່ສວຍງາມ (SEO) e.g., freecold-paracetamol
   sku                  String       @unique
-  nameEN               String
+  nameLA               String
   nameLA               String
   genericName          String? // ຊື່ສາມັນທາງຢາ e.g., 
   dosage               String? // 500mg

@@ -113,21 +113,18 @@ export const translations = {
   symptom: "symptom",
   All: "All",
   Management: "Management",
-  limitBanner: 'limitBanner',
+  limitBanner: "limitBanner",
   limitAnnouncement: "limitAnnouncement",
-  announcement: 'announcement',
-  type: 'type',
-  subCategory: 'subCategory',
-  actions: 'actions',
+  announcement: "announcement",
+  type: "type",
+  subCategory: "subCategory",
+  actions: "actions",
   Info: "Info",
   title: "title",
   preview: "preview",
-  loginSuccessful: 'loginSuccessful',
+  loginSuccessful: "loginSuccessful",
   service: "service",
 
-  news: "NEWS",
-  healthKnowLedge: "HEALTH_KNOWLEDGE",
-  activity: "ACTIVITY"
-
-
+  indication: "indication",
+  content: "content",
 } as const;
