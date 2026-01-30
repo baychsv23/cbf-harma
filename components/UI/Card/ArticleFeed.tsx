@@ -105,7 +105,7 @@ export default function ArticleFeed({
         {/* --- Header & Search --- */}
         <div className="flex flex-col gap-4 mb-6 md:mb-10">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center md:text-left">
-            {t(translations.title)}
+            {t(translations.article)}
           </h1>
 
           {/* Search Wrapper: Centered on mobile, aligned on desktop */}
@@ -162,8 +162,8 @@ export default function ArticleFeed({
           <Link
             href="/cbf/articles"
             className={`whitespace-nowrap px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-200 flex-shrink-0 ${currentType === "ALL"
-                ? "bg-primary text-white shadow-md shadow-primary/25"
-                : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+              ? "bg-primary text-white shadow-md shadow-primary/25"
+              : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
               }`}
           >
             {t(translations.All, { name: "" })}
@@ -175,8 +175,8 @@ export default function ArticleFeed({
                 key={value}
                 href={getTypePath(value)}
                 className={`whitespace-nowrap px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-200 flex-shrink-0 ${isActive
-                    ? "bg-primary text-white shadow-md shadow-primary/25"
-                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                  ? "bg-primary text-white shadow-md shadow-primary/25"
+                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
                   }`}
               >
                 {t(key)}

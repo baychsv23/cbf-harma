@@ -80,6 +80,7 @@ export default function Footer() {
                             <FooterLink href="/" label={t("home")} />
                             <FooterLink href="/public/products" label={t("products")} />
                             <FooterLink href="/cbf/articles" label={t("articles")} />
+                            <FooterLink href="/cbf/service" label={t("service")} />
                             <FooterLink href="/cbf/about" label={t("about")} />
                         </ul>
                     </div>
@@ -99,14 +100,14 @@ export default function Footer() {
                             </li>
                             <li className="flex items-center gap-3">
                                 <Phone className="w-5 h-5 text-accent shrink-0" />
-                                <a href="tel:+8562012345678" className="hover:text-accent transition-colors">
-                                    +856 20 1234 5678
+                                <a href="tel:+8562098989689" className="hover:text-accent transition-colors">
+                                    +856 20 9898 9689
                                 </a>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Mail className="w-5 h-5 text-accent shrink-0" />
-                                <a href="mailto:info@cbf.la" className="hover:text-accent transition-colors">
-                                    info@cbf.la
+                                <a href="mailto:info@cbfpharma.la" className="hover:text-accent transition-colors">
+                                    info@cbfpharma.la
                                 </a>
                             </li>
                         </ul>
@@ -119,10 +120,10 @@ export default function Footer() {
                 <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-primary-200">
                     <p>&copy; {currentYear} CBF. All rights reserved.</p>
                     <div className="flex gap-6 mt-2 md:mt-0">
-                        <Link href="/privacy" className="hover:text-accent transition-colors">
+                        <Link href="#" className="hover:text-accent transition-colors">
                             {t("privacyPolicy")}
                         </Link>
-                        <Link href="/terms" className="hover:text-accent transition-colors">
+                        <Link href="#" className="hover:text-accent transition-colors">
                             {t("termsOfService")}
                         </Link>
                     </div>
@@ -146,15 +147,3 @@ function FooterLink({ href, label }: { href: string; label: string }) {
     );
 }
 
-function SocialLink({ href, icon }: { href: string; icon: React.ReactNode }) {
-    return (
-        <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-10 h-10 rounded-full bg-primary-700 flex items-center justify-center text-accent hover:bg-accent hover:text-primary-900 transition-all duration-300 shadow-md"
-        >
-            {icon}
-        </a>
-    );
-}

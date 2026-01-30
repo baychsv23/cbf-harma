@@ -29,6 +29,7 @@ export default function ProductPage() {
     name: "",
     category: "",
     categorySub: "",
+    isActive: ""
   });
   const [allSymptoms, setAllSymptoms] = useState<any[]>([]);
   const [symptomPage, setSymptomPage] = useState(1);
@@ -93,11 +94,12 @@ export default function ProductPage() {
       name: search.name,
       category: search.category,
       categorySub: search.categorySub,
+      isActive: search.isActive
     });
   };
 
   const handleClearFilters = () => {
-    setSearch({ name: "", category: "", categorySub: "" });
+    setSearch({ name: "", category: "", categorySub: "", isActive: "" });
     clearFilters();
   };
   // Helper to get enum translations or raw keys
@@ -163,7 +165,32 @@ export default function ProductPage() {
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
             />
           </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-bold text-slate-500 ml-1">
+              {t(translations.status)}
+            </label>
+            <select
+              value={search.isActive}
+              onChange={(e) =>
+                setSearch({
+                  ...search,
+                  isActive: e.target.value,
+                })
+              }
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
+            >
+              <option value="">
+                {t(translations.All, { name: t(translations.status) })}
+              </option>
+              <option value={BooleanState.TRUE}>
+                {t(translations.active)}
+              </option>
+              <option value={BooleanState.FALSE}>
+                {t(translations.inactive)}
+              </option>
 
+            </select>
+          </div>
           {/* ค้นหาด้วยหมวดหมู่หลัก */}
           <div className="flex flex-col gap-1">
             <label className="text-xs font-bold text-slate-500 ml-1">

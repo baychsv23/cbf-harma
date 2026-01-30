@@ -127,4 +127,15 @@ export const translations = {
 
   indication: "indication",
   content: "content",
+  latestUpdate: 'latestUpdate',
+  generic: 'generic',
+  specsCategory: "specsCategory",
+  dosage: 'dosage',
+  packaging: "packaging",
+  antibioticGroup: "antibioticGroup",
+  clinicalIndications: "clinicalIndications",
+  identification: "identification",
+  Related: "Related",
+  prescriptionRequired: 'prescriptionRequired',
+  rxRequired: "rxRequired"
 } as const;

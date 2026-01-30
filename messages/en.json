@@ -153,7 +153,7 @@
   "subscribe": "Subscribe",
   "privacyPolicy": "Privacy Policy",
   "termsOfService": "Terms of Service",
-  "addressCompany": "123 ຖະໜົນສີຂຽວ, ເມືອງປາກເຊ, ແຂວງຈຳປາສັກ, ສປປ ລາວ",
+  "addressCompany": "4th Kilometer, Route 13 South, Kang Village, Pakse City, Champasak Province",
   "heroBadge": "Comprehensive Healthcare Solutions",
   "heroTitle": "Manufacturing, Distribution & Logistics",
   "heroDesc": "We are committed to delivering high-quality pharmaceutical products to every corner of Laos through our integrated supply chain.",
@@ -233,6 +233,18 @@
       }
     }
   },
-  "indication": "Indication and Usage",
-  "content": "Content"
+  "content": "Content",
+  "latestUpdate": "Latest Updates",
+  "generic": "Generic Name",
+  "specsCategory": "🧪 Specs & Category",
+  "dosage": "Dosage",
+  "packaging": "Packaging",
+  "antibioticGroup": "Antibiotic Group",
+  "clinicalIndications": "🩺 Clinical Indications",
+  "indication": "Indication",
+  "identification": "📝 Identification",
+  "Related": "Related {name}",
+  "prescriptionRequired": "Requires doctor's prescription",
+  "rxRequired": "RX Required",
+  "treatsRelieves": "Treats / Relieves"
 }

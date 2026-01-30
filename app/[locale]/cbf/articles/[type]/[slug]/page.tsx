@@ -6,14 +6,12 @@ import {
   Calendar,
   ArrowLeft,
   Tag,
-  Clock,
   ShoppingBag,
   ChevronRight,
   Eye,
 } from "lucide-react";
 import { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
-// import ArticleViewCounter from "@/components/ArticleViewCounter"; // Uncomment when ready
 import { ArticleStatus, Category } from "@/generated/prisma/enums";
 import { getArticleBySlug } from "@/lib/getDataSlug";
 import { isEnglish } from "@/lib/utils/locale";
@@ -21,8 +19,9 @@ import { ArticleCBF } from "@/lib/interface";
 import { selectDataOfArticle } from "@/lib/selectData";
 import { CATEGORY_SLUG_MAP } from "@/lib/constant";
 import ArticleViewCounter from "@/components/ArticleViewCounter";
+import { translations } from "@/lib/translation";
 
-// 1. Generate Metadata (คงเดิม)
+// 1. Generate Metadata
 export async function generateMetadata({
   params,
 }: {
@@ -51,7 +50,7 @@ export default async function ArticleSingleCBFPage({
 }) {
   const { slug } = await params;
   const locale = await getLocale();
-  const t = await getTranslations()
+  const t = await getTranslations();
   const article = (await getArticleBySlug(slug, {
     where: { status: ArticleStatus.PUBLISHED },
     select: selectDataOfArticle,
@@ -75,6 +74,7 @@ export default async function ArticleSingleCBFPage({
   return (
     <main className="min-h-screen bg-white text-gray-800 pb-20">
       <ArticleViewCounter slug={slug} />
+
       {/* --- 1. Top Navigation Bar (Sticky & Glassmorphism) --- */}
       <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-gray-100 shadow-sm transition-all duration-300">
         <div className="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
@@ -85,26 +85,30 @@ export default async function ArticleSingleCBFPage({
             <div className="p-2 rounded-full group-hover:bg-primary/10 transition-colors">
               <ArrowLeft className="w-4 h-4" />
             </div>
-            <span className="hidden sm:inline">Back to Articles</span>
+            <span className="hidden sm:inline">{t(translations.back)}</span>
           </Link>
         </div>
       </div>
 
       <article className="container mx-auto px-4 max-w-6xl mt-6 md:mt-10">
 
-        {/* --- 2. Hero Section --- */}
+        {/* --- 2. Hero Section (FIXED LAYOUT) --- */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 mb-12 items-start">
 
-          {/* Left: Content Header */}
-          <div className="flex-1 order-2 lg:order-1 flex flex-col justify-center">
+          {/* Left: Content Header 
+              Added 'min-w-0' to prevent flex item from overflowing its container
+          */}
+          <div className="flex-1 min-w-0 order-2 lg:order-1 flex flex-col justify-center w-full">
             {/* Tag */}
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wide mb-5 w-fit border border-blue-100">
               <Tag className="w-3 h-3" />
               {t(article.type)}
             </div>
 
-            {/* Title */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6 leading-[1.2] tracking-tight">
+            {/* Title 
+                Added 'break-words' and 'hyphens-auto' to handle long text gracefully
+            */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6 leading-[1.2] tracking-tight break-words hyphens-auto">
               {title}
             </h1>
 
@@ -112,7 +116,9 @@ export default async function ArticleSingleCBFPage({
             <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-sm text-gray-500 font-medium">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-700">{formatDate(article.publishedAt)}</span>
+                <span className="text-gray-700">
+                  {formatDate(article.publishedAt)}
+                </span>
               </div>
               <div className="w-1 h-1 rounded-full bg-gray-300 hidden sm:block" />
               <div className="flex items-center gap-2">
@@ -122,13 +128,15 @@ export default async function ArticleSingleCBFPage({
             </div>
           </div>
 
-          {/* Right: Cover Image */}
-          <div className="w-full lg:w-[45%] order-1 lg:order-2">
+          {/* Right: Cover Image 
+              Added 'lg:shrink-0' to ensure image width stays consistent 
+          */}
+          <div className="w-full lg:w-[45%] lg:shrink-0 order-1 lg:order-2">
             <div className="relative aspect-video lg:aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-lg bg-gray-100 ring-1 ring-black/5">
               {article.coverImage ? (
                 <Image
                   src={article.coverImage}
-                  alt={title}
+                  alt={title || "Article Cover"}
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-700"
                   priority
@@ -151,7 +159,7 @@ export default async function ArticleSingleCBFPage({
 
           {/* LEFT: Article Body */}
           <div className="min-w-0">
-            {/* Prose Configuration for Beautiful Typography */}
+            {/* Prose Configuration */}
             <div className="
               prose prose-lg md:prose-xl prose-stone max-w-none 
               prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-gray-900
@@ -160,6 +168,7 @@ export default async function ArticleSingleCBFPage({
               prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8
               prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
               prose-li:marker:text-primary
+              break-words
             ">
               <div dangerouslySetInnerHTML={{ __html: content || "" }} />
             </div>
@@ -174,7 +183,7 @@ export default async function ArticleSingleCBFPage({
                     <ShoppingBag className="w-5 h-5" />
                   </div>
                   <h3 className="font-bold text-gray-900 text-lg">
-                    Related Products
+                    {t(translations.Related, { name: t(translations.product) })}
                   </h3>
                 </div>
 
@@ -217,7 +226,10 @@ export default async function ArticleSingleCBFPage({
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-gray-100 text-center">
-                  <Link href="/cbf/products" className="text-xs font-bold text-gray-500 hover:text-primary uppercase tracking-wide transition-colors">
+                  <Link
+                    href="/cbf/products"
+                    className="text-xs font-bold text-gray-500 hover:text-primary uppercase tracking-wide transition-colors"
+                  >
                     View All Products
                   </Link>
                 </div>

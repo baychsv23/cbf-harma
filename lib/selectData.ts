@@ -1,4 +1,5 @@
 export const selectDataOfArticle = {
+  id: true,
   slug: true,
   titleLA: true,
   titleEN: true,

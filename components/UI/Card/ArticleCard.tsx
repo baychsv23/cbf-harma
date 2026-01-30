@@ -58,7 +58,7 @@ export default function ArticleCard({ article }: { article: ArticleCBF }) {
           </div>
 
           <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-            {title}
+            {title.length > 30 ? title.slice(0, 30) + "..." : title}
           </h3>
 
           {/* สินค้าที่เกี่ยวข้อง */}

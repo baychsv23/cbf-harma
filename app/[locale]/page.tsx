@@ -1,36 +1,28 @@
 import BannerSection from "@/components/UI/BannerSection";
 import Link from "next/link";
 import ArticleCard from "@/components/UI/Card/ArticleCard";
-import { Article } from "@/lib/interface";
+import { ArticleCBF } from "@/lib/interface";
 import { getArticles } from "@/lib/getData";
 import { ArticleStatus } from "@/generated/prisma/enums";
+import { selectDataOfArticle } from "@/lib/selectData";
+import { DEFAULT_LIMIT } from "@/lib/utils/pagination";
+import { getTranslations } from "next-intl/server";
+import { translations } from "@/lib/translation";
 
 // ฟังก์ชันดึงข้อมูลด้วย Axios
 
 export default async function Home() {
   // เรียกใช้ฟังก์ชัน (ทำงานฝั่ง Server)
   const where: any = { status: ArticleStatus.PUBLISHED };
+  const t = await getTranslations();
 
   // ✅ LIMIT: Set to 6 or 9 to enable "Load More" functionality
-  const LIMIT = 10;
 
-  const { data: articles, total } = await getArticles({
+  const { data: articles } = await getArticles({
     where,
     skip: 0,
-    limit: LIMIT,
-    select: {
-      id: true,
-      slug: true,
-      titleLA: true,
-      titleEN: true,
-      contentLA: true,
-      contentEN: true,
-      coverImage: true,
-      createdAt: true,
-      type: true,
-      views: true,
-      products: { select: { id: true, nameEN: true, nameLA: true } },
-    },
+    limit: DEFAULT_LIMIT,
+    select: selectDataOfArticle
   });
   return (
     <main className="min-h-screen bg-gray-50/30 pb-20">
@@ -44,29 +36,29 @@ export default async function Home() {
         {/* Header Section */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-gray-800">Latest Updates</h2>
+            <h2 className="text-3xl font-bold text-gray-800">{t(translations.latestUpdate)}</h2>
             <p className="text-gray-500 mt-1">
-              ติดตามข่าวสารและกิจกรรมล่าสุดของเรา
+
             </p>
           </div>
           <Link
             href="/articles"
             className="hidden md:inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-primary bg-primary/5 hover:bg-primary/10 transition-colors"
           >
-            View All Updates →
+            {t(translations.All, { name: t(translations.view) })} →
           </Link>
         </div>
 
         {/* Content Grid */}
         {articles.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(articles as Article[]).map((article) => (
+            {(articles as ArticleCBF[]).map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         ) : (
           <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
-            <p className="text-gray-500">ยังไม่มีข้อมูลข่าวสารในขณะนี้</p>
+            <p className="text-gray-500">{t(translations.notFound)}</p>
           </div>
         )}
 

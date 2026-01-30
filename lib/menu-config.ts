@@ -2,11 +2,13 @@ import {
   Home,
   LayoutDashboard,
   Users,
-  ShoppingBag,
   Stethoscope,
   FileText,
   Pill,
   Newspaper,
+  Server,
+  LucideMove3d,
+  Info,
 } from "lucide-react";
 import { translations } from "./translation";
 import { Permission } from "@/generated/prisma/enums";
@@ -16,12 +18,33 @@ export const ICON_MAP: Record<string, any> = {
   home: Home,
   dashboard: LayoutDashboard,
   account: Users,
-  product: Pill, // Changed to Pill for pharma
+  product: Pill,
   symptom: Stethoscope,
   article: FileText,
-  news: Newspaper,
-};
+  service: Server,
+  about: Info,
 
+  // --- Categories (Using Pill icon as requested) ---
+  NUTRITION_ELECTROLYTE: Pill,
+  ANTIBIOTICS: Pill,
+  ANTI_PARASITIC: Pill,
+  GASTROINTESTINAL: Pill,
+  CARDIOVASCULAR: Pill,
+  ANTI_DIABETIC: Pill,
+  RESPIRATORY: Pill,
+  ANTI_ALLERGIC: Pill,
+  EFFECTIVE_TO_PSYCHOTIC: Pill,
+  ANESTHETICS: Pill, // เพิ่มเติมจาก JSON แปลภาษา
+  ANALGESIC_ANTIPYRETIC: Pill,
+  VITAMINS_MINERALS: Pill,
+  DISINFECTANTS_ANTISEPTIC: Pill,
+  OTHERS: Pill,
+
+  // --- Article Sub-categories ---
+  NEWS: FileText,
+  HEALTH_KNOWLEDGE: FileText,
+  ACTIVITY: FileText,
+};
 // Color themes for different menu categories
 export const COLOR_THEMES: Record<
   string,
@@ -137,12 +160,17 @@ export const PERMISSION_MENUS: Record<string, MenuItem[]> = {
   [Permission.ARTICLE_VIEW]: [
     { title: translations.product, href: "/products" },
   ],
-  [Permission.USER_VIEW]: [{ title: translations.account, href: "/accounts" }],
+  [Permission.USER_VIEW]: [
+    { title: translations.account, href: "/accounts" }
+  ],
   [Permission.SYMPTOM_VIEW]: [
     { title: translations.symptom, href: "/symptoms" },
   ],
   [Permission.PRODUCT_VIEW]: [
     { title: translations.product, href: "/products" },
+  ],
+  [Permission.ANNOUNCEMENT_VIEW]: [
+    { title: translations.announcement, href: "/announcements" },
   ],
 };
 

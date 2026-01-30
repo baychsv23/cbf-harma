@@ -7,6 +7,7 @@ import {
 } from "@/generated/prisma/enums";
 
 export interface ArticleCBF {
+  id: string;
   titleEN: string;
   titleLA: string;
   contentEN?: string;
@@ -27,6 +28,7 @@ export interface ArticleCBF {
 }
 
 export interface ProductCBF {
+  id: string;
   slug: string;
   category: Category;
   categorySub: CategorySub;

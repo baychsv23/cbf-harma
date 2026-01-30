@@ -158,11 +158,11 @@ export default function AccountsPage() {
         <div className="flex flex-col md:flex-row gap-4 items-end">
           <div className="flex-1 w-full">
             <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
-              {t(translations.SearchBy, { name: t(translations.userName) })}
+              {t(translations.Filter, { name: t(translations.userName) })}
             </label>
             <input
               type="text"
-              placeholder="Search username..."
+              placeholder={t(translations.SearchBy, { name: t(translations.userName) })}
               value={search.userName}
               onChange={(e) => setSearch({ ...search, userName: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none transition-all"

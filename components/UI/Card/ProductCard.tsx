@@ -31,14 +31,22 @@ export default function ProductCard({ product }: { product: ProductCBF }) {
     <Link href={detailHref} className="block h-full">
       <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer relative">
         {/* Image Section */}
-        <div className="relative h-52 w-full bg-gray-50 overflow-hidden flex items-center justify-center">
-          <Image
-            src={product.productImage || "/images/default.png"}
-            alt={title || "Product"}
-            fill
-            className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+        <div className="relative h-48 w-full bg-gray-200 overflow-hidden">
+          {product.productImage ? (
+            <Image
+              src={product.productImage}
+              alt={title || "Product Image"}
+              fill
+              loading="eager"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority={false}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400 bg-gray-100">
+              No Image
+            </div>
+          )}
 
           {/* Category Badge (Top Left) */}
           <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-bold text-gray-600 shadow-sm z-10 border border-gray-100 uppercase tracking-wide">

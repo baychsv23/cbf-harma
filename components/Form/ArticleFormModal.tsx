@@ -260,7 +260,7 @@ export default function ArticleFormModal({
             <div className="flex-1 flex flex-col min-h-[200px]">
               <div className="pb-2 border-b border-slate-100 mb-3 flex justify-between items-end">
                 <h3 className="text-sm font-bold text-slate-800">
-                  Related Products
+                  {t(translations.Related, { name: t(translations.product) })}
                 </h3>
                 <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-md">
                   {formData.productIds.length} selected

@@ -1,4 +1,4 @@
-DATABASE_URL="postgresql://postgres:112233@localhost:5432/cbf_pharma?schema=public"
+DIRECT_URL="postgresql://postgres:112233@localhost:5432/cbf_pharma?schema=public"
 
 NEXT_AUTH_SECRET=""
 NEXTAUTH_URL="http://localhost:3000"

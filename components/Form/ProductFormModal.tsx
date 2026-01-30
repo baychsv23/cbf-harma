@@ -247,10 +247,10 @@ export default function ProductFormModal({
                   />
                   <div>
                     <span className="block font-bold text-slate-800 text-sm">
-                      RX Required
+                      {t(translations.rxRequired)}
                     </span>
                     <span className="text-[10px] text-slate-500 block leading-tight">
-                      Requires doctor's prescription
+                      {t(translations.prescriptionRequired)}
                     </span>
                   </div>
                 </label>
@@ -262,7 +262,7 @@ export default function ProductFormModal({
               <div className="flex-1 flex flex-col min-h-[200px]">
                 <div className="pb-2 border-b border-slate-100 mb-3 flex justify-between items-end">
                   <h3 className="text-sm font-bold text-slate-800">
-                    Related Symptoms
+                    {t(translations.Related, { name: t(translations.symptom) })}
                   </h3>
                   <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded-md">
                     {formData.symptomIds.length} selected
@@ -319,7 +319,7 @@ export default function ProductFormModal({
                           onClick={onLoadMoreSymptoms}
                           className="text-[10px] text-indigo-600 font-bold hover:underline"
                         >
-                          Show more products
+                          Show more
                         </button>
                       ) : (
                         <span className="text-[10px] text-slate-400">End of list</span>
@@ -339,12 +339,12 @@ export default function ProductFormModal({
               {/* 1. Identification */}
               <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                 <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
-                  📝 Identification
+                  {t(translations.identification)}
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-1">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      SKU Code <span className="text-red-500">*</span>
+                      {t(translations.sku)} <span className="text-red-500">*</span>
                     </label>
                     <input
                       value={formData.sku}
@@ -362,7 +362,7 @@ export default function ProductFormModal({
                   </div>
                   <div className="col-span-1">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      Generic Name
+                      {t(translations.generic)}
                     </label>
                     <input
                       value={formData.genericName}
@@ -378,7 +378,7 @@ export default function ProductFormModal({
                   </div>
                   <div className="col-span-2">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      Product Name (English){" "}
+                      {t(translations.Name, { name: t(translations.product) })} (English){" "}
                       <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -397,7 +397,7 @@ export default function ProductFormModal({
                   </div>
                   <div className="col-span-2">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      Product Name (Lao) <span className="text-red-500">*</span>
+                      {t(translations.Name, { name: t(translations.product) })} (Lao) <span className="text-red-500">*</span>
                     </label>
                     <input
                       value={formData.nameLA}
@@ -414,12 +414,12 @@ export default function ProductFormModal({
               {/* 2. Specs & Category */}
               <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                 <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
-                  🧪 Specs & Category
+                  {t(translations.specsCategory)}
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      Dosage
+                      {t(translations.dosage)}
                     </label>
                     <input
                       value={formData.dosage}
@@ -432,7 +432,7 @@ export default function ProductFormModal({
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      Packaging
+                      {t(translations.packaging)}
                     </label>
                     <input
                       value={formData.packaging}
@@ -468,7 +468,7 @@ export default function ProductFormModal({
                   {formData.category === Category.ANTIBIOTICS && (
                     <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                       <label className="block text-xs font-bold text-primary mb-1">
-                        Antibiotic Group
+                        {t(Category.ANTIBIOTICS)}
                       </label>
                       <select
                         value={formData.categorySub}
@@ -494,12 +494,12 @@ export default function ProductFormModal({
               {/* 3. Clinical Indications */}
               <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex-1">
                 <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
-                  🩺 Clinical Indications
+                  {t(translations.clinicalIndications)}
                 </h3>
                 <div className="space-y-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      Indication (English)
+                      {t(translations.indication)} (English)
                     </label>
                     <textarea
                       value={formData.indicationEN}
@@ -515,7 +515,7 @@ export default function ProductFormModal({
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      Indication (Lao)
+                      {t(translations.indication)} (Lao)
                     </label>
                     <textarea
                       value={formData.indicationLA}
