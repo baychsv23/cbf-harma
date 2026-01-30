@@ -34,7 +34,7 @@ export default function ArticlePage() {
   const { showConfirm, showProcessing } = useAlert();
   const { hasPermission } = useAuth();
 
-  const [search, setSearch] = useState({ title: "", type: "", status: "" });
+  const [search, setSearch] = useState({ title: "", type: "", status: "", year: "", month: "" });
   // โหลด Pagination
   const {
     items: articles,
@@ -79,11 +79,13 @@ export default function ArticlePage() {
       title: search.title,
       type: search.type,
       status: search.status,
+      year: search.year,
+      month: search.month
     });
   };
 
   const handleClearFilters = () => {
-    setSearch({ title: "", type: "", status: "" });
+    setSearch({ title: "", type: "", status: "", year: "", month: "" });
     clearFilters();
   };
 
@@ -156,22 +158,26 @@ export default function ArticlePage() {
         <h2 className="text-lg font-semibold text-slate-700 mb-4">
           {t(translations.Filter, { name: t(translations.article) })}
         </h2>
-        <div className="flex flex-col md:flex-row gap-4 items-end">
-          <div className="flex-1 w-full">
+
+        {/* Added flex-wrap to allow filters to flow to a second line if needed */}
+        <div className="flex flex-col md:flex-row flex-wrap gap-4 items-end">
+
+          {/* 1. Title - flexible width */}
+          <div className="flex-1 min-w-[200px] w-full">
             <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
               {t(translations.title)}
             </label>
             <input
               type="text"
-              placeholder={t(translations.SearchBy, {
-                name: t(translations.title),
-              })}
+              placeholder={t(translations.SearchBy, { name: t(translations.title) })}
               value={search.title}
               onChange={(e) => setSearch({ ...search, title: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
             />
           </div>
-          <div className="w-full md:w-64">
+
+          {/* 2. Type */}
+          <div className="w-full md:w-48">
             <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
               {t(translations.type)}
             </label>
@@ -180,17 +186,15 @@ export default function ArticlePage() {
               onChange={(e) => setSearch({ ...search, type: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
             >
-              <option value="">
-                {t(translations.All, { name: t(translations.article) })}
-              </option>
+              <option value="">{t(translations.All, { name: t(translations.article) })}</option>
               {Object.values(ArticleType).map((type) => (
-                <option key={type} value={type}>
-                  {t(type)}
-                </option>
+                <option key={type} value={type}>{t(type)}</option>
               ))}
             </select>
           </div>
-          <div className="w-full md:w-64">
+
+          {/* 3. Status */}
+          <div className="w-full md:w-48">
             <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
               {t(translations.status)}
             </label>
@@ -199,21 +203,55 @@ export default function ArticlePage() {
               onChange={(e) => setSearch({ ...search, status: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
             >
-              <option value="">
-                {t(translations.All, { name: t(translations.status) })}
-              </option>
+              <option value="">{t(translations.All, { name: t(translations.status) })}</option>
               {Object.values(ArticleStatus).map((s) => (
-                <option key={s} value={s}>
-                  {t(s)}
+                <option key={s} value={s}>{t(s)}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* 4. Year - Adjusted width */}
+          <div className="w-full md:w-28">
+            <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
+              {t(translations.year)}
+            </label>
+            <input
+              type="number"
+              placeholder="YYYY"
+              min="2000"
+              max={new Date().getFullYear() + 1}
+              value={search.year}
+              onChange={(e) => setSearch({ ...search, year: e.target.value })}
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+            />
+          </div>
+
+          {/* 5. Month - Adjusted width */}
+          <div className="w-full md:w-40">
+            <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
+              {t(translations.month)}
+            </label>
+            <select
+              value={search.month}
+              onChange={(e) => setSearch({ ...search, month: e.target.value })}
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+            >
+              <option value="">{t(translations.All, { name: "" })}</option>
+              {Array.from({ length: 12 }, (_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {new Date(0, i).toLocaleString('default', { month: 'long' })}
                 </option>
               ))}
             </select>
           </div>
 
-          <FilterActions
-            onClear={handleClearFilters}
-            onApply={handleApplyFilters}
-          />
+          {/* Actions */}
+          <div className="w-full md:w-auto">
+            <FilterActions
+              onClear={handleClearFilters}
+              onApply={handleApplyFilters}
+            />
+          </div>
         </div>
       </div>
 

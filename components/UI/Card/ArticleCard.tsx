@@ -49,6 +49,9 @@ export default function ArticleCard({ article }: { article: ArticleCBF }) {
           <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-primary shadow-sm z-10">
             {t(article.type)}
           </span>
+          <span className="absolute top-3 right-0 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-primary shadow-sm z-10">
+            {(article.views)} views
+          </span>
         </div>
 
         {/* ส่วนเนื้อหา */}
@@ -58,7 +61,7 @@ export default function ArticleCard({ article }: { article: ArticleCBF }) {
           </div>
 
           <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-            {title.length > 30 ? title.slice(0, 30) + "..." : title}
+            {title.length > 20 ? title.slice(0, 20) + "..." : title}
           </h3>
 
           {/* สินค้าที่เกี่ยวข้อง */}

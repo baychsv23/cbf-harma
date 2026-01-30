@@ -38,8 +38,8 @@ export const FilterActions = ({ onClear, onApply }: FilterActionsProps) => {
                 className={clsx(
                     "group flex-1 md:flex-none flex items-center justify-center gap-2",
                     "px-8 py-3 rounded-2xl font-semibold text-white",
-                    "bg-linear-to-r from-gray-900 to-black",
-                    "hover:from-black hover:to-gray-800",
+                    "bg-primary-500 from-primary-900 to-black",
+                    "hover:from-primary hover:to-gray-800",
                     "shadow-lg shadow-black/20",
                     "active:scale-[0.98]",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40",

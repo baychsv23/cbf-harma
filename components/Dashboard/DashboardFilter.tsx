@@ -13,7 +13,6 @@ export default function DashboardFilter() {
     const selectedMonth = searchParams.get("month") || ""; // ถ้าว่าง คือ "ทั้งปี"
 
     // สร้าง list ปี (ย้อนหลัง 5 ปี)
-    const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
     const months = [
         { value: "", label: "All Months" },
@@ -50,17 +49,18 @@ export default function DashboardFilter() {
             <span className="text-sm font-bold text-gray-700">Filter:</span>
 
             {/* เลือกปี */}
-            <select
-                value={selectedYear}
-                onChange={(e) => handleFilterChange("year", e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
-            >
-                {years.map((y) => (
-                    <option key={y} value={y}>
-                        Year {y}
-                    </option>
-                ))}
-            </select>
+            <div className="w-full md:w-32">
+
+                <input
+                    type="number"
+                    placeholder="YYYY"
+                    min="2000"
+                    max={new Date().getFullYear() + 1}
+                    value={selectedYear}
+                    onChange={(e) => handleFilterChange("year", e.target.value)}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                />
+            </div>
 
             {/* เลือกเดือน */}
             <select

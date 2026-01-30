@@ -22,6 +22,8 @@ export async function GET(request: NextRequest) {
     const title = searchParams.get("title");
     const type = searchParams.get("type");
     const status = searchParams.get("status");
+    const year = Number(searchParams.get("year"))
+    const month = Number(searchParams.get("month"))
     const where: any = {};
 
     if (title) {
@@ -33,6 +35,8 @@ export async function GET(request: NextRequest) {
 
     if (status) where.status = status;
     if (type) where.type = type;
+    if (year) where.year = year
+    if (month) where.month = month
 
 
     const skip = (page - 1) * limit;

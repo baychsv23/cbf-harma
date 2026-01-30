@@ -243,8 +243,9 @@
   "clinicalIndications": "🩺 ຂໍ້ບົ່ງໃຊ້",
   "indication": "ອາການບົ່ງໃຊ້",
   "identification": "📝 ການລະບຸ",
-  "Related": "{name}ກ່ຽວຂ້ອງ",
+  "Related": "{name}ທີ່ກ່ຽວຂ້ອງ",
   "prescriptionRequired": "ຈຳເປັນຕ້ອງມີໃບສັ່ງຈາກແພດ",
   "rxRequired": "ຈຳເປັນຕ້ອງມີໃບສັ່ງຢາ",
-  "treatsRelieves": "ໃຊ້ຮັກສາ / ບັນເທົາ"
+  "treatsRelieves": "ໃຊ້ຮັກສາ / ບັນເທົາ",
+  "more": "ເບິ່ງຕື່ມ"
 }

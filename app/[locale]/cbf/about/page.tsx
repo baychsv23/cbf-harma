@@ -69,9 +69,9 @@ export default function AboutPage() {
       <section className="bg-primary text-white py-16">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-green-800/50">
-            <StatItem number="10+" label={t("Stats.yearsExperience")} />
+            <StatItem number="30+" label={t("Stats.yearsExperience")} />
             <StatItem number="5k+" label={t("Stats.happyCustomers")} />
-            <StatItem number="50+" label={t("Stats.premiumProducts")} />
+            <StatItem number="100+" label={t("Stats.premiumProducts")} />
             <StatItem number="24/7" label={t("Stats.support")} />
           </div>
         </div>

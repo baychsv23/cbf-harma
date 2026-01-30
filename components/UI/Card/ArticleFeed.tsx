@@ -210,7 +210,7 @@ export default function ArticleFeed({
                       <span>Loading...</span>
                     </>
                   ) : (
-                    "More Articles"
+                    t(translations.more)
                   )}
                 </button>
               </div>

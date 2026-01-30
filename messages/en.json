@@ -246,5 +246,6 @@
   "Related": "Related {name}",
   "prescriptionRequired": "Requires doctor's prescription",
   "rxRequired": "RX Required",
-  "treatsRelieves": "Treats / Relieves"
+  "treatsRelieves": "Treats / Relieves",
+  "more": "More"
 }

@@ -230,7 +230,7 @@ export default async function ArticleSingleCBFPage({
                     href="/cbf/products"
                     className="text-xs font-bold text-gray-500 hover:text-primary uppercase tracking-wide transition-colors"
                   >
-                    View All Products
+                    {t(translations.All, { name: t(translations.view) })}
                   </Link>
                 </div>
               </div>

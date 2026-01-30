@@ -143,10 +143,7 @@ export const COMMON_PUBLIC: MenuItem[] = [
 // Role-based menu configurations
 export const ROLE_MENUS = {
   ADMIN: [
-    {
-      title: translations.dashboard,
-      children: [{ title: translations.dashboard, href: "/admin" }],
-    },
+    { title: translations.dashboard, href: "/admin" },
     { title: translations.account, href: "/accounts" },
     { title: translations.product, href: "/products" },
     { title: translations.symptom, href: "/symptoms" },
