@@ -39,7 +39,7 @@ export default function ProfilePage() {
     showProcessing();
 
     try {
-      await api.post("/api/user/change-password", passwordData);
+      await api.post("/api/profile/change-password", passwordData);
       setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
       formRef.current?.reset();
     } finally {

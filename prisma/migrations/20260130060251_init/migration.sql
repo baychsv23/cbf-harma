@@ -2,9 +2,6 @@
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'EMPLOYEE', 'USER');
 
 -- CreateEnum
-CREATE TYPE "ActiveState" AS ENUM ('ACTIVE', 'INACTIVE');
-
--- CreateEnum
 CREATE TYPE "ArticleStatus" AS ENUM ('DRAFT', 'PUBLISHED');
 
 -- CreateEnum
@@ -43,11 +40,10 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
-    "status" "ActiveState" NOT NULL DEFAULT 'ACTIVE',
     "slug" TEXT NOT NULL,
     "sku" TEXT NOT NULL,
-    "nameEN" TEXT NOT NULL,
     "nameLA" TEXT NOT NULL,
+    "nameEN" TEXT NOT NULL,
     "genericName" TEXT,
     "dosage" TEXT,
     "packaging" TEXT,

@@ -20,6 +20,7 @@ import { isEnglish } from "@/lib/utils/locale";
 import { ArticleCBF } from "@/lib/interface";
 import { selectDataOfArticle } from "@/lib/selectData";
 import { CATEGORY_SLUG_MAP } from "@/lib/constant";
+import ArticleViewCounter from "@/components/ArticleViewCounter";
 
 // 1. Generate Metadata (คงเดิม)
 export async function generateMetadata({
@@ -73,8 +74,7 @@ export default async function ArticleSingleCBFPage({
 
   return (
     <main className="min-h-screen bg-white text-gray-800 pb-20">
-      {/* <ArticleViewCounter slug={slug} /> */}
-
+      <ArticleViewCounter slug={slug} />
       {/* --- 1. Top Navigation Bar (Sticky & Glassmorphism) --- */}
       <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-gray-100 shadow-sm transition-all duration-300">
         <div className="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">

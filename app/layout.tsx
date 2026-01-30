@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   title: "CBF",
   icons: {
     icon: "/images/logo.svg",
-    shortcut: "/images/logo.png",
-    apple: "/images/logo.png",
+    shortcut: "/images/logo.svg",
+    apple: "/images/logo.svg",
   },
 };
 export default function RootLayout({
