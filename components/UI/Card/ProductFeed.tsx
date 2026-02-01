@@ -4,12 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Search, Filter, X } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import axios from "axios";
 import { Category } from "@/generated/prisma/enums";
 import { ProductCBF } from "@/lib/interface";
 import { translations } from "@/lib/translation";
 import { CATEGORY_SLUG_MAP } from "@/lib/constant";
 import ProductCard from "./ProductCard";
+import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 
 interface ProductFeedProps {
     initialProducts: ProductCBF[];
@@ -25,6 +25,7 @@ export default function ProductFeed({
     limit,
 }: ProductFeedProps) {
     const t = useTranslations();
+    const api = useApiWithAlert()
     const [products, setProducts] = useState<ProductCBF[]>(initialProducts);
     const [page, setPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
@@ -38,7 +39,7 @@ export default function ProductFeed({
         if (searchParam) params.name = searchParam;
 
         try {
-            const { data } = await axios.get("/api/products/list", { params });
+            const { data } = await api.get("/api/products/list", { params });
             if (data.success) {
                 setProducts((prev) => (shouldAppend ? [...prev, ...data.data] : data.data));
                 setHasMore(data.pagination.hasNext);
@@ -85,7 +86,9 @@ export default function ProductFeed({
                     {/* Compact Search Wrapper */}
                     <div className="flex items-center gap-2 w-full max-w-md mx-auto md:mx-0">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Search className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                            </div>
                             <input
                                 type="text"
                                 placeholder={t(translations.SearchBy, {
@@ -107,7 +110,7 @@ export default function ProductFeed({
                         </div>
                         <button
                             onClick={handleSearchClick}
-                            className="p-2.5 bg-gray-900 text-white rounded-xl hover:bg-black transition shrink-0"
+                            className="px-4 py-2 md:px-5 md:py-2.5 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition shrink-0"
                         >
                             <Search size={18} />
                         </button>
@@ -119,8 +122,8 @@ export default function ProductFeed({
                     <Link
                         href="/cbf/products"
                         className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs md:text-sm font-medium transition-all ${currentCategory === "ALL"
-                                ? "bg-primary text-white shadow-sm"
-                                : "bg-white text-gray-600 border border-gray-200"
+                            ? "bg-primary text-white shadow-sm"
+                            : "bg-white text-gray-600 border border-gray-200"
                             }`}
                     >
                         {t(translations.All, { name: "" })}
@@ -130,8 +133,8 @@ export default function ProductFeed({
                             key={cat}
                             href={getCategoryPath(cat)}
                             className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs md:text-sm font-medium transition-all ${currentCategory === cat
-                                    ? "bg-primary text-white shadow-sm"
-                                    : "bg-white text-gray-600 border border-gray-200"
+                                ? "bg-primary text-white shadow-sm"
+                                : "bg-white text-gray-600 border border-gray-200"
                                 }`}
                         >
                             {t(cat)}

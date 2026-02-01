@@ -4,8 +4,14 @@ import { database } from "@/lib/prisma";
 import { handleApiAction } from "@/lib/handleApiAction";
 import { translations } from "@/lib/translation";
 import { ApiError } from "@/lib/api-error";
+import { getRequestLocale } from "@/lib/getRequestLocale";
+import { getTranslations } from "next-intl/server";
 
 export async function POST(request: NextRequest) {
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
+    });
     return handleApiAction(async () => {
         const { slug } = await request.json();
 
@@ -25,6 +31,6 @@ export async function POST(request: NextRequest) {
             success: true,
             message: translations.fetchSuccess,
         };
-    })
+    }, t)
 
 } 

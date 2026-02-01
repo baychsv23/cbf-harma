@@ -8,22 +8,33 @@ import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
 import { getProductById } from "@/lib/getDataById";
+import { getRequestLocale } from "@/lib/getRequestLocale";
+import { getTranslations } from "next-intl/server";
 
 export async function PUT(
-    req: Request,
+    request: NextRequest,
     { params }: { params: Promise<{ id: string }> },
 ) {
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
+    });
     return handleApiAction(async () => {
         const { id } = await params;
-        const body = await req.json();
+        const body = await request.json();
         const { symptomIds } = body;
+
+        const session = await requirePermission(Permission.PRODUCT_UPDATE);
+
+        if (!session) throw new ApiError(translations.forbidden, 403)
+        const updatedById = session.user.id;
+
         if (body.isActive) {
-            await requirePermission(Permission.PRODUCT_DELETE);
             const updatedStatus = await database.product.update({
                 where: { id: id },
                 data: { isActive: body.isActive },
             });
-            return { ...updatedStatus, message: translations.updatedSuccess };
+            return { ...updatedStatus, message: t(translations.updatedSuccess) };
         }
         const existingProduct = await getProductById(id, { select: { productImage: true, productImagePublicId: true } })
 
@@ -31,9 +42,7 @@ export async function PUT(
             throw new ApiError(translations.notFound, 404);
         }
 
-        const session = await requirePermission(Permission.PRODUCT_UPDATE);
-        if (!session) throw new ApiError(translations.forbidden, 403)
-        const updatedById = session.user.id;
+
         if (
             body.productImage &&
             body.productImage !== existingProduct.productImage
@@ -68,31 +77,39 @@ export async function PUT(
             select: { id: true },
         });
 
-        return { ...updated, message: translations.updatedSuccess };
-    });
+        return { data: updated, message: t(translations.updatedSuccess) };
+    }, t);
 }
 export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
-
-    await requirePermission(Permission.PRODUCT_DELETE);
-    const existingProduct = await getProductById(id, { select: { productImage: true, productImagePublicId: true } })
-    if (!existingProduct) {
-        throw new ApiError(translations.notFound, 404);
-    }
-    try {
-        const publicId = existingProduct.productImagePublicId
-        if (publicId) {
-            await deleteFromCloudinary(publicId)
-        }
-    } catch (error) {
-        logger.error("Cloudinary Delete Error:", error);
-    }
-
-    const deleteArticle = await database.product.delete({ where: { id: id } })
-    return NextResponse.json({
-        message: translations.deletedSuccess, // "Update successfully"
-        data: deleteArticle,
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
     });
+    return handleApiAction(async () => {
+        const { id } = await params;
+        const session = await requirePermission(Permission.PRODUCT_DELETE);
+        if (!session) throw new ApiError(translations.forbidden, 403)
+        const existingProduct = await getProductById(id, { select: { productImage: true, productImagePublicId: true } })
+        if (!existingProduct) {
+            throw new ApiError(translations.notFound, 404);
+        }
+        try {
+            const publicId = existingProduct.productImagePublicId
+            if (publicId) {
+                await deleteFromCloudinary(publicId)
+            }
+        } catch (error) {
+            logger.error("Cloudinary Delete Error:", error);
+        }
+
+        const deleteArticle = await database.product.delete({ where: { id: id }, select: { id: true } })
+        return {
+            message: t(translations.deletedSuccess), // "Update successfully"
+            data: deleteArticle,
+        }
+    }, t)
+
+
 }

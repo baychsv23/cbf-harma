@@ -1,10 +1,17 @@
 
 import { getSymptoms } from "@/lib/getData";
+import { getRequestLocale } from "@/lib/getRequestLocale";
 import { handleApiAction } from "@/lib/handleApiAction";
+import { translations } from "@/lib/translation";
 import { DEFAULT_LIMIT, DEFAULT_PAGE, paginatedResponse } from "@/lib/utils/pagination";
-import { NextRequest, NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
+import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
+    });
     return handleApiAction(async () => {
         const searchParams = request.nextUrl.searchParams;
         const page = parseInt(searchParams.get("page") || DEFAULT_PAGE.toString());
@@ -26,6 +33,6 @@ export async function GET(request: NextRequest) {
             skip,
             select: { id: true, nameLA: true, nameEN: true }
         });
-        return NextResponse.json(paginatedResponse(data, total, page, limit));
+        return { message: t(translations.fetchSuccess), ...paginatedResponse(data, total, page, limit) };
     });
 }

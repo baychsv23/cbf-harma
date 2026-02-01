@@ -6,8 +6,10 @@ import { requirePermission } from "@/lib/requirePermission";
 import { database } from "@/lib/prisma";
 import { translations } from "@/lib/translation";
 import { Permission, Role } from "@/generated/prisma/enums";
+import { getTranslations } from "next-intl/server";
 
 export async function resetPassword(id: string, newPassword: string) {
+  const t = await getTranslations()
   return handleAction(
     async () => {
       const session = await requirePermission(Permission.USER_UPDATE);
@@ -22,7 +24,7 @@ export async function resetPassword(id: string, newPassword: string) {
       });
     },
     {
-      successKey: translations.updatedSuccess,
+      successKey: t(translations.updatedSuccess),
       errorKey: translations.updateFailed,
     }
   );

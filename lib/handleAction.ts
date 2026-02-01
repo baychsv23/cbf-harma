@@ -4,7 +4,8 @@ import { translations } from "./translation";
 
 export async function handleAction<T>(
     action: () => Promise<T>,
-    messages?: { successKey?: string; errorKey?: string }
+    messages?: { successKey?: string; errorKey?: string },
+    t?: (key: string) => string
 ) {
     try {
         const result = await action();
@@ -17,10 +18,15 @@ export async function handleAction<T>(
     } catch (err: any) {
         let message = err.message || messages?.errorKey;
         // Prisma duplicate error
-        if (err.code === "P2002") {
-            message = translations.duplicateData;
+        if (t) {
+            if (err.code === "P2002") {
+                message = t(translations.duplicateData);
+            }
+            if (err.code === "P2025") message = t(translations.notFound);
+
+            if (err.code === "P2003") message = t(translations.relatedRecord)
         }
-        if (err.code === "P2025") message = translations.notFound;
+
 
         return {
             success: false,

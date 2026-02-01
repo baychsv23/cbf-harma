@@ -1,5 +1,4 @@
 import BannerSection from "@/components/UI/BannerSection";
-import Link from "next/link";
 import ArticleCard from "@/components/UI/Card/ArticleCard";
 import { ArticleCBF } from "@/lib/interface";
 import { getArticles } from "@/lib/getData";
@@ -8,6 +7,7 @@ import { selectDataOfArticle } from "@/lib/selectData";
 import { DEFAULT_LIMIT } from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
 import { translations } from "@/lib/translation";
+import { Link } from "@/i18n/routing";
 
 // ฟังก์ชันดึงข้อมูลด้วย Axios
 
@@ -42,7 +42,7 @@ export default async function Home() {
             </p>
           </div>
           <Link
-            href="/articles"
+            href="/cbf/articles"
             className="hidden md:inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-primary bg-primary/5 hover:bg-primary/10 transition-colors"
           >
             {t(translations.All, { name: t(translations.view) })} →
@@ -65,10 +65,10 @@ export default async function Home() {
         {/* Mobile Button */}
         <div className="mt-8 md:hidden text-center">
           <Link
-            href="/articles"
+            href="/cbf/articles"
             className="inline-block w-full py-3 rounded-xl text-sm font-semibold text-white bg-primary shadow-lg"
           >
-            View All Updates
+            {t(translations.latestUpdate)}
           </Link>
         </div>
       </div>

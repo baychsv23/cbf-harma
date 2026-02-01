@@ -172,15 +172,18 @@ export default function SymptomPage() {
 
       {/* Filter Card */}
       <div className="mb-6 bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
+        <h2 className="text-lg font-semibold text-slate-700 mb-4">
+          {t(translations.Filter, { name: t(translations.symptom) })}
+        </h2>
         <div className="flex flex-col md:flex-row gap-4 items-end">
           <div className="flex-1 w-xl">
             <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
-              {t(translations.Filter, { name: t(translations.symptom) })}
+              {t(translations.symptom)}
             </label>
             <input
               type="text"
               placeholder={t(translations.SearchBy, {
-                name: t(translations.name),
+                name: t(translations.symptom),
               })}
               value={search.name}
               onChange={(e) => setSearch({ ...search, name: e.target.value })}

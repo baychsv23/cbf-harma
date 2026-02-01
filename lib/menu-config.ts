@@ -155,7 +155,7 @@ export const ROLE_MENUS = {
 // Permission-based menu configurations
 export const PERMISSION_MENUS: Record<string, MenuItem[]> = {
   [Permission.ARTICLE_VIEW]: [
-    { title: translations.product, href: "/products" },
+    { title: translations.article, href: "/articles" },
   ],
   [Permission.USER_VIEW]: [
     { title: translations.account, href: "/accounts" }

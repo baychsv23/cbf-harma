@@ -8,21 +8,25 @@ import { Permission } from "@/generated/prisma/enums";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
 import { logger } from "@/lib/logger";
 import { getAnnouncementById } from "@/lib/getDataById";
+import { getRequestLocale } from "@/lib/getRequestLocale";
+import { getTranslations } from "next-intl/server";
 
 // Helper to get ID from params
 
 export async function PUT(request: NextRequest,
     { params }: { params: Promise<{ id: string }> }) {
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
+    });
     return handleApiAction(async () => {
         const { id } = await params;
         const session = await requirePermission(Permission.ANNOUNCEMENT_UPDATE);
         if (!session) throw new ApiError(translations.forbidden, 403)
 
-        const { type, image, imagePublicId, isPublic } = await request.json();
-        if (!type) throw new ApiError(translations.allFiledRequired, 400)
+        const { image, imagePublicId, isPublic } = await request.json();
 
         const record = await getAnnouncementById(id, { select: { image: true, imagePublicId: true } })
-        console.log(record)
         if (!record) {
             throw new ApiError(translations.notFound, 404)
         }
@@ -38,17 +42,21 @@ export async function PUT(request: NextRequest,
         }
         const updated = await database.announcement.update({
             where: { id },
-            data: { image, imagePublicId, type, isPublic },
+            data: { image, imagePublicId, isPublic },
         });
 
         return {
             ...updated,
-            message: translations.updatedSuccess,
+            message: t(translations.updatedSuccess),
         };
-    });
+    }, t);
 }
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
+    });
     return handleApiAction(async () => {
         // 1. Check Permission
         const session = await requirePermission(Permission.ANNOUNCEMENT_DELETE);
@@ -57,7 +65,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
         // 2. Get Record to find Image Public ID
         const record = await getAnnouncementById(id, { select: { image: true, imagePublicId: true } })
-        console.log(record)
         if (!record) {
             throw new ApiError(translations.notFound, 404)
         }
@@ -74,7 +81,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
         return {
             id,
-            message: translations.deletedSuccess,
+            message: t(translations.deletedSuccess),
         };
-    });
+    }, t);
 }

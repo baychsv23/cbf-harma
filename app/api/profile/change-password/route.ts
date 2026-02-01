@@ -7,8 +7,14 @@ import { handleApiAction } from "@/lib/handleApiAction";
 import { getAuth } from "@/lib/requirePermission";
 import { ApiError } from "@/lib/api-error";
 import { translations } from "@/lib/translation";
+import { getRequestLocale } from "@/lib/getRequestLocale";
+import { getTranslations } from "next-intl/server";
 
 export async function POST(request: NextRequest) {
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
+    });
     return handleApiAction(async () => {
         const session = await getAuth()
 
@@ -42,7 +48,7 @@ export async function POST(request: NextRequest) {
             select: { id: true }
         });
 
-        return { message: translations.updatedSuccess, data: updated }
+        return { message: t(translations.updatedSuccess), data: updated }
 
-    })
+    }, t)
 }

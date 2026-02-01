@@ -1,10 +1,17 @@
 
 import { BooleanState, ImageType } from "@/generated/prisma/enums";
+import { getRequestLocale } from "@/lib/getRequestLocale";
 import { handleApiAction } from "@/lib/handleApiAction";
 import { database } from "@/lib/prisma";
+import { translations } from "@/lib/translation";
+import { getTranslations } from "next-intl/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
+    });
     return handleApiAction(async () => {
 
         const [banners, announcement] = await Promise.all([
@@ -30,12 +37,12 @@ export async function GET(request: NextRequest) {
             }),
         ]);
 
-        return NextResponse.json({
-            success: true,
+        return {
+            message: t(translations.fetchSuccess),
             data: {
                 banners,
                 announcement,
             },
-        });
+        }
     });
 }

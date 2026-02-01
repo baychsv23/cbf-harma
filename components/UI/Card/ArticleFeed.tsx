@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Search, Filter, X, Loader2 } from "lucide-react"; // Added Loader2 for loading state
 import { ArticleCBF } from "@/lib/interface";
 import ArticleCard from "./ArticleCard";
 import { ArticleType } from "@/generated/prisma/enums";
 import { translations } from "@/lib/translation";
 import { Link } from "@/i18n/routing";
-import axios from "axios";
+
 import { TYPE_SLUG_MAP } from "@/lib/constant";
+import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 
 interface ArticleFeedProps {
   initialArticles: ArticleCBF[];
@@ -25,7 +26,7 @@ export default function ArticleFeed({
   limit,
 }: ArticleFeedProps) {
   const t = useTranslations();
-  const local = useLocale();
+  const api = useApiWithAlert()
 
   // State
   const [articles, setArticles] = useState<ArticleCBF[]>(initialArticles);
@@ -34,7 +35,6 @@ export default function ArticleFeed({
   const [isLoading, setIsLoading] = useState(false); // Added loading state for better UX
   const [hasMore, setHasMore] = useState(initialArticles.length < totalArticles);
 
-  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Helper: Generate Link Paths
   const getTypePath = (type: ArticleType | "ALL") => {
@@ -59,7 +59,7 @@ export default function ArticleFeed({
     if (searchParam) params.title = searchParam;
 
     try {
-      const response = await axios.get("/api/articles/list", { params });
+      const response = await api.get("/api/articles/list", { params });
 
       if (response.data.success) {
         const newArticles = response.data.data;
@@ -108,8 +108,8 @@ export default function ArticleFeed({
             {t(translations.article)}
           </h1>
 
-          {/* Search Wrapper: Centered on mobile, aligned on desktop */}
-          <div className="flex items-center gap-2 w-full md:w-auto md:ml-auto md:absolute md:right-4 md:top-12 lg:static">
+          {/* Compact Search Wrapper */}
+          <div className="flex items-center gap-2 w-full max-w-md mx-auto md:mx-0">
             {/* Note: I kept your structure but made the wrapper full width on mobile */}
             <div className="relative w-full md:w-80 flex gap-2">
               <div className="relative flex-1">

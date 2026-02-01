@@ -1,6 +1,7 @@
 "use server";
 
 import { BooleanState, Permission, Role } from "@/generated/prisma/enums";
+import { ApiError } from "@/lib/api-error";
 import { handleAction } from "@/lib/handleAction";
 import { database } from "@/lib/prisma";
 
@@ -9,8 +10,10 @@ import { translations } from "@/lib/translation";
 
 
 import bcrypt from "bcryptjs";
+import { getTranslations } from "next-intl/server";
 
 export async function createAccount(prevState: any, data: FormData) {
+  const t = await getTranslations()
   return handleAction(
     async () => {
       const session = await requirePermission(Permission.USER_CREATE);
@@ -51,16 +54,17 @@ export async function createAccount(prevState: any, data: FormData) {
       });
     },
     {
-      successKey: translations.createdSuccess,
-      errorKey: translations.createFailed,
-    }
+      successKey: t(translations.createdSuccess),
+      errorKey: t(translations.createFailed),
+    }, t
   );
 }
 export async function updateAccount(prevState: any, data: FormData) {
+  const t = await getTranslations()
   return handleAction(
     async () => {
       const session = await requirePermission(Permission.USER_UPDATE);
-      if (!session) throw new Error(translations.forbidden)
+      if (!session) throw new ApiError(t(translations.forbidden), 403)
       const roleSession = session.user.role
       const id = data.get("id")?.toString();
       const userName = data.get("userName")?.toString();
@@ -93,16 +97,18 @@ export async function updateAccount(prevState: any, data: FormData) {
       });
     },
     {
-      successKey: translations.updatedSuccess,
-      errorKey: translations.updateFailed,
-    }
+      successKey: t(translations.updatedSuccess),
+      errorKey: t(translations.updateFailed),
+    }, t
   );
 }
 
 export async function activeAccount(id: string, status: BooleanState) {
+  const t = await getTranslations()
   return handleAction(
     async () => {
-      await requirePermission(Permission.USER_DELETE);
+      const session = await requirePermission(Permission.USER_DELETE);
+      if (!session) throw new ApiError(translations.forbidden, 403)
       const update = await database.user.update({
         where: {
           id: id
@@ -112,8 +118,8 @@ export async function activeAccount(id: string, status: BooleanState) {
       return update;
     },
     {
-      successKey: translations.updatedSuccess,
-      errorKey: translations.updateFailed,
+      successKey: t(translations.updatedSuccess),
+      errorKey: t(translations.updateFailed),
     }
   );
 }

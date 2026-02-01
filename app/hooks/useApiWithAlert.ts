@@ -1,17 +1,22 @@
-//hooks/useApiWithAlert.ts
 "use client";
 import axios from "axios";
-import { useTranslations } from "next-intl";
 import { useAlert } from "./useAlert";
-
+import { useLocale } from "next-intl";
 let lastErrorTime = 0;
 
 export function useApiWithAlert() {
-  const t = useTranslations();
   const { showSuccess, showError, showWarning } = useAlert();
+  const locale = useLocale()
   const api = axios.create({
     timeout: 15000,
   });
+  api.interceptors.request.use((config) => {
+    config.params = {
+      ...(config.params || {}),
+      lang: locale
+    };
+    return config;
+  })
 
   api.interceptors.response.use(
     (response) => {
@@ -20,7 +25,7 @@ export function useApiWithAlert() {
         response.config.method?.toUpperCase() || "",
       );
       if (message && isMutation) {
-        showSuccess(t(message));
+        showSuccess(message);
       }
       return response;
     },
@@ -34,7 +39,7 @@ export function useApiWithAlert() {
       const serverError = error.response?.data?.error;
 
       if ([404, 403, 401, 409, 400].includes(status)) {
-        showWarning(t(serverError));
+        showWarning(serverError);
       } else {
         showError(serverError);
       }

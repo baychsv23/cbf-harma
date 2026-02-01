@@ -23,8 +23,10 @@ export default function CreateAccountPage() {
   useEffect(() => {
     if (state?.message) {
       if (state.success) {
-        showSuccess(t(state.message));
-        router.back();
+        showSuccess(state.message);
+        setTimeout(() => {
+          router.back();
+        }, 1000);
       } else {
         showError(state.message);
       }

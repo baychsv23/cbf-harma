@@ -67,12 +67,12 @@ export default function EditAccountPage({ params }: any) {
   useEffect(() => {
     if (state?.message) {
       if (state.success) {
-        showSuccess(t(state.message));
+        showSuccess((state.message));
         setTimeout(() => {
           router.back();
         }, 1000);
       } else {
-        showError(t(state.message));
+        showError((state.message));
       }
     }
   }, [state, router]);

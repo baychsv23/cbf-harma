@@ -77,10 +77,10 @@ export default function AccountsPage() {
       closeProcessing();
 
       if (result.success) {
-        showSuccess(t(result.message));
+        showSuccess((result.message));
         reloadData();
       } else {
-        showError(t(result.message));
+        showError((result.message));
       }
     }
   };
@@ -182,6 +182,7 @@ export default function AccountsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200">
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.stt)}</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.Info, { name: t(translations.account) })}</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.role)}</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.status)}</th>
@@ -199,6 +200,7 @@ export default function AccountsPage() {
               ) : (
                 (users as any[]).map((user) => (
                   <tr key={user.id} className="hover:bg-sky-50/30 transition-colors group">
+                    <td className="px-6 py-4">{user.stt}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         {/* Avatar Circle */}

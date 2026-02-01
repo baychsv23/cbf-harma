@@ -5,14 +5,20 @@ import { logger } from "@/lib/logger";
 import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
 import { getArticleById } from "@/lib/getDataById";
+import { getRequestLocale } from "@/lib/getRequestLocale";
+import { getTranslations } from "next-intl/server";
 
 export async function PUT(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
+    });
     return handleApiAction(async () => {
         const { id } = await params;
 
@@ -78,37 +84,44 @@ export async function PUT(
                 },
             },
         });
-
-        return NextResponse.json({
-            message: translations.updatedSuccess, // "Update successfully"
+        return {
+            message: t(translations.updatedSuccess), // "Update successfully"
             data: updatedArticle,
-        });
-    });
+        }
+    }, t);
 }
 
 export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
-    const session = await requirePermission(Permission.ARTICLE_DELETE);
-    if (!session) throw new ApiError(translations.forbidden, 403)
-    const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true } })
 
-    if (!existingArticle) {
-        throw new ApiError(translations.notFound, 404);
-    }
-    try {
-        const publicId = existingArticle.coverImagePublicId
-        if (publicId) {
-            await deleteFromCloudinary(publicId);
-        }
-    } catch (error) {
-        logger.error("Cloudinary Delete Error:", error);
-    }
-
-    const deleteArticle = await database.article.delete({ where: { id: id } })
-    return NextResponse.json({
-        message: translations.deletedSuccess, // "Update successfully"
-        data: deleteArticle,
+    const locale = getRequestLocale(request);
+    const t = await getTranslations({
+        locale,
     });
+    return handleApiAction(async () => {
+        const { id } = await params;
+        const session = await requirePermission(Permission.ARTICLE_DELETE);
+        if (!session) throw new ApiError(translations.forbidden, 403)
+        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true } })
+
+        if (!existingArticle) {
+            throw new ApiError(translations.notFound, 404);
+        }
+        try {
+            const publicId = existingArticle.coverImagePublicId
+            if (publicId) {
+                await deleteFromCloudinary(publicId);
+            }
+        } catch (error) {
+            logger.error("Cloudinary Delete Error:", error);
+        }
+
+        const deleteArticle = await database.article.delete({ where: { id: id } })
+        return {
+            message: t(translations.deletedSuccess), // "Update successfully"
+            data: deleteArticle,
+        }
+    }, t)
+
 }

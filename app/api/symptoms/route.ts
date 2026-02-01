@@ -3,19 +3,23 @@
 import { BooleanState, Permission } from "@/generated/prisma/enums";
 import { ApiError } from "@/lib/api-error";
 import { getSymptoms } from "@/lib/getData";
+import { getRequestLocale } from "@/lib/getRequestLocale";
 import { handleApiAction } from "@/lib/handleApiAction";
 import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
-import { DEFAULT_LIMIT, DEFAULT_PAGE, paginatedResponse } from "@/lib/utils/pagination";
+import { DEFAULT_LIMIT, DEFAULT_PAGE, getPaginationParams, paginatedResponse } from "@/lib/utils/pagination";
+import { getTranslations } from "next-intl/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  const locale = getRequestLocale(request);
+  const t = await getTranslations({
+    locale,
+  });
   return handleApiAction(async () => {
     const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get("page") || DEFAULT_PAGE.toString());
-    const limit = parseInt(
-      searchParams.get("limit") || DEFAULT_LIMIT.toString())
+    const { page, limit } = getPaginationParams(searchParams);
 
     const where: any = {};
     const name = searchParams.get("name")
@@ -35,16 +39,18 @@ export async function GET(request: NextRequest) {
       limit,
     });
 
-    return NextResponse.json(paginatedResponse(data, total, page, limit));
-
-    // Fetch all mode
+    return { message: t(translations.fetchSuccess), ...paginatedResponse(data, total, page, limit) };
   });
 }
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
+  const locale = getRequestLocale(request);
+  const t = await getTranslations({
+    locale,
+  });
   return handleApiAction(async () => {
     await requirePermission(Permission.SYMPTOM_CREATE);
-    const body = await req.json();
+    const body = await request.json();
 
     if (!body.nameEN || !body.nameLA) {
       throw new ApiError(translations.allFiledRequired, 400);
@@ -61,8 +67,8 @@ export async function POST(req: Request) {
     // To include the 'message' for your Axios interceptor,
     // we return an object that the helper will spread into NextResponse
     return {
-      ...newProduct,
-      message: translations.createdSuccess,
+      data: newProduct,
+      message: t(translations.createdSuccess),
     };
-  });
+  }, t);
 }

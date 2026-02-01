@@ -126,6 +126,7 @@ export default function ArticlePage() {
       showProcessing();
 
       await api.delete(`/api/articles/${article.id}`);
+      reloadData();
     }
   };
 
@@ -218,7 +219,7 @@ export default function ArticlePage() {
             <input
               type="number"
               placeholder="YYYY"
-              min="2000"
+              min="2025"
               max={new Date().getFullYear() + 1}
               value={search.year}
               onChange={(e) => setSearch({ ...search, year: e.target.value })}

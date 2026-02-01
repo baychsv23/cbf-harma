@@ -232,7 +232,7 @@ export default function ProductPage() {
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all border-primary/30 bg-primary/5"
               >
                 <option value="">
-                  {t(translations.All, { name: t("ANTIBIOTICS") })}
+                  {t(translations.All, { name: t(translations.antibioticGroup) })}
                 </option>
                 {Object.values(CategorySub)
                   .filter((sub) => sub !== CategorySub.NONE)
@@ -269,10 +269,10 @@ export default function ProductPage() {
                 {t(translations.name)}
               </th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                STATUS
+                {t(translations.status)}
               </th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                ACTIONS
+                {t(translations.actions)}
               </th>
             </tr>
           </thead>
