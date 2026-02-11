@@ -132,8 +132,7 @@ export default async function ProductSingleCBFPage({
               <div className="mt-4 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 text-red-700">
                 <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <span className="font-bold block mb-1">Prescription Required</span>
-                  {t(translations.prescriptionRequired)} (Rx Only)
+                  <span className="font-bold block mb-1">{t(translations.prescriptionRequired)}</span>
                 </div>
               </div>
             )}

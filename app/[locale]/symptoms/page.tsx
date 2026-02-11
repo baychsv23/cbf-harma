@@ -278,14 +278,16 @@ export default function SymptomPage() {
       </div>
 
       {/* Pagination */}
-      {!loading && pagination.totalPages > 1 && (
-        <Pagination
-          pagination={pagination}
-          page={page}
-          setPage={setPage}
-          loading={loading}
-        />
-      )}
+      <div className="mt-10 flex justify-center">
+        {!loading && pagination.totalPages > 1 && (
+          <Pagination
+            pagination={pagination}
+            page={page}
+            setPage={setPage}
+            loading={loading}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { AlertCircle, Package, Pill } from "lucide-react"; // Optional: Icons fo
 import { ProductCBF } from "@/lib/interface";
 import { BooleanState, Category } from "@/generated/prisma/enums";
 import { CATEGORY_SLUG_MAP } from "@/lib/constant";
+import { translations } from "@/lib/translation";
 
 export default function ProductCard({ product }: { product: ProductCBF }) {
   const t = useTranslations();
@@ -57,7 +58,7 @@ export default function ProductCard({ product }: { product: ProductCBF }) {
           {product.isPrescription === BooleanState.TRUE && (
             <span className="absolute top-3 right-3 bg-red-50 text-red-600 border border-red-100 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm z-10 flex items-center gap-1">
               <AlertCircle className="w-3 h-3" />
-              RX Only
+              {t(translations.prescriptionRequired)}
             </span>
           )}
         </div>

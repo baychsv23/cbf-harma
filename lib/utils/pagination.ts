@@ -30,11 +30,13 @@ export const paginatedResponse = <T>(
             currentPage: page,
             totalPages: Math.ceil(total / limit),
             totalItems: total,
+            hasNext: page < Math.ceil(total / limit),
+            hasPrev: page > 1,
         },
     };
 };
 
-export const DEFAULT_LIMIT = 50;
+export const DEFAULT_LIMIT = 30;
 export const DEFAULT_PAGE = 1;
 
 export function getPaginationParams(searchParams: URLSearchParams) {

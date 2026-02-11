@@ -7,9 +7,9 @@ import {
   BooleanState,
   Category,
 } from "@/generated/prisma/enums";
-import { getArticles, getProducts } from "@/lib/getData";
-import { ArticleCBF, ProductCBF } from "@/lib/interface";
-import { selectDataOfArticle, selectDataOfProduct } from "@/lib/selectData";
+import { getProducts } from "@/lib/getData";
+import { ProductCBF } from "@/lib/interface";
+import { selectDataOfProduct } from "@/lib/selectData";
 import { DEFAULT_LIMIT } from "@/lib/utils/pagination";
 import { Metadata } from "next";
 

@@ -60,11 +60,9 @@ export default function PremiumLoginForm() {
                 <Lock className="w-7 h-7 text-white" />
               </div>
               <h1 className="text-3xl font-bold text-white mb-2">
-                {t(translations.signin)} P & Safe
+                {t(translations.signin)} CBF Pharma Co., Ltd
               </h1>
-              <p className="text-slate-400 text-sm">
-                Welcome back! Please sign in to continue
-              </p>
+
             </div>
 
             {/* Form */}

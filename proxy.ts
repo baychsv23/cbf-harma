@@ -52,7 +52,7 @@ const ROUTES: Record<string, RouteConfig> = {
   "/admin": { roles: [Role.ADMIN] },
 
   // Permission-based
-  "/accounts": { permissions: [Permission.USER_VIEW] },
+  "/accounts": { roles: [Role.ADMIN] },
   "/products": { permissions: [Permission.PRODUCT_VIEW] },
   "/articles": { permissions: [Permission.ARTICLE_VIEW] },
   "/symptoms": { permissions: [Permission.SYMPTOM_VIEW] },

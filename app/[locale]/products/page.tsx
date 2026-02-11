@@ -345,20 +345,23 @@ export default function ProductPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleOpenEdit(product)}
-                        className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm"
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleActiveStatus(product)}
-                        className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition shadow-sm"
-                      >
-                        <Settings2 size={16} />
-                      </button>
-                    </div>
+                    {hasPermission(Permission.PRODUCT_UPDATE) && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleOpenEdit(product)}
+                          className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleActiveStatus(product)}
+                          className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition shadow-sm"
+                        >
+                          <Settings2 size={16} />
+                        </button>
+                      </div>)}
+
+
                   </td>
                 </tr>
               ))
@@ -366,14 +369,16 @@ export default function ProductPage() {
           </tbody>
         </table>
       </div>
-      {!loading && pagination.totalPages > 1 && (
-        <Pagination
-          pagination={pagination}
-          page={page}
-          setPage={setPage}
-          loading={loading}
-        />
-      )}
+      <div className="mt-10 flex justify-center">
+        {!loading && pagination.totalPages > 1 && (
+          <Pagination
+            pagination={pagination}
+            page={page}
+            setPage={setPage}
+            loading={loading}
+          />
+        )}
+      </div>
       <ProductFormModal
         t={t}
         local={locale}

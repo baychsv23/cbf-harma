@@ -1,9 +1,10 @@
 // app/[locale]/cbf/articles/[[...type]]/page.tsx
 import ArticleFeed from "@/components/UI/Card/ArticleFeed";
-import { ArticleStatus, ArticleType } from "@/generated/prisma/enums";
+import { ArticleStatus, ArticleType, BooleanState } from "@/generated/prisma/enums";
 import { getArticles } from "@/lib/getData";
 import { ArticleCBF } from "@/lib/interface";
 import { selectDataOfArticle } from "@/lib/selectData";
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/lib/utils/pagination";
 import { Metadata } from "next";
 
 // Helper stays the same
@@ -37,13 +38,12 @@ export default async function ArticlesCBFWithTypePage({
   const where: any = { status: ArticleStatus.PUBLISHED };
   if (typeEnum !== "ALL") where.type = typeEnum;
 
-  // ✅ LIMIT: Set to 6 or 9 to enable "Load More" functionality
-  const LIMIT = 2;
+
 
   const { data, total } = await getArticles({
     where,
     skip: 0,
-    limit: LIMIT,
+    limit: DEFAULT_LIMIT,
     select: selectDataOfArticle,
   });
 
@@ -53,7 +53,7 @@ export default async function ArticlesCBFWithTypePage({
         initialArticles={data as ArticleCBF[]}
         totalArticles={total} // Pass total count to calculate hasMore
         currentType={typeEnum}
-        limit={LIMIT}
+        limit={DEFAULT_LIMIT}
       />
     </main>
   );

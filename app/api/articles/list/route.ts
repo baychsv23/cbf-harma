@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         const skip = (page - 1) * limit;
 
         const where: any = {
-            status: ArticleStatus.PUBLISHED
+            status: ArticleStatus.PUBLISHED,
         };
         if (type) where.type = type;
         if (title) {

@@ -14,21 +14,11 @@ export enum ViewMode {
 
 export const modules = [
   {
-    name: translations.account,
-    permissions: [
-      Permission.USER_VIEW,
-      Permission.USER_CREATE,
-      Permission.USER_UPDATE,
-      Permission.USER_DELETE,
-    ],
-  },
-  {
     name: translations.product,
     permissions: [
       Permission.PRODUCT_VIEW,
       Permission.PRODUCT_CREATE,
       Permission.PRODUCT_UPDATE,
-      Permission.PRODUCT_DELETE,
     ],
   },
   {

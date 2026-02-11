@@ -187,7 +187,7 @@ export default function ArticleFormModal({
               </label>
               <ImageUpload
                 value={formData.coverImage}
-                aspectRatio={1.78} // 16:9 for Banners
+                aspectRatio={1.77} // 16:9 for Banners
                 label="Click to Upload Article 16:9"
                 onChange={(result) =>
                   setFormData((prev) => ({

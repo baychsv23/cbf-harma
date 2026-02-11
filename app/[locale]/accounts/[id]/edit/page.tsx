@@ -202,9 +202,13 @@ export default function EditAccountPage({ params }: any) {
                       className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none appearance-none cursor-pointer"
                     >
                       <option value="" disabled>-- {t(translations.Select, { name: t(translations.role) })} --</option>
-                      {Object.values(Role).map((role) => (
-                        <option key={role} value={role}>{t(role)}</option>
-                      ))}
+                      {Object.values(Role)
+                        .filter((role) => role !== Role.USER)
+                        .map((role) => (
+                          <option key={role} value={role}>
+                            {t(role)}
+                          </option>
+                        ))}
                     </select>
                   </div>
                 </div>
@@ -220,7 +224,7 @@ export default function EditAccountPage({ params }: any) {
                       <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
                       Access Control
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">จัดการสิทธิ์การใช้งานแต่ละโมดูลอย่างละเอียด</p>
+                    <p className="text-xs text-gray-500 mt-1">ແບ່ງສິດການໃຊ້ງານໃຫ້ກັບຜູ້ໃຊ້ງານ</p>
                   </div>
                   <div className="px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-100">
                     {selectedPermissions.length} Active Permissions
@@ -297,7 +301,7 @@ export default function EditAccountPage({ params }: any) {
                     type="submit"
                     className="px-10 py-3.5 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-95 transition-all"
                   >
-                    {t(translations.Edit, { name: t(translations.account) })}
+                    {t(translations.edit)}
                   </button>
                 </div>
               </div>

@@ -59,14 +59,14 @@ export default function ArticleFeed({
     if (searchParam) params.title = searchParam;
 
     try {
-      const response = await api.get("/api/articles/list", { params });
+      const { data } = await api.get("/api/articles/list", { params });
 
-      if (response.data.success) {
-        const newArticles = response.data.data;
-        const pagination = response.data.pagination;
+      if (data.success) {
+        const newArticles = data.data;
+        const pagination = data.pagination;
 
         if (shouldAppend) {
-          setArticles((prev) => [...prev, ...newArticles]);
+          setArticles((prev) => (shouldAppend ? [...prev, ...data.data] : data.data));
         } else {
           setArticles(newArticles);
         }

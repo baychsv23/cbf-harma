@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/lib/utils/pagination";
 
 interface Pagination {
   currentPage: number;
@@ -29,8 +30,8 @@ interface UsePaginatedDataResult<T = any> {
 export function usePagination<T = any>(
   apiUrl: string,
   defaultFilters: Filters = {},
-  defaultPage = 1,
-  defaultLimit = 50
+  defaultPage = DEFAULT_PAGE,
+  defaultLimit = DEFAULT_LIMIT
 ): UsePaginatedDataResult<T> {
   const [items, setItems] = useState<T[]>([]);
   const api = useApiWithAlert();

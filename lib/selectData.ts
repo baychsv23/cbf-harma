@@ -1,3 +1,5 @@
+import { BooleanState } from "@/generated/prisma/enums";
+
 export const selectDataOfArticle = {
   id: true,
   slug: true,
@@ -8,6 +10,7 @@ export const selectDataOfArticle = {
   coverImage: true,
   type: true,
   products: {
+    where: { isActive: BooleanState.TRUE },
     select: {
       slug: true,
       category: true,

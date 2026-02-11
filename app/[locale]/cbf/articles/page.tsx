@@ -1,11 +1,12 @@
 // app/[locale]/cbf/articles/[[...type]]/page.tsx
 import ArticleFeed from "@/components/UI/Card/ArticleFeed";
-import { ArticleStatus } from "@/generated/prisma/enums";
+import { ArticleStatus, BooleanState } from "@/generated/prisma/enums";
 import { getArticles } from "@/lib/getData";
 import { ArticleCBF } from "@/lib/interface";
+import { database } from "@/lib/prisma";
 import { selectDataOfArticle } from "@/lib/selectData";
 
-import { DEFAULT_LIMIT } from "@/lib/utils/pagination";
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/lib/utils/pagination";
 import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,9 +16,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ArticlesCBFPage() {
   // ✅ LIMIT: Set to 6 or 9 to enable "Load More" functionality
-
   const { data, total } = await getArticles({
-    where: { status: ArticleStatus.PUBLISHED },
+    where: {
+      status: ArticleStatus.PUBLISHED
+    },
     skip: 0,
     limit: DEFAULT_LIMIT,
     select: selectDataOfArticle
