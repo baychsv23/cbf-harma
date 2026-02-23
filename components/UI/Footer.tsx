@@ -24,7 +24,7 @@ export default function Footer() {
 
     return (
         // ✅ เพิ่ม lg:ml-64 เพื่อให้ Footer ขยับหลบ Sidebar เหมือนกับ Main Content
-        <footer className="bg-primary text-white transition-all duration-300 lg:ml-64 border-t-4 border-accent">
+        <footer className="bg-primary text-white transition-all duration-300 border-t-4 border-accent">
             <div className="container mx-auto px-6 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 

@@ -2,7 +2,7 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
+  --background: #eef5f1;
   --foreground: #171717;
   /* Custom Colors */
   --primary: #154f30;
@@ -63,7 +63,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #e8f5ed;
+    --background:#f2f8f4;
     --foreground: #1b1b1b;
   }
 }

@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef, Fragment } from "react";
+import { useEffect, useState, Fragment } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation, Parallax } from "swiper/modules";
-import { Dialog, Transition } from "@headlessui/react";
-import { X, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -60,139 +59,94 @@ export default function BannerSection() {
     }
   };
 
-  // ✅ ปรับความสูง Loading ให้ตรงกับ Banner ใหม่ (ประมาณ 450px)
   if (isLoading) {
     return (
-      <div className="w-full h-[250px] md:h-[450px] bg-gray-100 animate-pulse rounded-2xl mx-auto max-w-[1400px] mt-6" />
+      <div className="w-full h-50 md:h-75 bg-gray-100 animate-pulse rounded-2xl mx-auto max-w-7xl mt-6 px-4" />
     );
   }
 
   if (!isLoading && banners.length === 0) return null;
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-6 group">
-      <div className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-primary-900/20 border border-white/60 transform transition-all hover:scale-[1.005] duration-500">
-        {!isLoading && banners.length > 0 && (
-          <Swiper
-            key={banners.length}
-            modules={[Autoplay, Pagination, Navigation, Parallax]}
-            parallax={true}
-            speed={1000}
-            spaceBetween={0}
-            slidesPerView={1}
-            loop={banners.length > 1}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            pagination={{
-              clickable: true,
-              el: ".custom-pagination",
-            }}
-            navigation={{
-              nextEl: ".custom-next",
-              prevEl: ".custom-prev",
-            }}
-            // ✅ แก้ไขจุดที่ 1: เอา aspect-video ออก แล้วกำหนดความสูงแบบ Responsive
-            // Mobile: 280px, Tablet: 380px, Desktop: 450px (ไม่ใหญ่เกินไป)
-            className="w-full h-[280px] sm:h-[380px] md:h-[450px] banner-swiper relative bg-slate-900"
-          >
-            {/* Background Gradient Overlay */}
-            <div
-              slot="container-start"
-              className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"
-            />
-
-            {banners.map((banner) => (
-              <SwiperSlide
-                key={banner.id}
-                className="relative w-full h-full overflow-hidden bg-slate-900"
-              >
-                {/* Image Container */}
-                <div className="relative w-full h-full overflow-hidden">
+<div className="w-full max-w-6xl mx-auto mt-6 group">
+      <div className="relative px-4 sm:px-6 lg:px-8">
+        <Swiper
+          key={banners.length}
+          modules={[Autoplay, Pagination, Navigation, Parallax]}
+          parallax={true}
+          speed={800}
+          centeredSlides={true}
+          breakpoints={{
+            // ✅ Mobile: slidesPerView=1 เต็มจอ ไม่มี peek ป้องกัน overflow
+            320: { slidesPerView: 1, spaceBetween: 12 },
+            // ✅ Tablet+: เริ่ม peek ซ้าย-ขวา
+            640: { slidesPerView: 1.15, spaceBetween: 16 },
+            1024: { slidesPerView: 1.4, spaceBetween: 24 },
+          }}
+          loop={banners.length > 1}
+          autoplay={{
+            delay: 4000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          pagination={{
+            clickable: true,
+            el: ".custom-pagination",
+          }}
+          navigation={{
+            nextEl: ".custom-next",
+            prevEl: ".custom-prev",
+          }}
+          // ✅ KEY FIX: ลบ overflow:visible ออก — ใช้ hidden แทนเพื่อป้องกัน div ล้น mobile
+          style={{ overflow: "hidden" }}
+          className="w-full pb-10!"
+        >
+          {banners.map((banner) => (
+            <SwiperSlide key={banner.id} className="transition-all duration-500">
+              {({ isActive }) => (
+                <div
+                  className={`relative aspect-video w-full overflow-hidden rounded-2xl shadow-md border border-gray-100 bg-white transition-all duration-500 ease-in-out ${
+                    isActive ? "scale-100 opacity-100" : "scale-95 opacity-50"
+                  }`}
+                >
                   <Image
                     src={banner.image}
                     alt={banner.title || "Banner"}
                     fill
-
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-                    // ✅ แก้ไขจุดที่ 2: ใช้ object-contain เพื่อให้เห็น "รูปเต็ม" โดยไม่โดนตัด
-                    // (ถ้าอยากให้เต็มกรอบโดยยอมตัดขอบภาพบ้าง ให้เปลี่ยนเป็น object-cover)
-                    className="object-contain animate-ken-burns"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 70vw"
+                    className="object-cover"
                     priority={true}
-                    loading="eager"
                   />
-                  {/* เพิ่ม Blur Background ซ้อนด้านหลังเพื่อให้สวยงามเวลารูปไม่เต็มจอ (Optional) */}
-                  <div className="absolute inset-0 -z-10 blur-xl opacity-50">
-                    <Image
-                      src={banner.image}
-                      alt="bg-blur"
-                      loading="eager"
-                      fill
 
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-
-                {/* Text Content */}
-                {(banner.title || banner.description) && (
-                  <div className="absolute bottom-0 left-0 w-full z-20 p-6 md:p-10 flex flex-col justify-end h-full pointer-events-none">
-                    <div className="max-w-3xl space-y-2 md:space-y-4 pointer-events-auto">
-                      <h2
-                        className="text-xl md:text-4xl font-extrabold text-white leading-tight drop-shadow-lg opacity-0 translate-y-8 transition-all duration-700 delay-300 slide-content-title"
-                        data-swiper-parallax="-300"
-                      >
+                  {(banner.title || banner.description) && isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+                      <h3 className="text-white font-bold text-base md:text-lg line-clamp-2 drop-shadow-md">
                         {banner.title}
-                      </h2>
-                      <p
-                        className="text-xs md:text-base text-gray-200 opacity-0 translate-y-8 transition-all duration-700 delay-500 slide-content-desc line-clamp-2 font-light"
-                        data-swiper-parallax="-200"
-                      >
-                        {banner.description}
-                      </p>
-
-                      <div className="pt-1 opacity-0 translate-y-8 transition-all duration-700 delay-700 slide-content-btn">
-                        <button className="inline-flex items-center gap-2 px-5 py-2 bg-white/20 hover:bg-white text-white hover:text-primary-600 rounded-full backdrop-blur-md border border-white/30 transition-all font-semibold text-xs md:text-sm group/btn">
-                          Explore More
-                          <ArrowRight
-                            size={16}
-                            className="group-hover/btn:translate-x-1 transition-transform"
-                          />
-                        </button>
-                      </div>
+                      </h3>
                     </div>
-                  </div>
-                )}
-              </SwiperSlide>
-            ))}
+                  )}
+                </div>
+              )}
+            </SwiperSlide>
+          ))}
 
-            {/* --- Controls --- */}
-            <div className="hidden md:flex absolute top-1/2 -translate-y-1/2 left-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <button className="custom-prev w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-primary transition-all active:scale-95 shadow-lg">
-                <ChevronLeft size={20} />
-              </button>
-            </div>
-            <div className="hidden md:flex absolute top-1/2 -translate-y-1/2 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <button className="custom-next w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-primary transition-all active:scale-95 shadow-lg">
-                <ChevronRight size={20} />
-              </button>
-            </div>
+          {/* Pagination dots */}
+          <div className="custom-pagination absolute bottom-0 left-1/2 -translate-x-1/2 z-30 flex gap-2" />
 
-            <div className="custom-pagination absolute bottom-4 right-4 md:right-auto md:left-10 z-30 flex gap-2 !w-auto"></div>
-          </Swiper>
-        )}
+          {/* ✅ Navigation ซ่อนบน mobile (hidden sm:flex) เพราะพื้นที่แคบเกินไป */}
+          <button className="custom-prev hidden sm:flex absolute top-1/2 -translate-y-[calc(50%+20px)] left-0 z-40 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white shadow-lg border border-gray-100 items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 cursor-pointer">
+            <ChevronLeft size={22} className="text-gray-700" />
+          </button>
+          <button className="custom-next hidden sm:flex absolute top-1/2 -translate-y-[calc(50%+20px)] right-0 z-40 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white shadow-lg border border-gray-100 items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 cursor-pointer">
+            <ChevronRight size={22} className="text-gray-700" />
+          </button>
+        </Swiper>
       </div>
 
-      {/* --- Modal Section (คงเดิมไว้) --- */}
+      {/* --- Modal --- */}
       <Transition appear show={isModalOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-[999]"
-          onClose={closeAnnouncement}
-        >
-          <Transition.Child
+        <Dialog as="div" className="relative z-999" onClose={closeAnnouncement}>
+          <TransitionChild
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
@@ -202,11 +156,11 @@ export default function BannerSection() {
             leaveTo="opacity-0"
           >
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
-          </Transition.Child>
+          </TransitionChild>
 
           <div className="fixed inset-0 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
+              <TransitionChild
                 as={Fragment}
                 enter="ease-out duration-300"
                 enterFrom="opacity-0 scale-95 translate-y-4"
@@ -215,10 +169,10 @@ export default function BannerSection() {
                 leaveFrom="opacity-100 scale-100 translate-y-0"
                 leaveTo="opacity-0 scale-95 translate-y-4"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-1 text-left align-middle shadow-2xl transition-all relative">
+                <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-1 text-left align-middle shadow-2xl transition-all relative">
                   <button
                     onClick={closeAnnouncement}
-                    className="absolute top-3 right-3 z-10 p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors backdrop-blur-md"
+                    className="absolute top-3 right-3 z-10 p-1.5 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors backdrop-blur-md cursor-pointer"
                   >
                     <X size={24} />
                   </button>
@@ -243,43 +197,26 @@ export default function BannerSection() {
                       </p>
                     </div>
                   )}
-                </Dialog.Panel>
-              </Transition.Child>
+                </DialogPanel>
+              </TransitionChild>
             </div>
           </div>
         </Dialog>
       </Transition>
 
       <style jsx global>{`
-        @keyframes ken-burns {
-          0% {
-            transform: scale(1);
-          }
-          100% {
-            transform: scale(1.1);
-          } /* ลด Zoom ลงหน่อยให้ภาพไม่ล้น */
-        }
-        .animate-ken-burns {
-          animation: ken-burns 15s ease-out infinite alternate; /* ช้าลงให้ดูนุ่ม */
-        }
-        .swiper-slide-active .slide-content-title,
-        .swiper-slide-active .slide-content-desc,
-        .swiper-slide-active .slide-content-btn {
-          opacity: 1;
-          transform: translateY(0);
-        }
         .custom-pagination .swiper-pagination-bullet {
-          background: rgba(255, 255, 255, 0.4);
-          width: 32px;
-          height: 4px;
-          border-radius: 2px;
+          background: #ccc;
+          width: 8px;
+          height: 8px;
           transition: all 0.3s;
+          cursor: pointer;
           opacity: 1;
         }
         .custom-pagination .swiper-pagination-bullet-active {
-          background: #fff;
-          width: 48px;
-          box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+          background: #006b3d;
+          width: 24px;
+          border-radius: 4px;
         }
       `}</style>
     </div>

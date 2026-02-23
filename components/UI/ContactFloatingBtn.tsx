@@ -74,7 +74,7 @@ export default function ContactFloatingBtn() {
             {/* --- Main Contact Button --- */}
             <div
                 className="relative flex items-center gap-3 pl-4 pr-5 py-3.5 
-                   bg-gradient-to-r from-primary-600 to-secondary-600 text-white 
+                   bg-linear-to-r from-primary-600 to-secondary-600 text-white 
                    rounded-full shadow-lg shadow-primary-600/30 
                    hover:shadow-primary-600/50 hover:scale-105 active:scale-95 
                    transition-all duration-300 ease-out z-10"

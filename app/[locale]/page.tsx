@@ -2,75 +2,152 @@ import BannerSection from "@/components/UI/BannerSection";
 import ArticleCard from "@/components/UI/Card/ArticleCard";
 import { ArticleCBF } from "@/lib/interface";
 import { getArticles } from "@/lib/getData";
-import { ArticleStatus } from "@/generated/prisma/enums";
+import { ArticleStatus, ArticleType } from "@/generated/prisma/enums";
 import { selectDataOfArticle } from "@/lib/selectData";
-import { DEFAULT_LIMIT } from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
 import { translations } from "@/lib/translation";
 import { Link } from "@/i18n/routing";
+import { Newspaper, Megaphone, GraduationCap, ArrowRight } from "lucide-react";
 
-// ฟังก์ชันดึงข้อมูลด้วย Axios
+// ── Section config — ปรับ ArticleType ให้ตรง enum จริงของคุณ ─────────────────
+const SECTIONS = [
+  {
+    type: ArticleType.NEWS,
+    fallbackLabel: "ข่าวสาร",
+    translationKey: "NEWS",
+    icon: Newspaper,
+    accent: "#006b3d",
+    accentLight: "#e8f4ee",
+    badgeClass: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    hrefAll: "/cbf/articles?type=NEWS",
+  },
+  {
+    type: ArticleType.ACTIVITY,
+    fallbackLabel: "ประกาศ",
+    translationKey: "ACTIVITY",
+    icon: Megaphone,
+    accent: "#b45309",
+    accentLight: "#fef9ec",
+    badgeClass: "bg-amber-50 text-amber-700 border border-amber-200",
+    hrefAll: "/cbf/articles?type=ANNOUNCEMENT",
+  },
+  {
+    type: ArticleType.HEALTH_KNOWLEDGE,
+    fallbackLabel: "ความรู้",
+    translationKey: "HEALTH_KNOWLEDGE",
+    icon: GraduationCap,
+    accent: "#1d4ed8",
+    accentLight: "#eff4ff",
+    badgeClass: "bg-blue-50 text-blue-700 border border-blue-200",
+    hrefAll: "/cbf/articles?type=KNOWLEDGE",
+  },
+] as const;
+
+const PER_SECTION = 3;
 
 export default async function Home() {
-  // เรียกใช้ฟังก์ชัน (ทำงานฝั่ง Server)
-  const where: any = { status: ArticleStatus.PUBLISHED };
   const t = await getTranslations();
+  const baseWhere = { status: ArticleStatus.PUBLISHED };
 
-  // ✅ LIMIT: Set to 6 or 9 to enable "Load More" functionality
+  // Fetch all 3 sections in parallel
+  const results = await Promise.all(
+    SECTIONS.map((s) =>
+      getArticles({
+        where: { ...baseWhere, type: s.type },
+        skip: 0,
+        limit: PER_SECTION,
+        select: selectDataOfArticle,
+      }),
+    ),
+  );
 
-  const { data: articles } = await getArticles({
-    where,
-    skip: 0,
-    limit: DEFAULT_LIMIT,
-    select: selectDataOfArticle
-  });
+  const sectionArticles = results.map((r) => (r.data ?? []) as ArticleCBF[]);
+
   return (
-    <main className="min-h-screen bg-gray-50/30 pb-20">
-      {/* 1. Banner Section */}
-      <div className="pt-6">
+    <main className="min-h-screen pb-24">
+
+      {/* ── Banner ──────────────────────────────────────────────────────── */}
+      <section className="pt-4">
         <BannerSection />
-      </div>
+      </section>
 
-      {/* 2. Latest Updates Section */}
-      <div className="max-w-7xl mx-auto px-6 mt-12">
-        {/* Header Section */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-800">{t(translations.latestUpdate)}</h2>
-            <p className="text-gray-500 mt-1">
+      {/* ── 3 Article Sections ─────────────────────────────────────────── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-14">
+        {SECTIONS.map((cfg, idx) => {
+          const Icon = cfg.icon;
+          const articles = sectionArticles[idx];
+          const label = 
+             t(cfg.translationKey)
 
-            </p>
-          </div>
-          <Link
-            href="/cbf/articles"
-            className="hidden md:inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-primary bg-primary/5 hover:bg-primary/10 transition-colors"
-          >
-            {t(translations.All, { name: t(translations.view) })} →
-          </Link>
-        </div>
+          return (
+            <section key={cfg.type}>
 
-        {/* Content Grid */}
-        {articles.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(articles as ArticleCBF[]).map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
-            <p className="text-gray-500">{t(translations.notFound)}</p>
-          </div>
-        )}
+              {/* ── Section Header ──────────────────────────────────────── */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: cfg.accentLight }}
+                  >
+                    <Icon className="w-5 h-5" style={{ color: cfg.accent }} />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-gray-800">
+                      {(label) }
+                    </h2>
+                    <div
+                      className="mt-1 h-[3px] w-8 rounded-full"
+                      style={{ backgroundColor: cfg.accent }}
+                    />
+                  </div>
+                </div>
 
-        {/* Mobile Button */}
-        <div className="mt-8 md:hidden text-center">
-          <Link
-            href="/cbf/articles"
-            className="inline-block w-full py-3 rounded-xl text-sm font-semibold text-white bg-primary shadow-lg"
-          >
-            {t(translations.latestUpdate)}
-          </Link>
-        </div>
+                {/* View all — desktop */}
+                <Link
+                  href={cfg.hrefAll}
+                  className="hidden md:inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors"
+                >
+                  ดูทั้งหมด <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+              {/* Divider */}
+              <div className="mb-6 h-px bg-gray-200" />
+
+              {/* ── Cards ───────────────────────────────────────────────── */}
+              {articles.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {articles.map((article) => (
+                    <div key={article.id} className="relative">
+                      <span
+                        className={`absolute top-3 left-3 z-10 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-md ${cfg.badgeClass}`}
+                      >
+                        {label}
+                      </span>
+                      <ArticleCard article={article} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-14 rounded-xl border border-dashed border-gray-200 bg-white">
+                  <Icon className="w-8 h-8 text-gray-300 mb-2" />
+                  <p className="text-sm text-gray-400">ยังไม่มี{label}ในขณะนี้</p>
+                </div>
+              )}
+
+              {/* View all — mobile */}
+              <div className="mt-5 md:hidden">
+                <Link
+                  href={cfg.hrefAll}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
+                >
+                  ดู{label}ทั้งหมด <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+            </section>
+          );
+        })}
       </div>
     </main>
   );

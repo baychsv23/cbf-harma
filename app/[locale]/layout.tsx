@@ -10,6 +10,7 @@ import Sidebar from "@/components/UI/Sidebar";
 import { getAuth } from "@/lib/requirePermission";
 import ContactFloatingBtn from "@/components/UI/ContactFloatingBtn";
 import Footer from "@/components/UI/Footer";
+import Navbar from "@/components/UI/Navbar";
 
 const notoSansLao = Noto_Sans_Lao({
   subsets: ["lao"],
@@ -58,12 +59,18 @@ export default async function LocaleLayout({
       <SessionProvider session={session}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <RouteChangeLoader />
-          <Sidebar />
-          <main className="transition-all duration-300 lg:ml-64 ">
+          {!session ?<> 
+           <Navbar />
+             {children}
+          <ContactFloatingBtn />
+                    <Footer />
+          </> : <>   <Sidebar />
+           <main className="transition-all duration-300 lg:ml-64 ">
             {children}
-          </main>
-          <Footer />
-          {!session && <ContactFloatingBtn />}
+          </main></>}
+       
+          
+
         </NextIntlClientProvider>
       </SessionProvider>
     </div>

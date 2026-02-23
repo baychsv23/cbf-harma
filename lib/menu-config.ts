@@ -104,36 +104,7 @@ export const COMMON_PUBLIC: MenuItem[] = [
   },
   {
     title: translations.product,
-    children: [
-      {
-        title: "NUTRITION_ELECTROLYTE",
-        href: "/cbf/products/nutrition-electrolyte",
-      },
-      {
-        title: "ANTIBIOTICS",
-        href: "/cbf/products/antibiotics",
-      },
-      { title: "ANTI_PARASITIC", href: "/cbf/products/anti-parasitic" },
-      { title: "GASTROINTESTINAL", href: "/cbf/products/gastrointestinal" },
-      { title: "CARDIOVASCULAR", href: "/cbf/products/cardiovascular" },
-      { title: "ANTI_DIABETIC", href: "/cbf/products/anti-diabetic" },
-      { title: "RESPIRATORY", href: "/cbf/products/respiratory" },
-      { title: "ANTI_ALLERGIC", href: "/cbf/products/anti-allergic" },
-      {
-        title: "EFFECTIVE_TO_PSYCHOTIC",
-        href: "/cbf/products/effective-to-psychotic",
-      },
-      {
-        title: "ANALGESIC_ANTIPYRETIC",
-        href: "/cbf/products/analgesic-antipyretic",
-      },
-      { title: "VITAMINS_MINERALS", href: "/cbf/products/vitamins-minerals" },
-      {
-        title: "DISINFECTANTS_ANTISEPTIC",
-        href: "/cbf/products/disinfectants-antiseptic",
-      },
-      { title: "OTHERS", href: "/cbf/products/others" },
-    ],
+   href: "/cbf/products"
   },
   { title: translations.service, href: "/cbf/service" },
 
@@ -156,9 +127,6 @@ export const ROLE_MENUS = {
 export const PERMISSION_MENUS: Record<string, MenuItem[]> = {
   [Permission.ARTICLE_VIEW]: [
     { title: translations.article, href: "/articles" },
-  ],
-  [Permission.USER_VIEW]: [
-    { title: translations.account, href: "/accounts" }
   ],
   [Permission.SYMPTOM_VIEW]: [
     { title: translations.symptom, href: "/symptoms" },
