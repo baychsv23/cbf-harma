@@ -59,13 +59,13 @@ function NavDropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
           isActive
             ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md`
-            : `text-slate-700 hover:bg-white/60`
+            : `text-black hover:bg-white/60`
         }`}
       >
-        <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-500"}`} />
+        <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-black/60"}`} />
         {t(item.title)}
         <ChevronDown
           className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
@@ -89,11 +89,11 @@ function NavDropdown({
                 className={`flex items-center gap-2.5 px-3 py-2 mx-1.5 rounded-lg text-sm transition-all duration-150 ${
                   childIsActive
                     ? `bg-gradient-to-r ${colorTheme.gradient} text-white`
-                    : `text-slate-700 hover:bg-slate-50`
+                    : `text-black hover:bg-slate-50`
                 }`}
               >
                 <ChildIcon
-                  className={`w-4 h-4 ${childIsActive ? "text-white" : "text-slate-400"}`}
+                  className={`w-4 h-4 ${childIsActive ? "text-white" : "text-black/60"}`}
                 />
                 {t(child.title)}
               </AntiSpamLink>
@@ -124,13 +124,13 @@ function NavItem({
     <AntiSpamLink
       href={item.href!}
       onClick={onClose}
-      className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
         isActive
-          ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md`
-          : `text-slate-700 hover:bg-white/60`
+          ? `bg-linear-to-r ${colorTheme.gradient} text-white shadow-md`
+          : `text-black hover:bg-white/60`
       }`}
     >
-      <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-500"}`} />
+      <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-black"}`} />
       {t(item.title)}
     </AntiSpamLink>
   );
@@ -161,10 +161,10 @@ function MobileMenuItem({
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
             isActive
               ? `bg-linear-to-r ${colorTheme.gradient} text-white shadow-md`
-              : `text-slate-700 hover:bg-slate-50`
+              : `text-black hover:bg-slate-50`
           }`}
         >
-          <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-500"}`} />
+          <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-black"}`} />
           <span className="flex-1 text-left">{t(item.title)}</span>
           <ChevronDown
             className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
@@ -180,14 +180,14 @@ function MobileMenuItem({
                   key={child.href}
                   href={child.href}
                   onClick={onNavigate}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-extrabold transition-all duration-200 ${
                     childIsActive
-                      ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-sm`
+                      ? `bg-linear-to-r ${colorTheme.gradient} text-white shadow-sm`
                       : `text-slate-600 hover:bg-slate-50`
                   }`}
                 >
                   <ChildIcon
-                    className={`w-4 h-4 ${childIsActive ? "text-white" : "text-slate-400"}`}
+                    className={`w-4 h-4 ${childIsActive ? "text-white" : "text-black"}`}
                   />
                   {t(child.title)}
                 </AntiSpamLink>
@@ -205,11 +205,11 @@ function MobileMenuItem({
       onClick={onNavigate}
       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
         isActive
-          ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md`
-          : `text-slate-700 hover:bg-slate-50`
+          ? `bg-linear-to-r ${colorTheme.gradient} text-white shadow-md`
+          : `text-black hover:bg-slate-50`
       }`}
     >
-      <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-500"}`} />
+      <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-black/60"}`} />
       {t(item.title)}
     </AntiSpamLink>
   );
@@ -277,7 +277,7 @@ export default function Navbar() {
     <>
       {/* ── Top Bar ─────────────────────────────────────────────────────────── */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 bg-primary-200 transition-shadow duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${
           isScrolled ? "shadow-lg" : "shadow-sm border-b border-slate-200/60"
         }`}
       >
@@ -289,7 +289,7 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2.5 shrink-0 group"
             >
-              <div className="w-9 h-9 relative bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+              <div className="w-16 h-16 relative bg-white rounded-lg flex items-center justify-center ">
                 <Image
                   src="/images/logo.svg"
                   alt="CBF Logo"
@@ -299,10 +299,11 @@ export default function Navbar() {
                   priority
                 />
               </div>
-              <span className="text-xl font-bold text-green-900 hidden sm:block leading-tight">
-                CBF Pharma
-                <span className="block text-xs font-normal text-green-700/80 tracking-wide">
-                  Co., Ltd
+              {/* Desktop & tablet title */}
+              <span className="text-sm font-bold text-black leading-tight">
+ບໍລິສັດ ຊີບີເອຟ ຟາຣມາ ຈຳກັດ
+                <span className="block text-xs font-normal text-black/80 tracking-wide">
+                              CBF Pharma  Co., Ltd
                 </span>
               </span>
             </AntiSpamLink>

@@ -107,7 +107,7 @@ export default async function Home() {
                   href={cfg.hrefAll}
                   className="hidden md:inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors"
                 >
-                  ดูทั้งหมด <ArrowRight className="w-4 h-4" />
+                  {t(translations.All,{name:t(translations.view)})} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 

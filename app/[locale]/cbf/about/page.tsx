@@ -38,9 +38,9 @@ export default function AboutPage() {
             </div>
 
             <div className="lg:w-1/2 w-full flex justify-center relative mt-8 lg:mt-0">
-              <div className="relative w-[90%] md:w-full max-w-md h-72 md:h-96 lg:h-[400px] rounded-3xl overflow-hidden shadow-xl border-4 border-white">
+              <div className="relative w-[90%] md:w-full max-w-md h-72 md:h-96 lg:h-100 rounded-3xl overflow-hidden shadow-xl border-4 border-white">
                 <Image
-                  src="/images/logo.svg"
+                  src="/images/lab.png"
                   alt="About CBF"
                   fill
                   className="object-contain"
@@ -51,15 +51,7 @@ export default function AboutPage() {
               </div>
 
               {/* Decorative Floating Element */}
-              <div className="md:flex absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-lg border-l-4 border-accent items-center gap-4 hidden">
-                <div className="bg-green-100 p-3 rounded-full text-primary">
-                  <Award className="w-8 h-8" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-gray-900">15+</p>
-                  <p className="text-sm text-gray-500">{t("Hero.awards")}</p>
-                </div>
-              </div>
+       
             </div>
           </div>
         </div>

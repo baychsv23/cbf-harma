@@ -219,10 +219,10 @@
     "WhyChoose": {
       "title": "Why Choose CBF?",
       "subtitle": "We don't just sell products; we build relationships based on trust and quality.",
-      "Natural": {
-        "title": "100% Natural",
-        "desc": "Our products are sourced from the finest natural ingredients without harmful chemicals."
-      },
+ "Natural": {
+  "title": "Standardized Quality",
+  "desc": "Our products are manufactured using high-quality raw materials under strictly controlled and standardized production processes."
+},
       "Quality": {
         "title": "Quality Certified",
         "desc": "Every product undergoes rigorous testing to meet international safety standards."

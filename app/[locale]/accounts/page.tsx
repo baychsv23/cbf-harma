@@ -142,15 +142,15 @@ export default function AccountsPage() {
           <span>{t(translations.Management, { name: t(translations.account) })} </span>
         </h1>
 
-        {hasPermission(Permission.USER_CREATE) && (
-          <Link
-            href={"/accounts/create"}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
-          >
-            <Plus size={20} strokeWidth={2.5} />
-            {t(translations.Create, { name: t(translations.account) })}
-          </Link>
-        )}
+
+        <Link
+          href={"/accounts/create"}
+          className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
+        >
+          <Plus size={20} strokeWidth={2.5} />
+          {t(translations.Create, { name: t(translations.account) })}
+        </Link>
+
       </div>
 
       {/* Filter Card */}
@@ -236,38 +236,38 @@ export default function AccountsPage() {
 
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
-                        {hasPermission(Permission.USER_UPDATE) && (
-                          <Link
-                            href={`/accounts/${user.id}/edit`}
-                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition shadow-sm"
-                            title={t(translations.edit)}
-                          >
-                            <Edit size={16} />
-                          </Link>
-                        )}
 
-                        {hasPermission(Permission.USER_UPDATE) && (
-                          <button
-                            onClick={() => showResetPasswordForm(user)}
-                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-secondary-50 hover:text-secondary-600 hover:border-secondary-200 transition shadow-sm"
-                            title={t(translations.resetPassword)}
-                          >
-                            <KeyRound size={16} />
-                          </button>
-                        )}
+                        <Link
+                          href={`/accounts/${user.id}/edit`}
+                          className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition shadow-sm"
+                          title={t(translations.edit)}
+                        >
+                          <Edit size={16} />
+                        </Link>
 
-                        {hasPermission(Permission.USER_DELETE) && (
-                          <button
-                            onClick={() => handleActiveStatus(user)}
-                            className={`p-2 bg-white border border-slate-200 rounded-lg transition shadow-sm ${user.isActive === BooleanState.TRUE
-                              ? "text-slate-600 hover:bg-red-100 hover:text-red-600 hover:border-red-200"
-                              : "text-slate-400 hover:bg-red-100/50 hover:text-red-600/70 hover:border-red-200/50"
-                              }`}
-                            title={t(translations.manage)}
-                          >
-                            <Power size={16} />
-                          </button>
-                        )}
+
+
+                        <button
+                          onClick={() => showResetPasswordForm(user)}
+                          className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-secondary-50 hover:text-secondary-600 hover:border-secondary-200 transition shadow-sm"
+                          title={t(translations.resetPassword)}
+                        >
+                          <KeyRound size={16} />
+                        </button>
+
+
+
+                        <button
+                          onClick={() => handleActiveStatus(user)}
+                          className={`p-2 bg-white border border-slate-200 rounded-lg transition shadow-sm ${user.isActive === BooleanState.TRUE
+                            ? "text-slate-600 hover:bg-red-100 hover:text-red-600 hover:border-red-200"
+                            : "text-slate-400 hover:bg-red-100/50 hover:text-red-600/70 hover:border-red-200/50"
+                            }`}
+                          title={t(translations.manage)}
+                        >
+                          <Power size={16} />
+                        </button>
+
                       </div>
                     </td>
                   </tr>
