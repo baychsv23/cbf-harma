@@ -52,6 +52,7 @@ export const modules = [
 
 export const FB_LINK = "https://www.facebook.com/cbfpharmalao";
 export const WA_LINK = "https://wa.me/8562098989689";
+export const GOOGLE_FORM_LINK = "https://forms.gle/xgP6mxfFGBpc6ahE8";
 
 export const CATEGORY_SLUG_MAP: Record<Category, string> = {
   NUTRITION_ELECTROLYTE: "nutrition-electrolyte",
