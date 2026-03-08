@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
         if (category) where.category = category
         if (name) {
             where.OR = [
-                { nameLA: { contains: name } },
-                { nameEN: { contains: name } },
+      { nameLA: { contains: name, mode: 'insensitive' } },
+        { nameEN: { contains: name, mode: 'insensitive' } },
             ];
         }
         const { data, total } = await getProducts({

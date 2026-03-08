@@ -107,8 +107,13 @@ export const COMMON_PUBLIC: MenuItem[] = [
    href: "/cbf/products"
   },
   { title: translations.service, href: "/cbf/service" },
-
-  { title: translations.about, href: "/cbf/about" },
+ {
+    title: translations.about,
+    children: [
+      { title: translations.about, href: "/cbf/about" },
+      { title: translations.organizationalChart, href: "/cbf/organizational-chart" },
+    ],
+  },
 ];
 
 // Role-based menu configurations

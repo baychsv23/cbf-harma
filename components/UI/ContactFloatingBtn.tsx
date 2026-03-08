@@ -41,11 +41,10 @@ export default function ContactFloatingBtn() {
       {/* --- Satellite Buttons --- */}
       {/* Using dynamic classes based on isOpen state instead of group-hover */}
       <div
-        className={`flex flex-col gap-3 transition-all duration-300 ease-out origin-bottom pb-2 ${
-          isOpen
+        className={`flex flex-col gap-3 transition-all duration-300 ease-out origin-bottom pb-2 ${isOpen
             ? "opacity-100 translate-y-0 visible"
             : "opacity-0 translate-y-10 invisible pointer-events-none"
-        }`}
+          }`}
       >
         {/* WhatsApp */}
         <a
@@ -100,6 +99,7 @@ export default function ContactFloatingBtn() {
                    rounded-full shadow-lg shadow-primary-600/30 
                    hover:shadow-primary-600/50 hover:scale-105 active:scale-95 
                    transition-all duration-300 ease-out z-10"
+                    onClick={() => setIsOpen(prev => !prev)}
       >
         {/* Pulse Animation Layer */}
         <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -116,11 +116,8 @@ export default function ContactFloatingBtn() {
 
         {/* Text */}
         <div className="flex flex-col items-start leading-none">
-          <span className="text-[10px] font-medium text-secondary-100 uppercase tracking-wider opacity-80 mb-0.5">
-            Support
-          </span>
           <span className="text-sm font-bold tracking-wide">
-            {t("contact") || "Contact Us"}
+            {t("contactUs")}
           </span>
         </div>
       </div>

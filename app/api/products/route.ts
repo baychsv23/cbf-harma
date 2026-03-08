@@ -36,8 +36,8 @@ export async function GET(request: NextRequest) {
     if (categorySub) where.categorySub = categorySub
     if (name) {
       where.OR = [
-        { nameLA: { contains: name } },
-        { nameEN: { contains: name } },
+         { nameLA: { contains: name, mode: 'insensitive' } },
+        { nameEN: { contains: name, mode: 'insensitive' } },
       ];
     }
     if (isActive) where.isActive = isActive;
