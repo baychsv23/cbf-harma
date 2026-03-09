@@ -8,7 +8,7 @@ import {
   AlertTriangle,
   ShieldCheck,
   Stethoscope,
-  Info
+  Info,
 } from "lucide-react";
 import { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -18,6 +18,7 @@ import { getProductBySlug } from "@/lib/getDataSlug";
 import { BooleanState, CategorySub } from "@/generated/prisma/enums";
 import { selectDataOfProduct } from "@/lib/selectData";
 import { translations } from "@/lib/translation";
+import ProductViewCounter from "@/components/ProductViewCounter";
 
 // 1. Generate Metadata
 export async function generateMetadata({
@@ -69,6 +70,7 @@ export default async function ProductSingleCBFPage({
 
   return (
     <main className="min-h-screen bg-[#F8F9FA] pb-20">
+      <ProductViewCounter slug={slug} />
       {/* Top Navigation Bar */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 mb-8 transition-all duration-300">
         <div className="container mx-auto px-4 max-w-6xl h-16 flex items-center">
@@ -87,11 +89,9 @@ export default async function ProductSingleCBFPage({
       <div className="container mx-auto px-4 max-w-6xl">
         {/* --- Main Layout: Grid 2 Columns --- */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-
           {/* LEFT COLUMN: Product Image (Sticky on Desktop) */}
           <div className="lg:col-span-5 lg:sticky lg:top-24 z-10">
             <div className="relative bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-gray-100 aspect-square flex items-center justify-center overflow-hidden group">
-
               {/* Badges Overlay */}
               <div className="absolute top-4 left-4 z-20 flex flex-wrap gap-2 max-w-full">
                 <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-gray-900 text-white text-[10px] md:text-xs font-bold uppercase tracking-wider shadow-md">
@@ -107,7 +107,6 @@ export default async function ProductSingleCBFPage({
               {/* Image */}
               {product.productImage ? (
                 <div className="relative w-full h-full transition-transform duration-500 group-hover:scale-105">
-
                   <Image
                     src={product.productImage}
                     alt={name}
@@ -122,7 +121,9 @@ export default async function ProductSingleCBFPage({
                   <div className="p-6 rounded-full bg-gray-50">
                     <Package className="w-12 h-12 opacity-30" />
                   </div>
-                  <span className="text-sm font-medium text-gray-400">Image not available</span>
+                  <span className="text-sm font-medium text-gray-400">
+                    Image not available
+                  </span>
                 </div>
               )}
             </div>
@@ -132,7 +133,9 @@ export default async function ProductSingleCBFPage({
               <div className="mt-4 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 text-red-700">
                 <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <span className="font-bold block mb-1">{t(translations.prescriptionRequired)}</span>
+                  <span className="font-bold block mb-1">
+                    {t(translations.prescriptionRequired)}
+                  </span>
                 </div>
               </div>
             )}
@@ -140,7 +143,6 @@ export default async function ProductSingleCBFPage({
 
           {/* RIGHT COLUMN: Product Details */}
           <div className="lg:col-span-7 min-w-0 flex flex-col gap-8">
-
             {/* 1. Header Section */}
             <div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-3 break-words hyphens-auto">
@@ -202,15 +204,16 @@ export default async function ProductSingleCBFPage({
               </div>
 
               {/* Prose for HTML Content */}
-              <div className="
+              <div
+                className="
                 prose prose-stone max-w-none 
                 prose-p:text-gray-600 prose-p:leading-relaxed
                 prose-headings:text-gray-900 prose-headings:font-bold
                 prose-li:text-gray-600
                 prose-strong:text-gray-800
                 break-words
-              ">
-
+              "
+              >
                 {indication ? (
                   <div dangerouslySetInnerHTML={{ __html: indication }} />
                 ) : (
@@ -251,7 +254,6 @@ export default async function ProductSingleCBFPage({
                 </div>
               </div>
             )}
-
           </div>
         </div>
       </div>

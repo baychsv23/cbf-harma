@@ -109,6 +109,7 @@ model Product {
   indicationLA         String?      @db.Text // ສັບພະຄຸນ
   indicationEN         String?      @db.Text
   isPrescription       BooleanState @default(FALSE) // ຕ້ອງມີໃບສັ່ງແພດບໍ່?
+  views                Int          @default(0)
   isActive             BooleanState @default(TRUE)
   productImage         String?
   productImagePublicId String?
