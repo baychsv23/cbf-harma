@@ -196,10 +196,11 @@
   },
   "About": {
     "Hero": {
-      "since": "SINCE 2010",
-      "titlePart1": "Driving Health &",
-      "titlePart2": "Sustainable Growth",
-      "description": "At CBF, we are dedicated to providing high-quality health products rooted in nature. We bridge the gap between traditional wisdom and modern wellness, ensuring a better life for our community.",
+      "titlePart1": "About Company",
+      "titlePart2": "",
+      "description1": "CBF Pharma Co., Ltd. is a modern and standardized company engaged in the manufacturing, processing, importing, and exporting of pharmaceuticals, medicinal materials, and chemicals.",
+      "description2": "With a commitment to participating in national socio-economic development—specifically promoting good health, accessibility, and the use of quality medicines and medical products—CBF Pharma Co., Ltd. was established under the laws of the Lao PDR and began its manufacturing and trading operations on January 1, 1995. Our objective is to develop and promote the domestic pharmaceutical manufacturing industry, advancing the supply of medicines and medical products to meet international standards.",
+      "description3": "Over the past 31 years, CBF Pharma Co., Ltd. has grown steadily from small-scale manufacturing to medium and large scale, utilizing modern technology. The CBF pharmaceutical factory operates according to Good Manufacturing Practice (GMP), features a laboratory with GLP standards, and maintains a quality management system meeting ISO 9001:2015 and ISO/IEC 17025:2017 standards. With skilled, experienced, and expert staff and workers, CBF's pharmaceutical and medical product manufacturing and business operations have advanced to a leading level in the Lao PDR.",
       "awards": "Awards Won"
     },
     "Stats": {
@@ -208,31 +209,59 @@
       "premiumProducts": "Premium Products",
       "support": "Support"
     },
-    "Mission": {
-      "title": "Our Mission",
-      "desc": "To deliver accessible, natural, and safe health solutions to every household in Laos, empowering people to take control of their well-being through knowledge and quality products."
+    "StandardOfCompany": {
+      "title": "Standard of Company",
+      "subTitle": "Committed to creating quality products and services to meet customer satisfaction."
+    },
+    "Values": {
+      "title": "Core Values",
+      "desc": "CBF is engaged in maintaining community health and taking social responsibility."
     },
     "Vision": {
       "title": "Our Vision",
-      "desc": "To become the leading health innovation hub in the region, recognized for integrity, sustainability, and our commitment to community development."
+      "desc": "Committed to developing CBF into a leading manufacturer and distributor of medicines and medical equipment in the Lao PDR, integrating with the region and internationally."
     },
-    "WhyChoose": {
-      "title": "Why Choose CBF?",
-      "subtitle": "We don't just sell products; we build relationships based on trust and quality.",
-    "Natural": {
-      "title": "Standardized Quality",
-      "desc": "Our products are manufactured using high-quality raw materials under strictly controlled and standardized production processes."
+    "Mission": {
+      "title": "Our Mission",
+      "item1": "Manufacture and distribute medicines with international standard quality at reasonable prices.",
+      "item2": "Provide modern medical equipment with international standards for diagnosis and treatment.",
+      "item3": "Develop CBF to create a difference and ensure continuous growth."
     },
-      "Quality": {
-        "title": "Quality Certified",
-        "desc": "Every product undergoes rigorous testing to meet international safety standards."
+    "QualityPolicy": {
+      "title": "Quality Policy",
+      "desc": "Committed to creating quality products and services to meet customer satisfaction."
+    },
+    "Standards": {
+      "title": "Quality Management and Control",
+      "subtitle": "A journey of commitment to developing manufacturing and service excellence",
+      "year2003": {
+        "year": "2003",
+        "title": "GMP",
+        "desc": "Since 2003, CBF has implemented Good Manufacturing Practice (GMP), a comprehensive quality management system covering all production steps from raw materials to finished products."
       },
-      "Expert": {
-        "title": "Expert Team",
-        "desc": "Our team consists of health professionals ready to guide you on your journey."
+      "year2004": {
+        "year": "2004",
+        "title": "GMP",
+        "desc": "By April 2004, CBF received ASEAN GMP certification for sterile injectable production from the Ministry of Health, becoming the first pharmaceutical factory in the Lao PDR to achieve this."
+      },
+      "year2015": {
+        "year": "2015",
+        "title": "ISO 9001:2015",
+        "desc": "Since late 2015, CBF has applied ISO 9001:2015 quality standards to its operations to ensure high-quality, reasonably priced products, prioritizing safety from delivery all the way to the consumer."
+      },
+      "year2019": {
+        "year": "2019",
+        "title": "GLP",
+        "desc": "By late 2019, the CBF pharmaceutical factory laboratory was certified for Good Laboratory Practice (GLP) according to WHO guidelines for quality control of raw materials, active ingredients, and packaging, ensuring all quality factors are controlled."
+      },
+      "year2023": {
+        "year": "2023",
+        "title": "",
+        "desc": "In 2023, CBF achieved the ISO/IEC 17025:2017 international standard for testing laboratory competence."
       }
     }
   },
+  "organizationalChart": "Organizational Chart",
   "content": "Content",
   "latestUpdate": "Latest Updates",
   "generic": "Generic Name",

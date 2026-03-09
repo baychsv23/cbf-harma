@@ -31,10 +31,9 @@ export default function ImageUpload({
           folder: folder,
           sources: ["local", "url"],
           clientAllowedFormats: ["jpg", "jpeg", "png", "webp"],
-          maxFileSize: 10000000, // จำกัด 10MB
-          maxImageWidth: 4000,
           validateMaxWidthHeight: true,
-
+          maxImageWidth: 6000,   // ✅ เพิ่มตรงนี้
+          maxImageHeight: 6000,  // ✅ เพิ่มตรงนี้
           cropping: true,
           croppingAspectRatio: aspectRatio,
           croppingShowDimensions: true, // โชว์ขนาด Pixel ขณะตัด

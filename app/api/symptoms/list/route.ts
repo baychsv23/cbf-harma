@@ -23,8 +23,8 @@ export async function GET(request: NextRequest) {
 
         if (name) {
             where.OR = [
-                { nameEN: { contains: name } },
-                { nameLA: { contains: name } },
+                { nameEN: { contains: name, mode: 'insensitive' } },
+                { nameLA: { contains: name, mode: 'insensitive' } },
             ];
         }
         const skip = (page - 1) * limit;

@@ -27,8 +27,8 @@ export async function GET(request: NextRequest) {
         if (type) where.type = type;
         if (title) {
             where.OR = [
-                { titleEN: { contains: title } },
-                { titleLA: { contains: title } },
+                { titleEN: { contains: title, mode: 'insensitive' } },
+                { titleLA: { contains: title, mode: 'insensitive' } },
             ];
         }
         const { data, total } = await getArticles({

@@ -138,5 +138,6 @@ export const translations = {
   Related: "Related",
   prescriptionRequired: 'prescriptionRequired',
   rxRequired: "rxRequired",
-  more: "more"
+  more: "more",
+  organizationalChart:"organizationalChart"
 } as const;
