@@ -106,7 +106,7 @@ export default function ServicesPage() {
               <ul className="space-y-4 pt-4">
                 <FeatureItem text={t("networkFeat1")} />
                 <FeatureItem text={t("networkFeat2")} />
-                <FeatureItem text={t("networkFeat3")} />
+                {/* <FeatureItem text={t("networkFeat3")} /> */}
               </ul>
             </div>
 
