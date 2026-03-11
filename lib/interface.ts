@@ -32,6 +32,7 @@ export interface ProductCBF {
   slug: string;
   category: Category;
   categorySub: CategorySub;
+  views: number;
   productImage?: string;
   nameEN: string;
   nameLA: string;

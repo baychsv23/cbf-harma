@@ -107,11 +107,14 @@ export const COMMON_PUBLIC: MenuItem[] = [
     href: "/cbf/products",
   },
   { title: translations.service, href: "/cbf/service" },
- {
+  {
     title: translations.about,
     children: [
       { title: translations.about, href: "/cbf/about" },
-      { title: translations.organizationalChart, href: "/cbf/organizational-chart" },
+      {
+        title: translations.organizationalChart,
+        href: "/cbf/organizational-chart",
+      },
     ],
   },
 ];
@@ -122,10 +125,13 @@ export const ROLE_MENUS = {
     {
       title: translations.dashboard,
       children: [
-        { title: translations.article, href: "/admin/article-dashboard" },
         {
-          title: translations.product,
+          title: translations.articleDashboard,
           href: "/admin/article-dashboard",
+        },
+        {
+          title: translations.productDashboard,
+          href: "/admin/product-dashboard",
         },
       ],
     },

@@ -29,6 +29,7 @@ export const selectDataOfProduct = {
   nameLA: true,
   nameEN: true,
   category: true,
+  views: true,
   categorySub: true,
   dosage: true,
   packaging: true,

@@ -4,14 +4,13 @@ import { useLocale, useTranslations } from "next-intl";
 import { User } from "lucide-react";
 
 const TreeStyles = `
-/* เพิ่ม Scrollbar สำหรับมือถือ ให้เลื่อนซ้ายขวาได้เนียนๆ */
 .org-tree-container {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 1rem;
 }
 .org-tree-container::-webkit-scrollbar {
-  height: 1px;
+  height: 4px;
 }
 .org-tree-container::-webkit-scrollbar-track {
   background: #f1f1f1;
@@ -21,8 +20,6 @@ const TreeStyles = `
   background: #16a34a;
   border-radius: 10px;
 }
-
-/* รักษาสไตล์ Tree ให้นำไปใช้กับทุกหน้าจอ (ลบ @media ที่บีบเป็นแนวตั้งออก) */
 .org-tree ul {
   padding-top: 20px;
   position: relative;
@@ -47,51 +44,37 @@ const TreeStyles = `
   right: auto; left: 50%;
   border-left: 2px solid #16a34a;
 }
-.org-tree li:only-child::after, .org-tree li:only-child::before {
-  display: none;
-}
-.org-tree li:only-child {
-  padding-top: 0;
-}
-.org-tree li:first-child::before, .org-tree li:last-child::after {
-  border: 0 none;
-}
+.org-tree li:only-child::after, .org-tree li:only-child::before { display: none; }
+.org-tree li:only-child { padding-top: 0; }
+.org-tree li:first-child::before, .org-tree li:last-child::after { border: 0 none; }
 .org-tree li:last-child::before {
   border-right: 2px solid #16a34a;
   border-radius: 0 5px 0 0;
 }
-.org-tree li:first-child::after {
-  border-radius: 5px 0 0 0;
-}
+.org-tree li:first-child::after { border-radius: 5px 0 0 0; }
 .org-tree ul ul::before {
   content: '';
   position: absolute; top: 0; left: 50%;
   border-left: 2px solid #16a34a;
   width: 0; height: 20px;
 }
-/* Support group li: override the ::after connector to be taller */
-.support-group-li::after {
-  height: 110px !important;
-}
-.support-group-li > ul {
-  padding-top: 90px !important;
-}
-.support-group-li > ul::before {
-  height: 0 !important;
-}
+.support-group-li::after { height: 110px !important; }
+.support-group-li > ul { padding-top: 90px !important; }
+.support-group-li > ul::before { height: 0 !important; }
 `;
-
 function NodeCard({ title, name }: { title: string; name: string }) {
   return (
-    <div className="border-2 border-green-600 rounded-full py-2 px-8 pl-10 bg-white inline-flex flex-col items-center justify-center shadow-lg relative z-10 w-60 min-h-[70px]">
-      <div className="w-12 h-12 rounded-full bg-gray-100 border-2 border-green-600 flex items-center justify-center absolute -left-2 top-1/2 -translate-y-1/2 shadow-sm">
-        <User className="text-gray-400 w-6 h-6" />
-      </div>
-      <div className="w-full text-center">
-        <h3 className="text-sm font-bold text-green-700 leading-tight mb-0.5">
-          {title}
-        </h3>
-        <p className="text-xs text-gray-600 leading-tight">{name}</p>
+    <div className="node-card-wrap">
+      <div className="border-2 border-green-600 rounded-full py-2 px-8 pl-10 bg-white inline-flex flex-col items-center justify-center shadow-lg relative z-10 w-60 min-h-[70px]">
+        <div className="w-12 h-12 rounded-full bg-gray-100 border-2 border-green-600 flex items-center justify-center absolute -left-2 top-1/2 -translate-y-1/2 shadow-sm">
+          <User className="text-gray-400 w-6 h-6" />
+        </div>
+        <div className="w-full text-center">
+          <h3 className="text-sm font-bold text-green-700 leading-tight mb-0.5">
+            {title}
+          </h3>
+          <p className="text-xs text-gray-600 leading-tight">{name}</p>
+        </div>
       </div>
     </div>
   );
@@ -141,25 +124,23 @@ export default function OrganizationalChartPage() {
     <main className="min-h-screen py-6 lg:py-12 relative overflow-hidden flex flex-col">
       <style dangerouslySetInnerHTML={{ __html: TreeStyles }} />
 
-      <div className="container mx-auto px-1 w-full pt-1 lg:pt-1 lg:mt-4">
+      <div className="container mx-auto px-4 w-full pt-1 lg:pt-1 lg:mt-4">
         <div className="text-center mb-8 lg:mb-16">
           <h1 className="text-2xl lg:text-3xl font-bold text-green-800">
             {t("organizationalChart")}
           </h1>
         </div>
 
-        {/* กล่องห่อหุ้มแผนผัง (เปิดใช้งาน Horizontal Scroll) */}
         <div className="org-tree-container w-full">
           <div className="org-tree inline-block min-w-full pb-8">
-            {/* กำหนด min-w-[1100px] เพื่อบังคับไม่ให้แผนผังบีบเละเมื่ออยู่ในจอมือถือ */}
-            <ul className="min-w-275 lg:min-w-full mx-auto">
+            <ul className="min-w-[1100px] mx-auto">
               <li>
                 <NodeCard
                   title={tRole("ຜູ້ອຳນວຍການ", "Director")}
                   name={tRole("ດຣ. ຈິນດາ ວົງສຸລິ", "Dr. Jinda Vongsouly")}
                 />
                 <ul>
-                  {/* ຮອງ 1 - ດຣ. ບຸນທະວີ */}
+                  {/* Deputy 1 */}
                   <li>
                     <NodeCard
                       title={tRole("ຮອງຜູ້ອຳນວຍການ", "Deputy Director")}
@@ -239,7 +220,7 @@ export default function OrganizationalChartPage() {
                     </ul>
                   </li>
 
-                  {/* ກຸ່ມ ສະໜັບສະໜູນ — support-group-li extends connector line down */}
+                  {/* Support Group */}
                   <li className="support-group-li">
                     <ul>
                       <li>
@@ -293,7 +274,7 @@ export default function OrganizationalChartPage() {
                     </ul>
                   </li>
 
-                  {/* ຮອງ 2 - ທ່ານ ສິນໄຊ */}
+                  {/* Deputy 2 */}
                   <li>
                     <NodeCard
                       title={tRole("ຮອງຜູ້ອຳນວຍການ", "Deputy Director")}
@@ -326,7 +307,7 @@ export default function OrganizationalChartPage() {
                     </ul>
                   </li>
 
-                  {/* ຮອງ 3 - ດຣ. ກຽງເພັດ */}
+                  {/* Deputy 3 */}
                   <li>
                     <NodeCard
                       title={tRole("ຮອງຜູ້ອຳນວຍການ", "Deputy Director")}

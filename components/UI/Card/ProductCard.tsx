@@ -55,12 +55,10 @@ export default function ProductCard({ product }: { product: ProductCBF }) {
           </span>
 
           {/* Prescription Badge (Top Right) - Only if RX */}
-          {product.isPrescription === BooleanState.TRUE && (
-            <span className="absolute top-3 right-3 bg-red-50 text-red-600 border border-red-100 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm z-10 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
-              {t(translations.prescriptionRequired)}
-            </span>
-          )}
+
+          <span className="absolute top-3 right-0 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-primary shadow-sm z-10">
+            {product.views} views
+          </span>
         </div>
 
         {/* Content Section */}
@@ -80,6 +78,12 @@ export default function ProductCard({ product }: { product: ProductCBF }) {
 
           {/* Footer: Dosage & Packaging */}
           <div className="mt-auto pt-3 border-t border-gray-50 flex flex-wrap gap-2">
+            {product.isPrescription === BooleanState.TRUE && (
+              <span className="inline-flex items-center gap-1 text-[10px] bg-red-50 text-red-700 px-2 py-1 rounded-md">
+                <AlertCircle className="w-3 h-3" />
+                {t(translations.prescriptionRequired)}
+              </span>
+            )}
             {product.dosage && (
               <span className="inline-flex items-center gap-1 text-[10px] bg-blue-50 text-blue-700 px-2 py-1 rounded-md">
                 <Pill className="w-3 h-3" />
