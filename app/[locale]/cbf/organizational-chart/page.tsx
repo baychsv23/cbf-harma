@@ -133,11 +133,11 @@ export default function OrganizationalChartPage() {
 
         <div className="org-tree-container w-full">
           <div className="org-tree inline-block min-w-full pb-8">
-            <ul className="min-w-[1100px] mx-auto">
+            <ul className="min-w-275 mx-auto">
               <li>
                 <NodeCard
                   title={tRole("ຜູ້ອຳນວຍການ", "Director")}
-                  name={tRole("ດຣ. ຈິນດາ ວົງສຸລິ", "Dr. Jinda Vongsouly")}
+                  name={tRole("ດຣ. ຈິນດາ ວົງສຸລິ", "Dr. Chinda Vongsouly")}
                 />
                 <ul>
                   {/* Deputy 1 */}
@@ -164,7 +164,7 @@ export default function OrganizationalChartPage() {
                               ),
                               name: tRole(
                                 "ທ. ສີສະຫງ່າ ສີສະອາດ",
-                                "Mr. Sissanga Sisaad",
+                                "Mr. Sisanga Sisa Ath",
                               ),
                             },
                             {
@@ -210,8 +210,8 @@ export default function OrganizationalChartPage() {
                                 "Savannakhet Branch",
                               ),
                               name: tRole(
-                                "ດຣ. ຄຳເພັດ ຂາວສະຫວ່າງ",
-                                "Dr. Khamphet Khaosavang",
+                                "ດຣ. ຄຳເພັດ ຂາວສະຫງ່າ",
+                                "Dr. Khamphet Khaosanga",
                               ),
                             },
                           ]}
@@ -231,7 +231,7 @@ export default function OrganizationalChartPage() {
                               role: tRole("ກອງເລຂາ", "Secretariat"),
                               name: tRole(
                                 "ທ. ສີສະຫງ່າ ສີສະອາດ",
-                                "Mr. Sisanga Sisaad",
+                                "Mr. Sisanga Sisa Ath",
                               ),
                             },
                             {
