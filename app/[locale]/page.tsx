@@ -139,7 +139,8 @@ export default async function Home() {
                   href={cfg.hrefAll}
                   className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
                 >
-                  ดู{label}ทั้งหมด <ArrowRight className="w-4 h-4" />
+                  {t(translations.All, { name: t(translations.view) })}{" "}
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </section>
