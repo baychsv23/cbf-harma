@@ -29,7 +29,7 @@ export default function EditAccountPage({ params }: any) {
   });
 
   const [selectedPermissions, setSelectedPermissions] = useState<Permission[]>(
-    []
+    [],
   );
 
   useEffect(() => {
@@ -67,18 +67,18 @@ export default function EditAccountPage({ params }: any) {
   useEffect(() => {
     if (state?.message) {
       if (state.success) {
-        showSuccess((state.message));
+        showSuccess(state.message);
         setTimeout(() => {
           router.back();
         }, 1000);
       } else {
-        showError((state.message));
+        showError(state.message);
       }
     }
   }, [state, router]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormUser((prev) => ({
@@ -91,7 +91,7 @@ export default function EditAccountPage({ params }: any) {
     setSelectedPermissions((prev) =>
       prev.includes(permission)
         ? prev.filter((p) => p !== permission)
-        : [...prev, permission]
+        : [...prev, permission],
     );
   };
 
@@ -99,19 +99,18 @@ export default function EditAccountPage({ params }: any) {
     return selectedPermissions.includes(permission);
   };
 
-
   const selectAllForModule = (moduleName: string, permissions: string[]) => {
     const allSelected = permissions.every((p) =>
-      selectedPermissions.includes(p as Permission)
+      selectedPermissions.includes(p as Permission),
     );
 
     if (allSelected) {
       setSelectedPermissions((prev) =>
-        prev.filter((p) => !permissions.includes(p))
+        prev.filter((p) => !permissions.includes(p)),
       );
     } else {
       const newPerms = permissions.filter(
-        (p) => !selectedPermissions.includes(p as Permission)
+        (p) => !selectedPermissions.includes(p as Permission),
       );
       setSelectedPermissions((prev) => [
         ...prev,
@@ -129,20 +128,25 @@ export default function EditAccountPage({ params }: any) {
             onClick={() => router.back()}
             className="w-fit group flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:text-indigo-600 hover:border-indigo-200 hover:shadow-sm transition-all"
           >
-            <span className="transition-transform group-hover:-translate-x-1">←</span>
+            <span className="transition-transform group-hover:-translate-x-1">
+              ←
+            </span>
             {t(translations.back)}
           </button>
           <div className="md:text-right">
             <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
               {t(translations.Edit, { name: t(translations.account) })}
             </h1>
-            <p className="text-gray-500 text-sm mt-1">แก้ไขข้อมูลผู้ใช้งานและปรับเปลี่ยนสิทธิ์การเข้าถึง</p>
+            <p className="text-gray-500 text-sm mt-1">
+              แก้ไขข้อมูลผู้ใช้งานและปรับเปลี่ยนสิทธิ์การเข้าถึง
+            </p>
           </div>
         </div>
 
         <form
           className="space-y-8"
           action={(formData) => {
+            showProcessing();
             formData.set("id", id);
             formData.set("permissions", JSON.stringify(selectedPermissions));
 
@@ -150,10 +154,8 @@ export default function EditAccountPage({ params }: any) {
           }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
             {/* Left Column: Basic Info & Subscription */}
             <div className="lg:col-span-1 space-y-6">
-
               {/* Identity Section */}
               <div className="bg-white border border-gray-200 rounded-[2rem] p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-gray-900 mb-5 pb-2 border-b border-gray-50 flex items-center gap-2">
@@ -162,7 +164,9 @@ export default function EditAccountPage({ params }: any) {
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">{t(translations.userName)} *</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+                      {t(translations.userName)} *
+                    </label>
                     <input
                       type="text"
                       name="userName"
@@ -173,7 +177,9 @@ export default function EditAccountPage({ params }: any) {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">{t(translations.fullName)}</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+                      {t(translations.fullName)}
+                    </label>
                     <input
                       type="text"
                       name="fullName"
@@ -182,7 +188,6 @@ export default function EditAccountPage({ params }: any) {
                       className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
                     />
                   </div>
-
                 </div>
               </div>
 
@@ -194,14 +199,20 @@ export default function EditAccountPage({ params }: any) {
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">{t(translations.role)} *</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+                      {t(translations.role)} *
+                    </label>
                     <select
                       name="role"
                       value={formUser.role}
                       onChange={handleChange}
                       className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none appearance-none cursor-pointer"
                     >
-                      <option value="" disabled>-- {t(translations.Select, { name: t(translations.role) })} --</option>
+                      <option value="" disabled>
+                        --{" "}
+                        {t(translations.Select, { name: t(translations.role) })}{" "}
+                        --
+                      </option>
                       {Object.values(Role)
                         .filter((role) => role !== Role.USER)
                         .map((role) => (
@@ -224,7 +235,9 @@ export default function EditAccountPage({ params }: any) {
                       <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
                       Access Control
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">ແບ່ງສິດການໃຊ້ງານໃຫ້ກັບຜູ້ໃຊ້ງານ</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      ແບ່ງສິດການໃຊ້ງານໃຫ້ກັບຜູ້ໃຊ້ງານ
+                    </p>
                   </div>
                   <div className="px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-100">
                     {selectedPermissions.length} Active Permissions
@@ -235,27 +248,45 @@ export default function EditAccountPage({ params }: any) {
                   <table className="min-w-full border-collapse">
                     <thead className="bg-gray-50/80 sticky top-0 z-10 shadow-sm">
                       <tr>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest w-1/3">Module</th>
-                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">Create</th>
-                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">View</th>
-                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">Update</th>
-                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">Delete</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-widest w-1/3">
+                          Module
+                        </th>
+                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                          Create
+                        </th>
+                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                          View
+                        </th>
+                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                          Update
+                        </th>
+                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+                          Delete
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {modules.map((module) => {
                         const allSelected = module.permissions.every((p) =>
-                          selectedPermissions.includes(p as Permission)
+                          selectedPermissions.includes(p as Permission),
                         );
 
                         return (
-                          <tr key={module.name} className="hover:bg-indigo-50/40 transition-colors group">
+                          <tr
+                            key={module.name}
+                            className="hover:bg-indigo-50/40 transition-colors group"
+                          >
                             <td className="px-6 py-4">
                               <label className="flex items-center gap-3 cursor-pointer">
                                 <input
                                   type="checkbox"
                                   checked={allSelected}
-                                  onChange={() => selectAllForModule(module.name, module.permissions)}
+                                  onChange={() =>
+                                    selectAllForModule(
+                                      module.name,
+                                      module.permissions,
+                                    )
+                                  }
                                   className="w-5 h-5 text-indigo-600 border-gray-300 rounded-lg focus:ring-indigo-500 cursor-pointer"
                                 />
                                 <span className="text-sm font-bold text-gray-700 group-hover:text-indigo-700 transition-colors">
@@ -263,25 +294,41 @@ export default function EditAccountPage({ params }: any) {
                                 </span>
                               </label>
                             </td>
-                            {["_CREATE", "_VIEW", "_UPDATE", "_DELETE"].map((actionType) => {
-                              const permission = module.permissions.find((p) => p.includes(actionType));
-                              return (
-                                <td key={actionType} className="px-2 py-4 text-center">
-                                  {permission ? (
-                                    <input
-                                      type="checkbox"
-                                      checked={isPermissionSelected(permission as Permission)}
-                                      onChange={() => togglePermission(permission as Permission)}
-                                      className="w-5 h-5 text-indigo-500 border-gray-300 rounded-lg focus:ring-indigo-500 transition-all cursor-pointer"
-                                    />
-                                  ) : (
-                                    <div className="flex justify-center items-center">
-                                      <span className="inline-block w-3 h-[3px] bg-red-300 rounded-full" title="Not Available"></span>
-                                    </div>
-                                  )}
-                                </td>
-                              );
-                            })}
+                            {["_CREATE", "_VIEW", "_UPDATE", "_DELETE"].map(
+                              (actionType) => {
+                                const permission = module.permissions.find(
+                                  (p) => p.includes(actionType),
+                                );
+                                return (
+                                  <td
+                                    key={actionType}
+                                    className="px-2 py-4 text-center"
+                                  >
+                                    {permission ? (
+                                      <input
+                                        type="checkbox"
+                                        checked={isPermissionSelected(
+                                          permission as Permission,
+                                        )}
+                                        onChange={() =>
+                                          togglePermission(
+                                            permission as Permission,
+                                          )
+                                        }
+                                        className="w-5 h-5 text-indigo-500 border-gray-300 rounded-lg focus:ring-indigo-500 transition-all cursor-pointer"
+                                      />
+                                    ) : (
+                                      <div className="flex justify-center items-center">
+                                        <span
+                                          className="inline-block w-3 h-[3px] bg-red-300 rounded-full"
+                                          title="Not Available"
+                                        ></span>
+                                      </div>
+                                    )}
+                                  </td>
+                                );
+                              },
+                            )}
                           </tr>
                         );
                       })}

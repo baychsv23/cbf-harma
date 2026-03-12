@@ -13,9 +13,9 @@ import { createAccount } from "@/action/accounts";
 export default function CreateAccountPage() {
   const t = useTranslations();
   const [state, formAction] = useActionState(createAccount, initialState);
-  const { showSuccess, showError } = useAlert();
+  const { showSuccess, showError, showProcessing } = useAlert();
   const [selectedPermissions, setSelectedPermissions] = useState<Permission[]>(
-    []
+    [],
   );
   const router = useRouter();
 
@@ -36,7 +36,7 @@ export default function CreateAccountPage() {
     setSelectedPermissions((prev) =>
       prev.includes(permission)
         ? prev.filter((p) => p !== permission)
-        : [...prev, permission]
+        : [...prev, permission],
     );
   };
 
@@ -48,16 +48,16 @@ export default function CreateAccountPage() {
 
   const selectAllForModule = (moduleName: string, permissions: string[]) => {
     const allSelected = permissions.every((p) =>
-      selectedPermissions.includes(p as Permission)
+      selectedPermissions.includes(p as Permission),
     );
 
     if (allSelected) {
       setSelectedPermissions((prev) =>
-        prev.filter((p) => !permissions.includes(p))
+        prev.filter((p) => !permissions.includes(p)),
       );
     } else {
       const newPerms = permissions.filter(
-        (p) => !selectedPermissions.includes(p as Permission)
+        (p) => !selectedPermissions.includes(p as Permission),
       );
       setSelectedPermissions((prev) => [
         ...prev,
@@ -65,7 +65,6 @@ export default function CreateAccountPage() {
       ]);
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gray-50/50 py-12 px-4 md:px-8">
@@ -76,7 +75,9 @@ export default function CreateAccountPage() {
             onClick={() => router.back()}
             className="w-fit group flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:text-indigo-600 hover:border-indigo-200 hover:shadow-sm transition-all"
           >
-            <span className="transition-transform group-hover:-translate-x-1">←</span>
+            <span className="transition-transform group-hover:-translate-x-1">
+              ←
+            </span>
             {t(translations.back)}
           </button>
           <div className="md:text-right">
@@ -89,13 +90,13 @@ export default function CreateAccountPage() {
         <form
           className="space-y-8"
           action={(formData) => {
+            showProcessing();
             formData.set("permissions", JSON.stringify(selectedPermissions));
 
             return formAction(formData);
           }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
             {/* Left Column: User Identity & Plan */}
             <div className="lg:col-span-1 space-y-6">
               {/* Profile Section */}
@@ -106,7 +107,9 @@ export default function CreateAccountPage() {
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">{t(translations.userName)} *</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+                      {t(translations.userName)} *
+                    </label>
                     <input
                       type="text"
                       name="userName"
@@ -116,7 +119,9 @@ export default function CreateAccountPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">{t(translations.fullName)} *</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+                      {t(translations.fullName)} *
+                    </label>
                     <input
                       type="text"
                       name="fullName"
@@ -126,7 +131,9 @@ export default function CreateAccountPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">{t(translations.password)} *</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+                      {t(translations.password)} *
+                    </label>
                     <input
                       type="password"
                       name="password"
@@ -146,13 +153,19 @@ export default function CreateAccountPage() {
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">{t(translations.role)} *</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">
+                      {t(translations.role)} *
+                    </label>
                     <select
                       name="role"
                       required
                       className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none appearance-none cursor-pointer"
                     >
-                      <option value="" disabled>-- {t(translations.Select, { name: t(translations.role) })} --</option>
+                      <option value="" disabled>
+                        --{" "}
+                        {t(translations.Select, { name: t(translations.role) })}{" "}
+                        --
+                      </option>
                       {Object.values(Role)
                         .filter((role) => role !== Role.USER)
                         .map((role) => (
@@ -185,27 +198,45 @@ export default function CreateAccountPage() {
                   <table className="min-w-full border-collapse">
                     <thead className="bg-gray-50/80 sticky top-0 z-10 shadow-sm">
                       <tr>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-1/3">Module</th>
-                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Create</th>
-                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">View</th>
-                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Update</th>
-                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Delete</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-1/3">
+                          Module
+                        </th>
+                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">
+                          Create
+                        </th>
+                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">
+                          View
+                        </th>
+                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">
+                          Update
+                        </th>
+                        <th className="px-2 py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">
+                          Delete
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {modules.map((module) => {
                         const allSelected = module.permissions.every((p) =>
-                          selectedPermissions.includes(p as Permission)
+                          selectedPermissions.includes(p as Permission),
                         );
 
                         return (
-                          <tr key={module.name} className="hover:bg-indigo-50/30 transition-colors group">
+                          <tr
+                            key={module.name}
+                            className="hover:bg-indigo-50/30 transition-colors group"
+                          >
                             <td className="px-6 py-4">
                               <label className="flex items-center gap-3 cursor-pointer">
                                 <input
                                   type="checkbox"
                                   checked={allSelected}
-                                  onChange={() => selectAllForModule(module.name, module.permissions)}
+                                  onChange={() =>
+                                    selectAllForModule(
+                                      module.name,
+                                      module.permissions,
+                                    )
+                                  }
                                   className="w-5 h-5 text-indigo-600 border-gray-300 rounded-lg focus:ring-indigo-500 transition-all cursor-pointer"
                                 />
                                 <span className="text-sm font-bold text-gray-700 group-hover:text-indigo-700 transition-colors">
@@ -213,25 +244,41 @@ export default function CreateAccountPage() {
                                 </span>
                               </label>
                             </td>
-                            {["_CREATE", "_VIEW", "_UPDATE", "_DELETE"].map((actionType) => {
-                              const permission = module.permissions.find((p) => p.includes(actionType));
-                              return (
-                                <td key={actionType} className="px-2 py-4 text-center">
-                                  {permission ? (
-                                    <input
-                                      type="checkbox"
-                                      checked={isPermissionSelected(permission as Permission)}
-                                      onChange={() => togglePermission(permission as Permission)}
-                                      className="w-5 h-5 text-primary-600 border-gray-300 rounded-lg focus:ring-primary-600 transition-all cursor-pointer"
-                                    />
-                                  ) : (
-                                    <div className="flex justify-center items-center">
-                                      <span className="inline-block w-3 h-[3px] bg-red-300 rounded-full" title="Not Available"></span>
-                                    </div>
-                                  )}
-                                </td>
-                              );
-                            })}
+                            {["_CREATE", "_VIEW", "_UPDATE", "_DELETE"].map(
+                              (actionType) => {
+                                const permission = module.permissions.find(
+                                  (p) => p.includes(actionType),
+                                );
+                                return (
+                                  <td
+                                    key={actionType}
+                                    className="px-2 py-4 text-center"
+                                  >
+                                    {permission ? (
+                                      <input
+                                        type="checkbox"
+                                        checked={isPermissionSelected(
+                                          permission as Permission,
+                                        )}
+                                        onChange={() =>
+                                          togglePermission(
+                                            permission as Permission,
+                                          )
+                                        }
+                                        className="w-5 h-5 text-primary-600 border-gray-300 rounded-lg focus:ring-primary-600 transition-all cursor-pointer"
+                                      />
+                                    ) : (
+                                      <div className="flex justify-center items-center">
+                                        <span
+                                          className="inline-block w-3 h-[3px] bg-red-300 rounded-full"
+                                          title="Not Available"
+                                        ></span>
+                                      </div>
+                                    )}
+                                  </td>
+                                );
+                              },
+                            )}
                           </tr>
                         );
                       })}

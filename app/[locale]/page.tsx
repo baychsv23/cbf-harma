@@ -65,7 +65,6 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen pb-24">
-
       {/* ── Banner ──────────────────────────────────────────────────────── */}
       <section className="pt-4">
         <BannerSection />
@@ -76,12 +75,10 @@ export default async function Home() {
         {SECTIONS.map((cfg, idx) => {
           const Icon = cfg.icon;
           const articles = sectionArticles[idx];
-          const label = 
-             t(cfg.translationKey)
+          const label = t(cfg.translationKey);
 
           return (
             <section key={cfg.type}>
-
               {/* ── Section Header ──────────────────────────────────────── */}
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
@@ -92,9 +89,7 @@ export default async function Home() {
                     <Icon className="w-5 h-5" style={{ color: cfg.accent }} />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-gray-800">
-                      {(label) }
-                    </h2>
+                    <h2 className="text-lg font-bold text-gray-800">{label}</h2>
                     <div
                       className="mt-1 h-[3px] w-8 rounded-full"
                       style={{ backgroundColor: cfg.accent }}
@@ -107,7 +102,8 @@ export default async function Home() {
                   href={cfg.hrefAll}
                   className="hidden md:inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors"
                 >
-                  {t(translations.All,{name:t(translations.view)})} <ArrowRight className="w-4 h-4" />
+                  {t(translations.All, { name: t(translations.view) })}{" "}
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
@@ -131,7 +127,9 @@ export default async function Home() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-14 rounded-xl border border-dashed border-gray-200 bg-white">
                   <Icon className="w-8 h-8 text-gray-300 mb-2" />
-                  <p className="text-sm text-gray-400">ยังไม่มี{label}ในขณะนี้</p>
+                  <p className="text-sm text-gray-400">
+                    {t(translations.noData)} {label}
+                  </p>
                 </div>
               )}
 
@@ -144,7 +142,6 @@ export default async function Home() {
                   ดู{label}ทั้งหมด <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-
             </section>
           );
         })}
