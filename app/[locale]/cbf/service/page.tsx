@@ -10,6 +10,10 @@ import {
   ShieldCheck,
   Headset,
   ArrowRight,
+  Network,
+  Building2,
+  Globe,
+  Users
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
 
@@ -60,26 +64,26 @@ export default function ServicesPage() {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Service 1: Production */}
             <ServiceCard
-              icon={<FlaskConical className="w-8 h-8" />}
+              icon={<Building2 className="w-8 h-8" />}
               title={t("productionTitle")}
               desc={t("productionDesc")}
-              badge="GMP Certified"
+              badge="+856 20 9898 9689"
             />
 
             {/* Service 2: Distribution/Sales */}
             <ServiceCard
-              icon={<Store className="w-8 h-8" />}
+              icon={<Network className="w-8 h-8" />}
               title={t("distributionTitle")}
               desc={t("distributionDesc")}
-              badge="Wholesale & Retail"
+              badge="+856 20 22 013 791"
             />
 
             {/* Service 3: Logistics */}
             <ServiceCard
-              icon={<Truck className="w-8 h-8" />}
+              icon={<Network className="w-8 h-8" />}
               title={t("logisticsTitle")}
               desc={t("logisticsDesc")}
-              badge="Nationwide"
+              badge="+856 20 95 820 990"
             />
           </div>
         </div>
@@ -112,7 +116,7 @@ export default function ServicesPage() {
 
             {/* Visual Side (Map Graphic) */}
             <div className="lg:w-1/2 w-full">
-              <div className="relative w-full h-[280px] sm:h-[320px] md:h-[400px] rounded-3xl overflow-hidden bg-gray-100 border border-gray-200">
+              <div className="relative w-full h-70 sm:h-80 md:h-100 rounded-3xl overflow-hidden bg-gray-100 border border-gray-200">
                 <Image
                   src="/images/map.png"
                   alt="Network Map"
@@ -137,7 +141,102 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* 4. Why Partner With Us (B2B Focus) */}
+      {/* 4. Customer Groups */}
+      <section className="py-20 bg-gray-50 border-t border-gray-100">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="text-center mb-16 space-y-2">
+            <h2 className="text-3xl font-bold text-gray-900">
+              {t("CustomerGroups.title")}
+            </h2>
+            <div className="w-20 h-1 bg-primary mx-auto rounded-full mt-4 flex items-center justify-center"></div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Group 1: Public Sector */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow h-full">
+              <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+                <Building2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t("CustomerGroups.publicSector")}</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold text-gray-800 text-sm mb-2">{t("CustomerGroups.moh")}</h4>
+                  <ul className="space-y-1 pl-2">
+                    <ListSubItem text={t("CustomerGroups.centralHospitals")} />
+                    <ListSubItem text={t("CustomerGroups.provincialHospitals")} />
+                    <ListSubItem text={t("CustomerGroups.others")} />
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800 text-sm mb-2">{t("CustomerGroups.mod")}</h4>
+                  <ul className="space-y-1 pl-2">
+                    <ListSubItem text={t("CustomerGroups.h103")} />
+                    <ListSubItem text={t("CustomerGroups.regionalHospitals")} />
+                    <ListSubItem text={t("CustomerGroups.militaryHospitals")} />
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800 text-sm mb-2">{t("CustomerGroups.mops")}</h4>
+                  <ul className="space-y-1 pl-2">
+                    <ListSubItem text={t("CustomerGroups.h5april")} />
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Group 2: Private Sector */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow h-full">
+              <div className="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6">
+                <Store className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t("CustomerGroups.privateSector")}</h3>
+              <ul className="space-y-2">
+                <ListSubItem text={t("CustomerGroups.privateHospitals")} />
+                <ListSubItem text={t("CustomerGroups.clinics")} />
+                <ListSubItem text={t("CustomerGroups.distributors")} />
+                <ListSubItem text={t("CustomerGroups.pharmacies")} />
+                <ListSubItem text={t("CustomerGroups.others")} />
+              </ul>
+            </div>
+
+            {/* Group 3: NGOs */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow h-full">
+              <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-6">
+                <Users className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t("CustomerGroups.ngos")}</h3>
+              <ul className="space-y-2">
+                <ListSubItem text="GLOBAL FUND" />
+                <ListSubItem text="WORLD BANK" />
+                <ListSubItem text="WHO" />
+                <ListSubItem text="ADB" />
+                <ListSubItem text="UNICEF" />
+                <ListSubItem text="JICA" />
+                <ListSubItem text="KOICA" />
+                <ListSubItem text={t("CustomerGroups.others")} />
+              </ul>
+            </div>
+
+            {/* Group 4: Neighboring Countries */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow h-full">
+              <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center mb-6">
+                <Globe className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t("CustomerGroups.neighboring")}</h3>
+              <ul className="space-y-2">
+                <ListSubItem text={t("CustomerGroups.cambodia")} />
+                <ListSubItem text={t("CustomerGroups.vietnam")} />
+                <ListSubItem text={t("CustomerGroups.china")} />
+                <ListSubItem text={t("CustomerGroups.thailand")} />
+                <ListSubItem text={t("CustomerGroups.others")} />
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Why Partner With Us (B2B Focus) */}
       <section className="py-16 bg-primary text-white">
         <div className="container mx-auto px-6 max-w-6xl text-center">
           <h2 className="text-3xl font-bold mb-12">{t("whyPartnerTitle")}</h2>
@@ -182,7 +281,7 @@ function ServiceCard({
       <div className="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110" />
 
       {badge && (
-        <span className="absolute top-6 right-6 text-[10px] font-bold uppercase tracking-wider text-primary bg-white/80 backdrop-blur px-2 py-1 rounded-md shadow-sm">
+        <span className="absolute top-6 right-6 text-[12px] font-bold uppercase tracking-wider text-primary bg-white/80 backdrop-blur px-2 py-1 rounded-md shadow-sm">
           {badge}
         </span>
       )}
@@ -207,6 +306,15 @@ function FeatureItem({ text }: { text: string }) {
         <ArrowRight className="w-3.5 h-3.5" />
       </div>
       <span className="text-gray-700 font-medium">{text}</span>
+    </li>
+  );
+}
+
+function ListSubItem({ text }: { text: string }) {
+  return (
+    <li className="flex items-start gap-2 text-gray-600 text-sm">
+      <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+      <span>{text}</span>
     </li>
   );
 }
