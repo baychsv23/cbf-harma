@@ -142,4 +142,5 @@ export const translations = {
   organizationalChart: "organizationalChart",
   articleDashboard: "articleDashboard",
   productDashboard: "productDashboard",
+  applyForWork: "applyForWork",
 } as const;

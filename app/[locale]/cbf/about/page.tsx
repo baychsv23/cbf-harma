@@ -47,7 +47,6 @@ export default function AboutPage() {
 
             <div className="lg:w-[35%] xl:w-[30%] w-full flex justify-center relative mt-8 lg:mt-0 z-10">
               <div className="relative w-[90%] md:w-full max-w-sm h-72 md:h-96 lg:h-[450px] overflow-hidden group">
-
                 <Image
                   src="/images/lab.png"
                   alt="About CBF"
@@ -60,46 +59,41 @@ export default function AboutPage() {
               </div>
 
               {/* Decorative Floating Element */}
-
             </div>
           </div>
         </div>
       </section>
 
       {/* 2. Statistics Section (Full Width) */}
-      {/* <section className="bg-primary text-white py-16">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-green-800/50">
-            <StatItem number="30+" label={t("Stats.yearsExperience")} />
-            <StatItem number="5k+" label={t("Stats.happyCustomers")} />
-            <StatItem number="100+" label={t("Stats.premiumProducts")} />
-            <StatItem number="16/7" label={t("Stats.support")} />
-          </div>
+      <section className="bg-primary text-white py-16">
+        <div className="container mx-auto px-6 max-w-6xl text-center">
+          <h2 className="text-3xl font-bold text-accent mb-4">
+            {t("StandardOfCompany.title")}
+          </h2>
+
+          <p className="text-green-100 max-w-2xl mx-auto">
+            {t("StandardOfCompany.subTitle")}
+          </p>
         </div>
-      </section> */}
+      </section>
 
       {/* 3. Core Values, Vision, Mission, and Quality Policy */}
       <section className="py-5 relative overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-white to-gray-50/50 -z-10"></div>
         <div className="container mx-auto px-6 max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              {t("StandardOfCompany.title")}
-            </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">
-              {t("StandardOfCompany.subTitle")}
-            </p>
-          </div>
           <div className="grid md:grid-cols-2 gap-10">
-
             {/* Values Card */}
             <div className="bg-white/80 backdrop-blur-md p-10 rounded-4xl shadow-xl shadow-red-900/5 border border-white hover:-translate-y-2 transition-all duration-300 relative group overflow-hidden">
               <div className="absolute top-0 right-0 w-48 h-48 bg-linear-to-br from-green-50 to-transparent rounded-full -translate-y-1/2 translate-x-1/2 opacity-50 group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
               <div className="w-16 h-16 bg-linear-to-br from-green-100 to-green-50 rounded-2xl flex items-center justify-center text-primary mb-8 shadow-inner shadow-white relative z-10">
                 <Trophy className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">{t("Values.title")}</h3>
-              <p className="text-gray-600 leading-[1.6] relative z-10">{t("Values.desc")}</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                {t("Values.title")}
+              </h3>
+              <p className="text-gray-600 leading-[1.6] relative z-10">
+                {t("Values.desc")}
+              </p>
             </div>
 
             {/* Vision Card */}
@@ -108,8 +102,12 @@ export default function AboutPage() {
               <div className="w-16 h-16 bg-linear-to-br from-green-100 to-green-50 rounded-2xl flex items-center justify-center text-primary mb-8 shadow-inner shadow-white relative z-10">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">{t("Vision.title")}</h3>
-              <p className="text-gray-600 leading-[1.6] relative z-10">{t("Vision.desc")}</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                {t("Vision.title")}
+              </h3>
+              <p className="text-gray-600 leading-[1.6] relative z-10">
+                {t("Vision.desc")}
+              </p>
             </div>
 
             {/* Mission Card */}
@@ -118,7 +116,9 @@ export default function AboutPage() {
               <div className="w-16 h-16 bg-linear-to-br from-green-100 to-green-50 rounded-2xl flex items-center justify-center text-primary mb-8 shadow-inner shadow-white relative z-10">
                 <Target className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">{t("Mission.title")}</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                {t("Mission.title")}
+              </h3>
               <ul className="text-gray-600 leading-[1.6] space-y-3 list-disc pl-5 marker:text-primary relative z-10">
                 <li>{t("Mission.item1")}</li>
                 <li>{t("Mission.item2")}</li>
@@ -132,8 +132,12 @@ export default function AboutPage() {
               <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-50 rounded-2xl flex items-center justify-center text-primary mb-8 shadow-inner shadow-white relative z-10">
                 <Pill className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">{t("QualityPolicy.title")}</h3>
-              <p className="text-gray-600 leading-[1.6] relative z-10">{t("QualityPolicy.desc")}</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                {t("QualityPolicy.title")}
+              </h3>
+              <p className="text-gray-600 leading-[1.6] relative z-10">
+                {t("QualityPolicy.desc")}
+              </p>
             </div>
           </div>
         </div>
@@ -197,7 +201,6 @@ export default function AboutPage() {
 
 // --- Sub Components ---
 
-
 function StandardCard({
   year,
   title,
@@ -236,17 +239,20 @@ function StandardCard({
           alt={`${title} Certification`}
           className="object-contain h-24 w-auto relative z-10 drop-shadow-sm transition-transform group-hover:scale-105 duration-300"
           onError={(e) => {
-            e.currentTarget.style.display = 'none';
+            e.currentTarget.style.display = "none";
           }}
         />
       </div>
 
-      <h3 className="text-xl font-bold text-gray-900 mb-3 relative z-10">{title}</h3>
-      <p className="text-gray-500 leading-[1.6] text-sm flex-grow relative z-10">{desc}</p>
+      <h3 className="text-xl font-bold text-gray-900 mb-3 relative z-10">
+        {title}
+      </h3>
+      <p className="text-gray-500 leading-[1.6] text-sm flex-grow relative z-10">
+        {desc}
+      </p>
     </div>
   );
 }
-
 
 function StatItem({ number, label }: { number: string; label: string }) {
   return (
@@ -255,26 +261,6 @@ function StatItem({ number, label }: { number: string; label: string }) {
       <div className="text-green-100 text-sm uppercase tracking-wider">
         {label}
       </div>
-    </div>
-  );
-}
-
-function FeatureCard({
-  icon,
-  title,
-  desc,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-}) {
-  return (
-    <div className="text-center p-6 rounded-2xl hover:bg-gray-50 transition-colors">
-      <div className="w-16 h-16 mx-auto bg-primary text-white rounded-full flex items-center justify-center mb-6 shadow-lg shadow-green-900/20">
-        {icon}
-      </div>
-      <h3 className="text-xl font-bold text-gray-900 mb-3">{title}</h3>
-      <p className="text-gray-500 leading-relaxed text-sm">{desc}</p>
     </div>
   );
 }

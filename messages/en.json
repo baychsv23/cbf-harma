@@ -180,7 +180,7 @@
   "speedDesc": "Optimized routes for quickest delivery times.",
   "supportTitle": "Expert Support",
   "supportDesc": "Dedicated team to assist with orders and product info.",
-    "articleDashboard": "Article Dashboard",
+  "articleDashboard": "Article Dashboard",
   "productDashboard": "Product Dashboard",
   "Forbidden": {
     "title": "Access Forbidden",
@@ -279,5 +279,6 @@
   "rxRequired": "RX Required",
   "treatsRelieves": "Treats / Relieves",
   "more": "More",
-  "feedback": "Feedback"
+  "feedback": "Feedback",
+  "applyForWork": "Apply for work"
 }

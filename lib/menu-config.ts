@@ -115,6 +115,10 @@ export const COMMON_PUBLIC: MenuItem[] = [
         title: translations.organizationalChart,
         href: "/cbf/organizational-chart",
       },
+      {
+        title: translations.applyForWork,
+        href: "https://www.facebook.com/cbfhrdept",
+      },
     ],
   },
 ];

@@ -65,15 +65,15 @@ const TreeStyles = `
 function NodeCard({ title, name }: { title: string; name: string }) {
   return (
     <div className="node-card-wrap">
-      <div className="border-2 border-green-600 rounded-full py-2 px-8 pl-10 bg-white inline-flex flex-col items-center justify-center shadow-lg relative z-10 w-60 min-h-[70px]">
+      <div className="border-2 border-green-600 rounded-full py-2 px-8 pl-10 bg-white inline-flex flex-col items-center justify-center shadow-lg relative z-10 w-60 min-h-17.5">
         <div className="w-12 h-12 rounded-full bg-gray-100 border-2 border-green-600 flex items-center justify-center absolute -left-2 top-1/2 -translate-y-1/2 shadow-sm">
           <User className="text-gray-400 w-6 h-6" />
         </div>
         <div className="w-full text-center">
-          <h3 className="text-sm font-bold text-green-700 leading-tight mb-0.5">
+          <h3 className="text-basic font-bold text-green-700 leading-tight mb-0.5">
             {title}
           </h3>
-          <p className="text-xs text-gray-600 leading-tight">{name}</p>
+          <p className="text-basic text-gray-600 leading-tight">{name}</p>
         </div>
       </div>
     </div>
@@ -101,10 +101,10 @@ function GroupCard({
             <div className="w-8 h-8 rounded-full bg-gray-100 border border-green-500 flex items-center justify-center absolute -left-4 top-1/2 -translate-y-1/2 shadow-inner">
               <User className="text-gray-400 w-4 h-4" />
             </div>
-            <h4 className="text-[11px] text-green-700 font-bold leading-tight mb-0.5">
+            <h4 className="text-basic text-green-700 font-bold leading-tight mb-0.5">
               {item.role}
             </h4>
-            <div className="bg-green-700 text-white text-[9px] px-2 py-0.5 rounded-full inline-block mt-1">
+            <div className="bg-green-700 text-white text-basic px-2 py-0.5 rounded-full inline-block mt-1">
               {item.name}
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function OrganizationalChartPage() {
       <style dangerouslySetInnerHTML={{ __html: TreeStyles }} />
 
       <div className="container mx-auto px-4 w-full pt-1 lg:pt-1 lg:mt-4">
-        <div className="text-center mb-8 lg:mb-16">
+        <div className="text-center mb-2 lg:mb-2">
           <h1 className="text-2xl lg:text-3xl font-bold text-green-800">
             {t("organizationalChart")}
           </h1>
