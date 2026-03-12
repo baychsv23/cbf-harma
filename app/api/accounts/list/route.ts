@@ -1,9 +1,9 @@
-import { BooleanState, Permission } from "@/generated/prisma/enums";
+import { BooleanState, Permission, Role } from "@/generated/prisma/enums";
 import { ApiError } from "@/lib/api-error";
 import { getAccounts } from "@/lib/getData";
 import { getRequestLocale } from "@/lib/getRequestLocale";
 import { handleApiAction } from "@/lib/handleApiAction";
-import { requirePermission } from "@/lib/requirePermission";
+import { getAuth, requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
 import {
   getPaginationParams,
