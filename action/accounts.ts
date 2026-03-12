@@ -1,24 +1,22 @@
 "use server";
 
 import { BooleanState, Permission, Role } from "@/generated/prisma/enums";
-import { ApiError } from "@/lib/api-error";
 import { handleAction } from "@/lib/handleAction";
 import { database } from "@/lib/prisma";
 
-import { requirePermission } from "@/lib/requirePermission";
+import { getAuth, requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
-
 
 import bcrypt from "bcryptjs";
 import { getTranslations } from "next-intl/server";
 
 export async function createAccount(prevState: any, data: FormData) {
-  const t = await getTranslations()
+  const t = await getTranslations();
   return handleAction(
     async () => {
-      const session = await requirePermission(Permission.USER_CREATE);
-      if (!session) throw new Error(translations.forbidden)
-      const roleSession = session.user.role
+      const session = await getAuth();
+      if (!session) throw new Error(translations.forbidden);
+      const roleSession = session.user.role;
       const userName = data.get("userName")?.toString();
 
       const fullName = data.get("fullName")?.toString();
@@ -56,16 +54,17 @@ export async function createAccount(prevState: any, data: FormData) {
     {
       successKey: t(translations.createdSuccess),
       errorKey: t(translations.createFailed),
-    }, t
+    },
+    t,
   );
 }
 export async function updateAccount(prevState: any, data: FormData) {
-  const t = await getTranslations()
+  const t = await getTranslations();
   return handleAction(
     async () => {
-      const session = await requirePermission(Permission.USER_UPDATE);
-      if (!session) throw new ApiError(t(translations.forbidden), 403)
-      const roleSession = session.user.role
+      const session = await getAuth();
+      if (!session) throw new Error(translations.forbidden);
+      const roleSession = session.user.role;
       const id = data.get("id")?.toString();
       const userName = data.get("userName")?.toString();
       const fullName = data.get("fullName")?.toString();
@@ -99,19 +98,20 @@ export async function updateAccount(prevState: any, data: FormData) {
     {
       successKey: t(translations.updatedSuccess),
       errorKey: t(translations.updateFailed),
-    }, t
+    },
+    t,
   );
 }
 
 export async function activeAccount(id: string, status: BooleanState) {
-  const t = await getTranslations()
+  const t = await getTranslations();
   return handleAction(
     async () => {
-      const session = await requirePermission(Permission.USER_DELETE);
-      if (!session) throw new ApiError(translations.forbidden, 403)
+      const session = await getAuth();
+      if (!session) throw new Error(translations.forbidden);
       const update = await database.user.update({
         where: {
-          id: id
+          id: id,
         },
         data: { isActive: status },
       });
@@ -120,6 +120,6 @@ export async function activeAccount(id: string, status: BooleanState) {
     {
       successKey: t(translations.updatedSuccess),
       errorKey: t(translations.updateFailed),
-    }
+    },
   );
 }
