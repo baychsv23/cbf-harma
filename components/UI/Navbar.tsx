@@ -2,13 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import {
-  ChevronDown,
-  FileText,
-  Menu,
-  X,
-  Home,
-} from "lucide-react";
+import { ChevronDown, FileText, Menu, X, Home } from "lucide-react";
 import AuthButtons from "./AuthButtons";
 import LanguageSwitcher from "./LanguageSwitcher";
 import AntiSpamLink from "../AntiSpamLink";
@@ -25,6 +19,7 @@ import { usePathname } from "@/i18n/routing";
 import Image from "next/image";
 import { translations } from "@/lib/translation";
 
+// ─── Dropdown Item ─────────────────────────────────────────────────────────────
 // ─── Dropdown Item ─────────────────────────────────────────────────────────────
 function NavDropdown({
   item,
@@ -44,12 +39,10 @@ function NavDropdown({
   const Icon = ICON_MAP[item.title] || ICON_MAP.home;
   const colorTheme = COLOR_THEMES[item.title] || COLOR_THEMES.default;
 
-  // Close on outside click
   useEffect(() => {
     function handler(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (ref.current && !ref.current.contains(e.target as Node))
         setIsOpen(false);
-      }
     }
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -59,20 +52,21 @@ function NavDropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
           isActive
-            ? `bg-gradient-to-r ${colorTheme.gradient} text-white shadow-md`
-            : `text-black hover:bg-white/60`
+            ? `bg-linear-to-r ${colorTheme.gradient} text-white shadow-md`
+            : `text-white hover:bg-white/20`
         }`}
       >
-        <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-black/60"}`} />
+        <Icon
+          className={`w-4 h-4 ${isActive ? "text-white" : "text-white/70"}`}
+        />
         {t(item.title)}
         <ChevronDown
           className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
 
-      {/* Dropdown Panel */}
       {isOpen && (
         <div className="absolute top-full left-0 mt-1.5 w-52 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
           {item.children!.map((child) => {
@@ -89,11 +83,11 @@ function NavDropdown({
                 className={`flex items-center gap-2.5 px-3 py-2 mx-1.5 rounded-lg text-sm transition-all duration-150 ${
                   childIsActive
                     ? `bg-gradient-to-r ${colorTheme.gradient} text-white`
-                    : `text-black hover:bg-slate-50`
+                    : `text-slate-700 hover:bg-slate-50`
                 }`}
               >
                 <ChildIcon
-                  className={`w-4 h-4 ${childIsActive ? "text-white" : "text-black/60"}`}
+                  className={`w-4 h-4 ${childIsActive ? "text-white" : "text-slate-400"}`}
                 />
                 {t(child.title)}
               </AntiSpamLink>
@@ -127,10 +121,12 @@ function NavItem({
       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
         isActive
           ? `bg-linear-to-r ${colorTheme.gradient} text-white shadow-md`
-          : `text-black hover:bg-white/60`
+          : `text-white hover:bg-white/20`
       }`}
     >
-      <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-black"}`} />
+      <Icon
+        className={`w-4 h-4 ${isActive ? "text-white" : "text-white/70"}`}
+      />
       {t(item.title)}
     </AntiSpamLink>
   );
@@ -161,10 +157,12 @@ function MobileMenuItem({
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
             isActive
               ? `bg-linear-to-r ${colorTheme.gradient} text-white shadow-md`
-              : `text-black hover:bg-slate-50`
+              : `text-slate-700 hover:bg-slate-50`
           }`}
         >
-          <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-black"}`} />
+          <Icon
+            className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-400"}`}
+          />
           <span className="flex-1 text-left">{t(item.title)}</span>
           <ChevronDown
             className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
@@ -180,14 +178,14 @@ function MobileMenuItem({
                   key={child.href}
                   href={child.href}
                   onClick={onNavigate}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-extrabold transition-all duration-200 ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                     childIsActive
                       ? `bg-linear-to-r ${colorTheme.gradient} text-white shadow-sm`
                       : `text-slate-600 hover:bg-slate-50`
                   }`}
                 >
                   <ChildIcon
-                    className={`w-4 h-4 ${childIsActive ? "text-white" : "text-black"}`}
+                    className={`w-4 h-4 ${childIsActive ? "text-white" : "text-slate-400"}`}
                   />
                   {t(child.title)}
                 </AntiSpamLink>
@@ -206,10 +204,12 @@ function MobileMenuItem({
       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
         isActive
           ? `bg-linear-to-r ${colorTheme.gradient} text-white shadow-md`
-          : `text-black hover:bg-slate-50`
+          : `text-slate-700 hover:bg-slate-50`
       }`}
     >
-      <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-black/60"}`} />
+      <Icon
+        className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-400"}`}
+      />
       {t(item.title)}
     </AntiSpamLink>
   );
@@ -250,7 +250,10 @@ export default function Navbar() {
     const finalMenus: MenuItem[] = [];
 
     userPermissions.forEach((permission) => {
-      if (!processedPermissions.has(permission) && PERMISSION_MENUS[permission]) {
+      if (
+        !processedPermissions.has(permission) &&
+        PERMISSION_MENUS[permission]
+      ) {
         const menus = PERMISSION_MENUS[permission];
         if (menus.length > 0) finalMenus.push(...menus);
       }
@@ -263,8 +266,8 @@ export default function Navbar() {
     const baseMenus = [{ title: translations.home, href: "/" }];
     const existing = new Set(
       menuItems.flatMap((m) =>
-        m.href ? [m.href] : m.children?.map((c) => c.href) || []
-      )
+        m.href ? [m.href] : m.children?.map((c) => c.href) || [],
+      ),
     );
     menuItems = [
       ...baseMenus.filter((m) => !existing.has(m.href!)),
@@ -277,21 +280,20 @@ export default function Navbar() {
     <>
       {/* ── Top Bar ─────────────────────────────────────────────────────────── */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${
-          isScrolled ? "shadow-lg" : "shadow-sm border-b border-slate-200/60"
+        className={`fixed top-0 left-0 right-0 z-50 bg-linear-to-r from-primary-600 to-secondary-600 text-white transition-shadow duration-300 ${
+          isScrolled ? "shadow-lg" : "shadow-sm"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex items-center h-16 gap-4">
-
             {/* Logo */}
             <AntiSpamLink
               href="/"
-              className="flex items-center gap-2.5 shrink-0 group"
+              className="flex items-center gap-2.5  shrink-0 group"
             >
-              <div className="w-16 h-16 relative bg-white rounded-lg flex items-center justify-center ">
+              <div className="w-16 h-16 relative rounded-lg flex items-center justify-center ">
                 <Image
-                  src="/images/logo.svg"
+                  src="/images/logo2.svg"
                   alt="CBF Logo"
                   fill
                   loading="eager"
@@ -300,10 +302,10 @@ export default function Navbar() {
                 />
               </div>
               {/* Desktop & tablet title */}
-              <span className="text-sm font-bold text-black leading-tight">
-ບໍລິສັດ ຊີບີເອຟ ຟາຣມາ ຈຳກັດ
-                <span className="block text-xs font-normal text-black/80 tracking-wide">
-                              CBF Pharma  Co., Ltd
+              <span className="text-sm font-bold text-white leading-tight">
+                ບໍລິສັດ ຊີບີເອຟ ຟາຣມາ ຈຳກັດ
+                <span className="block text-xs font-normal text-white/80 tracking-wide">
+                  CBF Pharma Co., Ltd
                 </span>
               </span>
             </AntiSpamLink>
@@ -325,7 +327,7 @@ export default function Navbar() {
                     pathname={pathname}
                     onClose={() => {}}
                   />
-                )
+                ),
               )}
             </nav>
 
@@ -383,7 +385,7 @@ export default function Navbar() {
       {/* Overlay */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+          className="fixed inset-0 bg-white/30 z-40 lg:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}

@@ -89,7 +89,7 @@ function GroupCard({
 }) {
   return (
     <div className="bg-white border-2 border-green-700 rounded-lg shadow-md w-65 mx-auto overflow-hidden relative z-10">
-      <div className="bg-green-700 text-white font-bold py-2 px-4 text-xs whitespace-pre-wrap leading-tight text-center">
+      <div className="bg-green-700 text-white font-bold py-2 px-4 text-basic whitespace-pre-wrap leading-tight text-center">
         {title}
       </div>
       <div className="p-4 flex flex-col gap-3">

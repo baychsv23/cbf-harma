@@ -2,7 +2,7 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #eef5f1;
+  --background: #fcfffd;
   --foreground: #171717;
   /* Custom Colors */
   --primary: #154f30;
