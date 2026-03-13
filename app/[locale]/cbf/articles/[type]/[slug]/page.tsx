@@ -91,10 +91,8 @@ export default async function ArticleSingleCBFPage({
       </div>
 
       <article className="container mx-auto px-4 max-w-6xl mt-6 md:mt-10">
-
         {/* --- 2. Hero Section (FIXED LAYOUT) --- */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 mb-12 items-start">
-
           {/* Left: Content Header 
               Added 'min-w-0' to prevent flex item from overflowing its container
           */}
@@ -156,11 +154,11 @@ export default async function ArticleSingleCBFPage({
 
         {/* --- 3. Main Layout: Content + Sidebar --- */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 lg:gap-16">
-
           {/* LEFT: Article Body */}
           <div className="min-w-0">
             {/* Prose Configuration */}
-            <div className="
+            <div
+              className="
               prose prose-lg md:prose-xl prose-stone max-w-none 
               prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-gray-900
               prose-p:leading-relaxed prose-p:text-gray-600
@@ -169,7 +167,8 @@ export default async function ArticleSingleCBFPage({
               prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
               prose-li:marker:text-primary
               break-words
-            ">
+            "
+            >
               <div dangerouslySetInnerHTML={{ __html: content || "" }} />
             </div>
           </div>

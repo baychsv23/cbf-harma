@@ -2,15 +2,15 @@
 import axios from "axios";
 import { useEffect } from "react";
 
-interface ArticleViewCounterProps {
+interface ProductViewCounterProps {
   slug: string;
 }
 
-export default function ArticleViewCounter({ slug }: ArticleViewCounterProps) {
+export default function ProductViewCounter({ slug }: ProductViewCounterProps) {
   useEffect(() => {
     if (!slug) return;
 
-    const storageKey = `article-viewed-${slug}`;
+    const storageKey = `product-viewed-${slug}`;
 
     // ถ้านับไปแล้วใน session นี้ → ไม่ต้องนับซ้ำ
     if (sessionStorage.getItem(storageKey)) return;
