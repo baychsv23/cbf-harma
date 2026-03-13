@@ -8,7 +8,12 @@ import { handleApiAction } from "@/lib/handleApiAction";
 import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
-import { DEFAULT_LIMIT, DEFAULT_PAGE, getPaginationParams, paginatedResponse } from "@/lib/utils/pagination";
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_PAGE,
+  getPaginationParams,
+  paginatedResponse,
+} from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,29 +23,28 @@ export async function GET(request: NextRequest) {
     locale,
   });
   return handleApiAction(async () => {
-    const session = await requirePermission(Permission.ARTICLE_VIEW)
-    if (!session) throw new ApiError(translations.forbidden, 403)
+    const session = await requirePermission(Permission.ARTICLE_VIEW);
+    if (!session) throw new ApiError(translations.forbidden, 403);
     const searchParams = request.nextUrl.searchParams;
     const { page, limit } = getPaginationParams(searchParams);
     const title = searchParams.get("title");
     const type = searchParams.get("type");
     const status = searchParams.get("status");
-    const year = Number(searchParams.get("year"))
-    const month = Number(searchParams.get("month"))
+    const year = Number(searchParams.get("year"));
+    const month = Number(searchParams.get("month"));
     const where: any = {};
 
     if (title) {
       where.OR = [
-        { titleEN: { contains: title, mode: 'insensitive' } },
-        { titleLA: { contains: title, mode: 'insensitive' } },
+        { titleEN: { contains: title, mode: "insensitive" } },
+        { titleLA: { contains: title, mode: "insensitive" } },
       ];
     }
 
     if (status) where.status = status;
     if (type) where.type = type;
-    if (year) where.year = year
-    if (month) where.month = month
-
+    if (year) where.year = year;
+    if (month) where.month = month;
 
     const skip = (page - 1) * limit;
 
@@ -53,8 +57,12 @@ export async function GET(request: NextRequest) {
         createdBy: { select: { fullName: true } },
         updatedBy: { select: { fullName: true } },
       },
+      orderBy: { createdAt: "desc" },
     });
-    return { message: t(translations.fetchSuccess), ...paginatedResponse(data, total, page, limit) };
+    return {
+      message: t(translations.fetchSuccess),
+      ...paginatedResponse(data, total, page, limit),
+    };
   });
 }
 export async function POST(request: NextRequest) {
@@ -80,7 +88,7 @@ export async function POST(request: NextRequest) {
       status,
       type,
       coverImage,
-      coverImagePublicId
+      coverImagePublicId,
     } = body;
     if (!titleEN || !titleLA || !slug) {
       throw new ApiError(translations.allFiledRequired, 400);

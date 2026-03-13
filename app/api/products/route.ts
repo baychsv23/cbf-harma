@@ -8,10 +8,7 @@ import { handleApiAction } from "@/lib/handleApiAction";
 import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
-import {
-  getPaginationParams,
-  paginatedResponse,
-} from "@/lib/utils/pagination";
+import { getPaginationParams, paginatedResponse } from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
 import { NextRequest } from "next/server";
 
@@ -29,15 +26,16 @@ export async function GET(request: NextRequest) {
     const name = searchParams.get("name");
     const isActive = searchParams.get("isActive");
     const category = searchParams.get("category");
-    const categorySub = searchParams.get("categorySub")
+    const categorySub = searchParams.get("categorySub");
 
     const where: any = {};
-    if (category) where.category = category
-    if (categorySub) where.categorySub = categorySub
+    if (category) where.category = category;
+    if (categorySub) where.categorySub = categorySub;
     if (name) {
       where.OR = [
-         { nameLA: { contains: name, mode: 'insensitive' } },
-        { nameEN: { contains: name, mode: 'insensitive' } },
+        { nameLA: { contains: name, mode: "insensitive" } },
+        { nameEN: { contains: name, mode: "insensitive" } },
+        { sku: { contains: name, mode: "insensitive" } },
       ];
     }
     if (isActive) where.isActive = isActive;
@@ -48,9 +46,13 @@ export async function GET(request: NextRequest) {
       where,
       skip,
       limit,
+      orderBy: { sku: "asc" },
     });
 
-    return { message: t(translations.fetchSuccess), ...paginatedResponse(data, total, page, limit) };
+    return {
+      message: t(translations.fetchSuccess),
+      ...paginatedResponse(data, total, page, limit),
+    };
   });
 }
 export async function POST(request: NextRequest) {

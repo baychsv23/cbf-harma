@@ -29,7 +29,7 @@ export default function ProductPage() {
     name: "",
     category: "",
     categorySub: "",
-    isActive: ""
+    isActive: "",
   });
   const [allSymptoms, setAllSymptoms] = useState<any[]>([]);
   const [symptomPage, setSymptomPage] = useState(1);
@@ -45,11 +45,12 @@ export default function ProductPage() {
     clearFilters,
   } = usePagination("/api/products");
 
-
   const fetchSymptoms = async (page: number) => {
     const { data } = await api.get(`/api/symptoms/list?page=${page}`);
     if (data.success) {
-      setAllSymptoms((prev) => (page === 1 ? data.data : [...prev, ...data.data]));
+      setAllSymptoms((prev) =>
+        page === 1 ? data.data : [...prev, ...data.data],
+      );
       setHasMoreSymptoms(data.pagination.hasNext);
     }
   };
@@ -63,7 +64,6 @@ export default function ProductPage() {
     setSymptomPage(nextPage);
     fetchSymptoms(nextPage);
   };
-
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -94,7 +94,7 @@ export default function ProductPage() {
       name: search.name,
       category: search.category,
       categorySub: search.categorySub,
-      isActive: search.isActive
+      isActive: search.isActive,
     });
   };
 
@@ -188,7 +188,6 @@ export default function ProductPage() {
               <option value={BooleanState.FALSE}>
                 {t(translations.inactive)}
               </option>
-
             </select>
           </div>
           {/* ค้นหาด้วยหมวดหมู่หลัก */}
@@ -232,7 +231,9 @@ export default function ProductPage() {
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all border-primary/30 bg-primary/5"
               >
                 <option value="">
-                  {t(translations.All, { name: t(translations.antibioticGroup) })}
+                  {t(translations.All, {
+                    name: t(translations.antibioticGroup),
+                  })}
                 </option>
                 {Object.values(CategorySub)
                   .filter((sub) => sub !== CategorySub.NONE)
@@ -266,7 +267,7 @@ export default function ProductPage() {
                 {t(translations.category)}
               </th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                {t(translations.name)}
+                {t(translations.sku)}
               </th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
                 {t(translations.status)}
@@ -321,7 +322,7 @@ export default function ProductPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-xs font-mono bg-slate-100 px-2 py-1 rounded inline-block">
-                      {t(translations.sku)}: {product.sku}
+                      {product.sku}
                     </div>
                     <div className="text-[10px] text-slate-400 mt-1">
                       /{product.slug}
@@ -329,10 +330,11 @@ export default function ProductPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${product.isActive === BooleanState.TRUE
-                        ? "bg-secondary-100 text-secondary-700 border-secondary-300"
-                        : "bg-red-100/50 text-red-600/70 border-red-200/50"
-                        }`}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${
+                        product.isActive === BooleanState.TRUE
+                          ? "bg-secondary-100 text-secondary-700 border-secondary-300"
+                          : "bg-red-100/50 text-red-600/70 border-red-200/50"
+                      }`}
                     >
                       <div
                         className={`w-1.5 h-1.5 rounded-full ${product.isActive === BooleanState.TRUE ? "bg-secondary-500" : "bg-red-300"}`}
@@ -359,9 +361,8 @@ export default function ProductPage() {
                         >
                           <Settings2 size={16} />
                         </button>
-                      </div>)}
-
-
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))
