@@ -392,7 +392,7 @@ export default function ProductFormModal({
                   </div> */}
                   <div className="col-span-2">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.Name, { name: t(translations.product) })}{" "}
+                      {t(translations.name, { Name: t(translations.product) })}{" "}
                       (English) <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -411,7 +411,7 @@ export default function ProductFormModal({
                   </div>
                   <div className="col-span-2">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.Name, { name: t(translations.product) })}{" "}
+                      {t(translations.name, { name: t(translations.product) })}{" "}
                       (Lao) <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -509,7 +509,7 @@ export default function ProductFormModal({
               {/* 3. Clinical Indications */}
               <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex-1">
                 <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
-                  {t(translations.clinicalIndications)}
+                  {t(translations.indication)}
                 </h3>
                 <div className="space-y-3">
                   <div>

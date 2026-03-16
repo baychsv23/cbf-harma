@@ -134,7 +134,6 @@ export const translations = {
   dosage: "dosage",
   packaging: "packaging",
   antibioticGroup: "antibioticGroup",
-  clinicalIndications: "clinicalIndications",
   identification: "identification",
   Related: "Related",
   prescriptionRequired: "prescriptionRequired",

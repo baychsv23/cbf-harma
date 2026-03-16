@@ -26,15 +26,16 @@ export default function ArticleFeed({
   limit,
 }: ArticleFeedProps) {
   const t = useTranslations();
-  const api = useApiWithAlert()
+  const api = useApiWithAlert();
 
   // State
   const [articles, setArticles] = useState<ArticleCBF[]>(initialArticles);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false); // Added loading state for better UX
-  const [hasMore, setHasMore] = useState(initialArticles.length < totalArticles);
-
+  const [hasMore, setHasMore] = useState(
+    initialArticles.length < totalArticles,
+  );
 
   // Helper: Generate Link Paths
   const getTypePath = (type: ArticleType | "ALL") => {
@@ -66,7 +67,9 @@ export default function ArticleFeed({
         const pagination = data.pagination;
 
         if (shouldAppend) {
-          setArticles((prev) => (shouldAppend ? [...prev, ...data.data] : data.data));
+          setArticles((prev) =>
+            shouldAppend ? [...prev, ...data.data] : data.data,
+          );
         } else {
           setArticles(newArticles);
         }
@@ -101,7 +104,6 @@ export default function ArticleFeed({
     // Reduced vertical padding on mobile (py-6) vs desktop (md:py-12)
     <section className="py-6 md:py-12 bg-gray-50/50 min-h-screen">
       <div className="container mx-auto px-4 max-w-7xl">
-
         {/* --- Header & Search --- */}
         <div className="flex flex-col gap-4 mb-6 md:mb-10">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center md:text-left">
@@ -126,7 +128,7 @@ export default function ArticleFeed({
                   className="block w-full pl-9 pr-9 py-2 md:py-2.5 border border-gray-200 rounded-xl text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-white shadow-sm"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearchClick()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearchClick()}
                 />
 
                 {searchQuery && (
@@ -161,10 +163,11 @@ export default function ArticleFeed({
         <div className="flex overflow-x-auto pb-2 md:pb-4 mb-6 md:mb-8 border-b border-gray-200 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap gap-2">
           <Link
             href="/cbf/articles"
-            className={`whitespace-nowrap px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-200 flex-shrink-0 ${currentType === "ALL"
-              ? "bg-primary text-white shadow-md shadow-primary/25"
-              : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-              }`}
+            className={`whitespace-nowrap px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-200 flex-shrink-0 ${
+              currentType === "ALL"
+                ? "bg-primary text-white shadow-md shadow-primary/25"
+                : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+            }`}
           >
             {t(translations.All, { name: "" })}
           </Link>
@@ -174,10 +177,11 @@ export default function ArticleFeed({
               <Link
                 key={value}
                 href={getTypePath(value)}
-                className={`whitespace-nowrap px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-200 flex-shrink-0 ${isActive
-                  ? "bg-primary text-white shadow-md shadow-primary/25"
-                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-                  }`}
+                className={`whitespace-nowrap px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-200 flex-shrink-0 ${
+                  isActive
+                    ? "bg-primary text-white shadow-md shadow-primary/25"
+                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                }`}
               >
                 {t(key)}
               </Link>
