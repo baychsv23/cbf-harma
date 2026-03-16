@@ -1,5 +1,16 @@
 import { BooleanState } from "@/generated/prisma/enums";
 
+export const selectBasicDataOfArticle = {
+  id: true,
+  slug: true,
+  titleLA: true,
+  titleEN: true,
+  coverImage: true,
+  type: true,
+  views: true,
+  publishedAt: true,
+};
+
 export const selectDataOfArticle = {
   id: true,
   slug: true,
@@ -21,6 +32,17 @@ export const selectDataOfArticle = {
   },
   views: true,
   publishedAt: true,
+};
+
+export const selectBasicDataOfProduct = {
+  id: true,
+  slug: true,
+  nameLA: true,
+  nameEN: true,
+  category: true,
+  views: true,
+  isPrescription: true,
+  productImage: true,
 };
 
 export const selectDataOfProduct = {

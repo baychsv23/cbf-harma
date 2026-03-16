@@ -14,6 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${title} | CBF` };
 }
 
+export const revalidate = 3600;
+
 export default async function ArticlesCBFPage() {
   // ✅ LIMIT: Set to 6 or 9 to enable "Load More" functionality
   const { data, total } = await getArticles({

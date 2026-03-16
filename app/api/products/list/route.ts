@@ -3,11 +3,11 @@ import { BooleanState } from "@/generated/prisma/enums";
 import { getProducts } from "@/lib/getData";
 import { getRequestLocale } from "@/lib/getRequestLocale";
 import { handleApiAction } from "@/lib/handleApiAction";
-import { selectDataOfProduct } from "@/lib/selectData";
+import { selectBasicDataOfProduct } from "@/lib/selectData";
 import { translations } from "@/lib/translation";
 import { getPaginationParams, paginatedResponse } from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
-import { NextRequest } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const locale = getRequestLocale(request);
@@ -35,13 +35,21 @@ export async function GET(request: NextRequest) {
       where,
       skip,
       limit,
-      select: selectDataOfProduct,
+      select: selectBasicDataOfProduct,
       orderBy: { nameEN: "asc" },
     });
 
-    return {
+    const response = NextResponse.json({
       message: t(translations.fetchSuccess),
       ...paginatedResponse(data, total, page, limit),
-    };
+    });
+
+    // Cache the response at the edge network for 1 hour, serve stale up to a day
+    response.headers.set(
+      "Cache-Control",
+      "s-maxage=3600, stale-while-revalidate=86400"
+    );
+
+    return response;
   });
 }

@@ -45,6 +45,8 @@ const SECTIONS = [
 
 const PER_SECTION = 3;
 
+export const revalidate = 3600; // Cache the page for 1 hour to save Vercel CPU
+
 export default async function Home() {
   const t = await getTranslations();
   const baseWhere = { status: ArticleStatus.PUBLISHED };
