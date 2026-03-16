@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 
-interface ProductViewCounterProps {
+interface ArticleViewCounterProps {
   slug: string;
 }
 
