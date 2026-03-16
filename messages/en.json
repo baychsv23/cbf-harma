@@ -273,6 +273,7 @@
   "antibioticGroup": "Antibiotic Group",
   "clinicalIndications": "🩺 Clinical Indications",
   "indication": "Indication",
+  "administration": "Administration / Directions for use",
   "identification": "📝 Identification",
   "Related": "Related {name}",
   "prescriptionRequired": "Requires doctor's prescription",

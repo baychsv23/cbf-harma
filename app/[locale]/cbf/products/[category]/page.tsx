@@ -66,6 +66,7 @@ export default async function ProductsCBFWithCategoryPage({
     skip: 0,
     limit: DEFAULT_LIMIT,
     select: selectDataOfProduct,
+    orderBy: { nameEN: "asc" },
   });
 
   return (

@@ -126,6 +126,7 @@ export const translations = {
   service: "service",
 
   indication: "indication",
+  administration: "administration",
   content: "content",
   latestUpdate: "latestUpdate",
   generic: "generic",

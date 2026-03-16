@@ -82,6 +82,8 @@ export async function POST(request: NextRequest) {
         packaging: body.packaging,
         indicationEN: body.indicationEN,
         indicationLA: body.indicationLA,
+        administrationEN: body.administrationEN,
+        administrationLA: body.administrationLA,
         category: body.category,
         categorySub: body.categorySub,
         productImage: body.productImage,

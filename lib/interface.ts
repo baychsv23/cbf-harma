@@ -41,6 +41,8 @@ export interface ProductCBF {
   packaging?: string;
   indicationLA?: string;
   indicationEN?: string;
+  administrationLA?: string;
+  administrationEN?: string;
   isPrescription: BooleanState;
   symptoms?: { nameLA: string; nameEN: string }[];
 }

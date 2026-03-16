@@ -108,6 +108,8 @@ model Product {
   packaging            String? // ຮູບແບບບັນຈຸ e.g., 10 tablets/strip
   indicationLA         String?      @db.Text // ສັບພະຄຸນ
   indicationEN         String?      @db.Text
+  administrationEN           String?      @db.Text
+  administrationLA           String?      @db.Text
   isPrescription       BooleanState @default(FALSE) // ຕ້ອງມີໃບສັ່ງແພດບໍ່?
   views                Int          @default(0)
   isActive             BooleanState @default(TRUE)

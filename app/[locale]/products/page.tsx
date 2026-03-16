@@ -128,7 +128,7 @@ export default function ProductPage() {
     }
   };
   return (
-    <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
+    <div className="p-8 max-w-350 mx-auto min-h-screen bg-slate-50">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
           <Pill className="text-primary" />{" "}

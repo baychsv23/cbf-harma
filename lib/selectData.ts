@@ -35,6 +35,8 @@ export const selectDataOfProduct = {
   packaging: true,
   indicationLA: true,
   indicationEN: true,
+  administrationLA: true,
+  administrationEN: true,
   isPrescription: true,
   productImage: true,
 

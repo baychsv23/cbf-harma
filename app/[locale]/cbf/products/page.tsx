@@ -23,6 +23,7 @@ export default async function ProductCBFPage() {
     skip: 0,
     limit: DEFAULT_LIMIT,
     select: selectDataOfProduct,
+    orderBy: { nameEN: "asc" },
   });
 
   return (

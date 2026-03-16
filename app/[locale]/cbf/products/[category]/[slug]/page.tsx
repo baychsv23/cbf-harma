@@ -67,6 +67,9 @@ export default async function ProductSingleCBFPage({
   const isEn = isEnglish(locale);
   const name = isEn ? product.nameEN : product.nameLA;
   const indication = isEn ? product.indicationEN : product.indicationLA;
+  const administration = isEn
+    ? product.administrationEN
+    : product.administrationLA;
 
   return (
     <main className="min-h-screen bg-[#F8F9FA] pb-20">
@@ -145,11 +148,11 @@ export default async function ProductSingleCBFPage({
           <div className="lg:col-span-7 min-w-0 flex flex-col gap-8">
             {/* 1. Header Section */}
             <div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-3 break-words hyphens-auto">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight mb-3 wrap-break-word hyphens-auto">
                 {name}
               </h1>
               {product.genericName && (
-                <p className="text-lg md:text-xl text-gray-500 font-serif italic break-words">
+                <p className="text-lg md:text-xl text-gray-500 font-serif italic wrap-break-word">
                   {product.genericName}
                 </p>
               )}
@@ -199,7 +202,7 @@ export default async function ProductSingleCBFPage({
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <h2 className="text-lg font-bold text-gray-900">
-                  {t(translations.clinicalIndications)}
+                  {t(translations.indication)}
                 </h2>
               </div>
 
@@ -211,7 +214,7 @@ export default async function ProductSingleCBFPage({
                 prose-headings:text-gray-900 prose-headings:font-bold
                 prose-li:text-gray-600
                 prose-strong:text-gray-800
-                break-words
+                wrap-break-word
               "
               >
                 {indication ? (
@@ -224,6 +227,32 @@ export default async function ProductSingleCBFPage({
                 )}
               </div>
             </div>
+
+            {/* 3.5 Administration / Directions for Use */}
+            {administration && (
+              <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                  <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                    <Info className="w-5 h-5" />
+                  </div>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    {t(translations.administration)}
+                  </h2>
+                </div>
+                <div
+                  className="
+                  prose prose-stone max-w-none 
+                  prose-p:text-gray-600 prose-p:leading-relaxed
+                  prose-headings:text-gray-900 prose-headings:font-bold
+                  prose-li:text-gray-600
+                  prose-strong:text-gray-800
+                  wrap-break-word
+                "
+                >
+                  <div dangerouslySetInnerHTML={{ __html: administration }} />
+                </div>
+              </div>
+            )}
 
             {/* 4. Symptoms / Tags */}
             {product.symptoms && product.symptoms.length > 0 && (

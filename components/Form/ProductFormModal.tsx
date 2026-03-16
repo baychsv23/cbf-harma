@@ -23,7 +23,7 @@ interface ProductFormProps {
   allSymptoms: any[];
   local: string;
   onLoadMoreSymptoms: () => void;
-  hasMoreSymptoms: boolean
+  hasMoreSymptoms: boolean;
 }
 
 export default function ProductFormModal({
@@ -35,10 +35,8 @@ export default function ProductFormModal({
   t,
   local,
   onLoadMoreSymptoms,
-  hasMoreSymptoms
+  hasMoreSymptoms,
 }: ProductFormProps) {
-
-
   const observerTarget = useRef(null);
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -47,7 +45,7 @@ export default function ProductFormModal({
           onLoadMoreSymptoms();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (observerTarget.current) {
@@ -68,9 +66,11 @@ export default function ProductFormModal({
     categorySub: CategorySub;
     isPrescription: BooleanState;
     productImage: string;
-    productImagePublicId: string
+    productImagePublicId: string;
     indicationEN: string;
     indicationLA: string;
+    administrationEN: string;
+    administrationLA: string;
     symptomIds: string[];
     slug: string;
   }>({
@@ -88,6 +88,8 @@ export default function ProductFormModal({
 
     indicationEN: "",
     indicationLA: "",
+    administrationEN: "",
+    administrationLA: "",
     symptomIds: [],
     slug: "",
   });
@@ -110,9 +112,11 @@ export default function ProductFormModal({
         productImage: initialData.productImage || "",
         indicationEN: initialData.indicationEN || "",
         indicationLA: initialData.indicationLA || "",
+        administrationEN: initialData.administrationEN || "",
+        administrationLA: initialData.administrationLA || "",
         symptomIds: initialData.symptom?.map((s: any) => s.id) || [],
         slug: initialData.slug || "",
-        productImagePublicId: initialData.productImagePublicId || ""
+        productImagePublicId: initialData.productImagePublicId || "",
       });
     } else {
       // Reset
@@ -129,9 +133,11 @@ export default function ProductFormModal({
         productImage: "",
         indicationEN: "",
         indicationLA: "",
+        administrationEN: "",
+        administrationLA: "",
         symptomIds: [],
         slug: "",
-        productImagePublicId: ""
+        productImagePublicId: "",
       });
     }
     setErrors({});
@@ -156,11 +162,10 @@ export default function ProductFormModal({
       return;
     }
 
-    const finalSlug =
-      formData.nameEN
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, "-");
+    const finalSlug = formData.nameEN
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-");
     onSubmit({ ...formData, slug: finalSlug });
   };
 
@@ -172,7 +177,7 @@ export default function ProductFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 transition-all">
-      <div className="bg-white w-full max-w-[1100px] h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white w-full max-w-275 h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* HEADER */}
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
           <div className="flex items-center gap-3">
@@ -183,7 +188,9 @@ export default function ProductFormModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-800 leading-none">
-                {initialData ? t(translations.Edit, { name: t(translations.product) }) : t(translations.Create, { name: t(translations.product) })}
+                {initialData
+                  ? t(translations.Edit, { name: t(translations.product) })
+                  : t(translations.Create, { name: t(translations.product) })}
               </h2>
               <p className="text-xs text-slate-500 mt-1">
                 Clinical Information & Stock Details
@@ -210,7 +217,7 @@ export default function ProductFormModal({
                 </label>
                 <ImageUpload
                   value={formData.productImage}
-                  aspectRatio={1}     // 16:9 for Banners
+                  aspectRatio={1} // 16:9 for Banners
                   label="Click to Upload Product 1:1"
                   onChange={(result) =>
                     setFormData((prev) => ({
@@ -220,7 +227,6 @@ export default function ProductFormModal({
                     }))
                   }
                 />
-
               </div>
 
               {/* Safety Control */}
@@ -256,10 +262,7 @@ export default function ProductFormModal({
                 </label>
               </div>
 
-
-
-
-              <div className="flex-1 flex flex-col min-h-[200px]">
+              <div className="flex-1 flex flex-col min-h-50">
                 <div className="pb-2 border-b border-slate-100 mb-3 flex justify-between items-end">
                   <h3 className="text-sm font-bold text-slate-800">
                     {t(translations.Related, { name: t(translations.symptom) })}
@@ -275,57 +278,67 @@ export default function ProductFormModal({
                   />
                   <input
                     type="text"
-                    placeholder={t(translations.SearchBy, { name: t(translations.symptom) })}
+                    placeholder={t(translations.SearchBy, {
+                      name: t(translations.symptom),
+                    })}
                     value={symptomSearch}
                     onChange={(e) => setSymptomSearch(e.target.value)}
                     className="w-full text-xs py-2 pl-8 pr-3 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none transition-all"
                   />
                 </div>
 
-                <div className="flex-1 max-h-[250px] overflow-y-auto space-y-1 custom-scrollbar pr-1">
-                  {filteredSymptoms.length > 0 ? <>{filteredSymptoms.map((s) => (
-                    <label
-                      key={s.id}
-                      className="flex items-center gap-2 p-1.5 hover:bg-purple-50 rounded cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        className="w-3.5 h-3.5 accent-purple-600 rounded"
-                        checked={formData.symptomIds.includes(s.id)}
-                        onChange={(e) => {
-                          if (e.target.checked)
-                            setFormData({
-                              ...formData,
-                              symptomIds: [...formData.symptomIds, s.id],
-                            });
-                          else
-                            setFormData({
-                              ...formData,
-                              symptomIds: formData.symptomIds.filter(
-                                (id) => id !== s.id,
-                              ),
-                            });
-                        }}
-                      />
-                      <span className="text-xs text-slate-700 truncate">
-                        {isEnglish(local) ? s.nameEN : s.nameLA}
-                      </span>
-                    </label>
-                  ))}
-                    <div ref={observerTarget} className="py-4 flex justify-center">
-                      {hasMoreSymptoms ? (
-                        <button
-                          type="button"
-                          onClick={onLoadMoreSymptoms}
-                          className="text-[10px] text-indigo-600 font-bold hover:underline"
+                <div className="flex-1 max-h-62.5 overflow-y-auto space-y-1 custom-scrollbar pr-1">
+                  {filteredSymptoms.length > 0 ? (
+                    <>
+                      {filteredSymptoms.map((s) => (
+                        <label
+                          key={s.id}
+                          className="flex items-center gap-2 p-1.5 hover:bg-purple-50 rounded cursor-pointer"
                         >
-                          Show more
-                        </button>
-                      ) : (
-                        <span className="text-[10px] text-slate-400">End of list</span>
-                      )}
-                    </div>
-                  </> : (
+                          <input
+                            type="checkbox"
+                            className="w-3.5 h-3.5 accent-purple-600 rounded"
+                            checked={formData.symptomIds.includes(s.id)}
+                            onChange={(e) => {
+                              if (e.target.checked)
+                                setFormData({
+                                  ...formData,
+                                  symptomIds: [...formData.symptomIds, s.id],
+                                });
+                              else
+                                setFormData({
+                                  ...formData,
+                                  symptomIds: formData.symptomIds.filter(
+                                    (id) => id !== s.id,
+                                  ),
+                                });
+                            }}
+                          />
+                          <span className="text-xs text-slate-700 truncate">
+                            {isEnglish(local) ? s.nameEN : s.nameLA}
+                          </span>
+                        </label>
+                      ))}
+                      <div
+                        ref={observerTarget}
+                        className="py-4 flex justify-center"
+                      >
+                        {hasMoreSymptoms ? (
+                          <button
+                            type="button"
+                            onClick={onLoadMoreSymptoms}
+                            className="text-[10px] text-indigo-600 font-bold hover:underline"
+                          >
+                            Show more
+                          </button>
+                        ) : (
+                          <span className="text-[10px] text-slate-400">
+                            End of list
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  ) : (
                     <div className="text-center py-4 text-xs text-slate-400">
                       {t(translations.notFound)}
                     </div>
@@ -344,7 +357,8 @@ export default function ProductFormModal({
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-1">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.sku)} <span className="text-red-500">*</span>
+                      {t(translations.sku)}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <input
                       value={formData.sku}
@@ -360,7 +374,7 @@ export default function ProductFormModal({
                       </p>
                     )}
                   </div>
-                  <div className="col-span-1">
+                  {/* <div className="col-span-1">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
                       {t(translations.generic)}
                     </label>
@@ -375,11 +389,11 @@ export default function ProductFormModal({
                       className="w-full p-2 border border-slate-200 rounded-lg text-sm"
                       placeholder="Active Ingredient"
                     />
-                  </div>
+                  </div> */}
                   <div className="col-span-2">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.Name, { name: t(translations.product) })} (English){" "}
-                      <span className="text-red-500">*</span>
+                      {t(translations.Name, { name: t(translations.product) })}{" "}
+                      (English) <span className="text-red-500">*</span>
                     </label>
                     <input
                       value={formData.nameEN}
@@ -397,7 +411,8 @@ export default function ProductFormModal({
                   </div>
                   <div className="col-span-2">
                     <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.Name, { name: t(translations.product) })} (Lao) <span className="text-red-500">*</span>
+                      {t(translations.Name, { name: t(translations.product) })}{" "}
+                      (Lao) <span className="text-red-500">*</span>
                     </label>
                     <input
                       value={formData.nameLA}
@@ -527,6 +542,47 @@ export default function ProductFormModal({
                       }
                       className="w-full p-2 border border-slate-200 rounded-lg text-sm min-h-[60px]"
                       placeholder="ສັບພະຄຸນ..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Administration / Directions for Use */}
+              <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex-1">
+                <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
+                  {t(translations.administration)}
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 mb-1">
+                      {t(translations.administration)} (English)
+                    </label>
+                    <textarea
+                      value={formData.administrationEN}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          administrationEN: e.target.value,
+                        })
+                      }
+                      className="w-full p-2 border border-slate-200 rounded-lg text-sm min-h-[60px]"
+                      placeholder="Directions for use..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 mb-1">
+                      {t(translations.administration)} (Lao)
+                    </label>
+                    <textarea
+                      value={formData.administrationLA}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          administrationLA: e.target.value,
+                        })
+                      }
+                      className="w-full p-2 border border-slate-200 rounded-lg text-sm min-h-[60px]"
+                      placeholder="ວິທີໃຊ້..."
                     />
                   </div>
                 </div>
