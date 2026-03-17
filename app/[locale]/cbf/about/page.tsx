@@ -28,9 +28,6 @@ export default function AboutPage() {
 
             {/* Text Content */}
             <div className="lg:w-[65%] xl:w-[70%] space-y-6 z-10">
-              {/* <span className="inline-block px-4 py-1.5 rounded-full bg-green-100 text-primary font-bold text-sm">
-                {t("Hero.since")}
-              </span> */}
               <h1 className="text-4xl md:text-5xl font-bold text-primary leading-snug pb-2">
                 {t("Hero.titlePart1")} <br />
                 <span className="text-primary">{t("Hero.titlePart2")}</span>

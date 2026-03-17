@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import Image from "next/image";
+import CloudinaryImage from "@/components/UI/CloudinaryImage";
 import { Link } from "@/i18n/routing";
 import { isEnglish } from "@/lib/utils/locale";
 import { AlertCircle, Package, Pill } from "lucide-react"; // Optional: Icons for better UI
@@ -32,16 +32,15 @@ export default function ProductCard({ product }: { product: ProductCBF }) {
     <Link href={detailHref} className="block h-full">
       <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer relative">
         {/* Image Section */}
-        <div className="relative h-48 w-full bg-gray-200 overflow-hidden">
+        <div className="relative h-48 w-full bg-white border-b border-gray-50 overflow-hidden">
           {product.productImage ? (
-            <Image
+            <CloudinaryImage
               src={product.productImage}
               alt={title || "Product Image"}
               fill
               loading="eager"
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              className="object-contain"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority={false}
             />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400 bg-gray-100">

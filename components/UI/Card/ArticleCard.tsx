@@ -3,7 +3,7 @@
 import { formatDate } from "@/lib/formateData";
 import { ArticleCBF } from "@/lib/interface";
 import { useLocale, useTranslations } from "next-intl";
-import Image from "next/image";
+import CloudinaryImage from "@/components/UI/CloudinaryImage";
 import { Link } from "@/i18n/routing";
 import { ArticleType } from "@/generated/prisma/enums";
 import { isEnglish } from "@/lib/utils/locale";
@@ -30,14 +30,13 @@ export default function ArticleCard({ article }: { article: ArticleCBF }) {
         {/* ส่วนรูปภาพ */}
         <div className="relative h-48 w-full bg-gray-200 overflow-hidden">
           {article.coverImage ? (
-            <Image
+            <CloudinaryImage
               src={article.coverImage}
               alt={title || "Article Image"}
               fill
               loading="eager"
               className="object-cover group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority={false}
             />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400 bg-gray-100">
@@ -50,7 +49,7 @@ export default function ArticleCard({ article }: { article: ArticleCBF }) {
             {t(article.type)}
           </span>
           <span className="absolute top-3 right-0 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-primary shadow-sm z-10">
-            {(article.views)} views
+            {article.views} views
           </span>
         </div>
 

@@ -19,12 +19,11 @@ import { useTranslations } from "next-intl";
 import { BooleanState, ImageType, Permission } from "@/generated/prisma/enums"; // Adjust import path
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 
-import Image from "next/image";
+import CloudinaryImage from "@/components/UI/CloudinaryImage";
 import { translations } from "@/lib/translation";
 import AnnouncementFormModal from "@/components/Form/AnnouncementFormModal";
 import { formatDate } from "@/lib/formateData";
 import { FilterActions } from "@/components/UI/FilterActions";
-import cloudinaryLoader from "@/components/cloudinary-loader";
 
 export default function AnnouncementPage() {
   const t = useTranslations();
@@ -203,8 +202,7 @@ export default function AnnouncementPage() {
                   <td className="px-6 py-4">
                     <div className="relative w-32 h-16 bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
                       {item.image ? (
-                        <Image
-                          loader={cloudinaryLoader}
+                        <CloudinaryImage
                           src={item.image}
                           alt="Banner"
                           fill

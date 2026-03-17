@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Fragment } from "react";
-import Image from "next/image";
+import CloudinaryImage from "@/components/UI/CloudinaryImage";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation, Parallax } from "swiper/modules";
 import {
@@ -17,7 +17,6 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
-import cloudinaryLoader from "../cloudinary-loader";
 
 interface Announcement {
   id: string;
@@ -118,8 +117,7 @@ export default function BannerSection() {
                     isActive ? "scale-100 opacity-100" : "scale-95 opacity-50"
                   }`}
                 >
-                  <Image
-                    loader={cloudinaryLoader}
+                  <CloudinaryImage
                     src={banner.image}
                     alt={banner.title || "Banner"}
                     fill
@@ -188,8 +186,7 @@ export default function BannerSection() {
                   </button>
                   <div className="relative w-full aspect-square">
                     {announcement && (
-                      <Image
-                        loader={cloudinaryLoader}
+                      <CloudinaryImage
                         src={announcement.image}
                         alt="Announcement"
                         loading="eager"

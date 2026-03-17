@@ -45,7 +45,6 @@ export default function ProductFeed({
     if (searchParam) params.name = searchParam;
     try {
       const { data } = await api.get("/api/products/list", { params });
-      console.log(data);
       if (data.success) {
         setProducts((prev) =>
           shouldAppend ? [...prev, ...data.data] : data.data,

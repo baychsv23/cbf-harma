@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/routing";
-import Image from "next/image";
+import CloudinaryImage from "@/components/UI/CloudinaryImage";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
@@ -19,7 +19,6 @@ import { BooleanState, CategorySub } from "@/generated/prisma/enums";
 import { selectDataOfProduct } from "@/lib/selectData";
 import { translations } from "@/lib/translation";
 import ProductViewCounter from "@/components/ProductViewCounter";
-import cloudinaryLoader from "@/components/cloudinary-loader";
 
 // 1. Generate Metadata
 export async function generateMetadata({
@@ -111,8 +110,7 @@ export default async function ProductSingleCBFPage({
               {/* Image */}
               {product.productImage ? (
                 <div className="relative w-full h-full transition-transform duration-500 group-hover:scale-105">
-                  <Image
-                    loader={cloudinaryLoader}
+                  <CloudinaryImage
                     src={product.productImage}
                     alt={name}
                     fill
