@@ -24,6 +24,7 @@ import { translations } from "@/lib/translation";
 import AnnouncementFormModal from "@/components/Form/AnnouncementFormModal";
 import { formatDate } from "@/lib/formateData";
 import { FilterActions } from "@/components/UI/FilterActions";
+import cloudinaryLoader from "@/components/cloudinary-loader";
 
 export default function AnnouncementPage() {
   const t = useTranslations();
@@ -147,8 +148,7 @@ export default function AnnouncementPage() {
               ))}
             </select>
           </div>
-          <div className="flex-1 w-xl">
-          </div>
+          <div className="flex-1 w-xl"></div>
           {/* Spacer divs to keep grid alignment consistent if you add more filters later */}
 
           <FilterActions
@@ -204,6 +204,7 @@ export default function AnnouncementPage() {
                     <div className="relative w-32 h-16 bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
                       {item.image ? (
                         <Image
+                          loader={cloudinaryLoader}
                           src={item.image}
                           alt="Banner"
                           fill
@@ -220,10 +221,11 @@ export default function AnnouncementPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-md text-xs font-bold border ${item.type === ImageType.BANNER
-                        ? "bg-purple-50 text-purple-600 border-purple-100"
-                        : "bg-primary/10 text-primary border-primary/20"
-                        }`}
+                      className={`px-2 py-1 rounded-md text-xs font-bold border ${
+                        item.type === ImageType.BANNER
+                          ? "bg-purple-50 text-purple-600 border-purple-100"
+                          : "bg-primary/10 text-primary border-primary/20"
+                      }`}
                     >
                       {t(item.type)}
                     </span>
@@ -238,11 +240,12 @@ export default function AnnouncementPage() {
                                                     rounded-full px-3 py-1
                                                     text-xs font-semibold
                                                     transition-colors
-                                                    ${item.isPublic ===
-                          BooleanState.TRUE
-                          ? "bg-secondary-100 text-secondary-700 hover:bg-secondary-200"
-                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                        }
+                                                    ${
+                                                      item.isPublic ===
+                                                      BooleanState.TRUE
+                                                        ? "bg-secondary-100 text-secondary-700 hover:bg-secondary-200"
+                                                        : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                                                    }
                                         `}
                     >
                       {item.isPublic === BooleanState.TRUE ? (

@@ -48,21 +48,10 @@ export default function ProductCard({ product }: { product: ProductCBF }) {
               No Image
             </div>
           )}
-
-          {/* Category Badge (Top Left) */}
-          <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-bold text-gray-600 shadow-sm z-10 border border-gray-100 uppercase tracking-wide">
-            {t(product.category)}
-          </span>
-
-          {/* Prescription Badge (Top Right) - Only if RX */}
-
-          <span className="absolute top-3 right-0 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-primary shadow-sm z-10">
-            {product.views} views
-          </span>
         </div>
 
         {/* Content Section */}
-        <div className="p-4 flex flex-col flex-grow">
+        <div className="p-4 flex flex-col grow">
           {/* SKU */}
           {/* Product Name */}
           <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-2 group-hover:text-primary transition-colors">

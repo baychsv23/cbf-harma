@@ -19,6 +19,7 @@ import { BooleanState, CategorySub } from "@/generated/prisma/enums";
 import { selectDataOfProduct } from "@/lib/selectData";
 import { translations } from "@/lib/translation";
 import ProductViewCounter from "@/components/ProductViewCounter";
+import cloudinaryLoader from "@/components/cloudinary-loader";
 
 // 1. Generate Metadata
 export async function generateMetadata({
@@ -111,6 +112,7 @@ export default async function ProductSingleCBFPage({
               {product.productImage ? (
                 <div className="relative w-full h-full transition-transform duration-500 group-hover:scale-105">
                   <Image
+                    loader={cloudinaryLoader}
                     src={product.productImage}
                     alt={name}
                     fill
@@ -170,7 +172,7 @@ export default async function ProductSingleCBFPage({
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
                       {t(translations.dosage)}
                     </p>
-                    <p className="text-gray-900 font-semibold truncate">
+                    <p className="text-gray-900 font-semibold ">
                       {product.dosage}
                     </p>
                   </div>
@@ -187,7 +189,7 @@ export default async function ProductSingleCBFPage({
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
                       {t(translations.packaging)}
                     </p>
-                    <p className="text-gray-900 font-semibold truncate">
+                    <p className="text-gray-900 font-semibold ">
                       {product.packaging}
                     </p>
                   </div>

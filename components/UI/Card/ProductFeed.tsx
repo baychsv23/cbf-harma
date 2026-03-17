@@ -43,13 +43,14 @@ export default function ProductFeed({
     const params: any = { page: pageParam, limit: limit };
     if (currentCategory !== "ALL") params.category = currentCategory;
     if (searchParam) params.name = searchParam;
-
     try {
       const { data } = await api.get("/api/products/list", { params });
+      console.log(data);
       if (data.success) {
         setProducts((prev) =>
           shouldAppend ? [...prev, ...data.data] : data.data,
         );
+
         setHasMore(data.pagination.hasNext);
       }
     } finally {

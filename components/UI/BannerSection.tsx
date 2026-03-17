@@ -4,7 +4,12 @@ import { useEffect, useState, Fragment } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation, Parallax } from "swiper/modules";
-import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
+import {
+  Dialog,
+  DialogPanel,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 import "swiper/css";
@@ -12,6 +17,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+import cloudinaryLoader from "../cloudinary-loader";
 
 interface Announcement {
   id: string;
@@ -68,7 +74,7 @@ export default function BannerSection() {
   if (!isLoading && banners.length === 0) return null;
 
   return (
-<div className="w-full max-w-6xl mx-auto mt-6 group">
+    <div className="w-full max-w-6xl mx-auto mt-6 group">
       <div className="relative px-4 sm:px-6 lg:px-8">
         <Swiper
           key={banners.length}
@@ -102,7 +108,10 @@ export default function BannerSection() {
           className="w-full pb-10!"
         >
           {banners.map((banner) => (
-            <SwiperSlide key={banner.id} className="transition-all duration-500">
+            <SwiperSlide
+              key={banner.id}
+              className="transition-all duration-500"
+            >
               {({ isActive }) => (
                 <div
                   className={`relative aspect-video w-full overflow-hidden rounded-2xl shadow-md border border-gray-100 bg-white transition-all duration-500 ease-in-out ${
@@ -110,6 +119,7 @@ export default function BannerSection() {
                   }`}
                 >
                   <Image
+                    loader={cloudinaryLoader}
                     src={banner.image}
                     alt={banner.title || "Banner"}
                     fill
@@ -179,6 +189,7 @@ export default function BannerSection() {
                   <div className="relative w-full aspect-square">
                     {announcement && (
                       <Image
+                        loader={cloudinaryLoader}
                         src={announcement.image}
                         alt="Announcement"
                         loading="eager"

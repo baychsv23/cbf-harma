@@ -10,44 +10,37 @@ import { getTranslations } from "next-intl/server";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-    const locale = getRequestLocale(request);
-    const t = await getTranslations({
-        locale,
+  const locale = getRequestLocale(request);
+  const t = await getTranslations({
+    locale,
+  });
+  return handleApiAction(async () => {
+    const searchParams = request.nextUrl.searchParams;
+    const { page, limit } = getPaginationParams(searchParams);
+    const title = searchParams.get("title");
+    const type = searchParams.get("type");
+    const skip = (page - 1) * limit;
+
+    const where: any = {
+      status: ArticleStatus.PUBLISHED,
+    };
+    if (type) where.type = type;
+    if (title) {
+      where.OR = [
+        { titleEN: { contains: title, mode: "insensitive" } },
+        { titleLA: { contains: title, mode: "insensitive" } },
+      ];
+    }
+    const { data, total } = await getArticles({
+      where,
+      skip,
+      limit,
+      select: selectBasicDataOfArticle,
     });
-    return handleApiAction(async () => {
-        const searchParams = request.nextUrl.searchParams;
-        const { page, limit } = getPaginationParams(searchParams);
-        const title = searchParams.get("title");
-        const type = searchParams.get("type");
-        const skip = (page - 1) * limit;
 
-        const where: any = {
-            status: ArticleStatus.PUBLISHED,
-        };
-        if (type) where.type = type;
-        if (title) {
-            where.OR = [
-                { titleEN: { contains: title, mode: 'insensitive' } },
-                { titleLA: { contains: title, mode: 'insensitive' } },
-            ];
-        }
-        const { data, total } = await getArticles({
-            where,
-            skip,
-            limit,
-            select: selectBasicDataOfArticle
-        });
-        const response = NextResponse.json({
-            message: t(translations.fetchSuccess),
-            ...paginatedResponse(data, total, page, limit),
-        });
-
-        // Cache the response at the edge network for 1 hour, serve stale up to a day
-        response.headers.set(
-            "Cache-Control",
-            "s-maxage=3600, stale-while-revalidate=86400"
-        );
-
-        return response;
-    });
+    return {
+      message: t(translations.fetchSuccess),
+      ...paginatedResponse(data, total, page, limit),
+    };
+  });
 }

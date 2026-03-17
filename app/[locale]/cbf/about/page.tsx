@@ -46,7 +46,7 @@ export default function AboutPage() {
             </div>
 
             <div className="lg:w-[35%] xl:w-[30%] w-full flex justify-center relative mt-8 lg:mt-0 z-10">
-              <div className="relative w-[90%] md:w-full max-w-sm h-72 md:h-96 lg:h-[450px] overflow-hidden group">
+              <div className="relative w-[90%] md:w-full max-w-sm h-72 md:h-96 lg:h-112.5 overflow-hidden group">
                 <Image
                   src="/images/lab.png"
                   alt="About CBF"

@@ -314,7 +314,7 @@ export default function ProductFormModal({
                                 });
                             }}
                           />
-                          <span className="text-xs text-slate-700 truncate">
+                          <span className="text-xs text-slate-700 ">
                             {isEnglish(local) ? s.nameEN : s.nameLA}
                           </span>
                         </label>

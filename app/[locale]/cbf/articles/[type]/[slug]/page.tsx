@@ -20,6 +20,7 @@ import { selectDataOfArticle } from "@/lib/selectData";
 import { CATEGORY_SLUG_MAP } from "@/lib/constant";
 import ArticleViewCounter from "@/components/ArticleViewCounter";
 import { translations } from "@/lib/translation";
+import cloudinaryLoader from "@/components/cloudinary-loader";
 
 // 1. Generate Metadata
 export async function generateMetadata({
@@ -130,9 +131,10 @@ export default async function ArticleSingleCBFPage({
               Added 'lg:shrink-0' to ensure image width stays consistent 
           */}
           <div className="w-full lg:w-[45%] lg:shrink-0 order-1 lg:order-2">
-            <div className="relative aspect-video lg:aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-lg bg-gray-100 ring-1 ring-black/5">
+            <div className="relative aspect-video lg:aspect-4/3 w-full rounded-2xl overflow-hidden shadow-lg bg-gray-100 ring-1 ring-black/5">
               {article.coverImage ? (
                 <Image
+                  loader={cloudinaryLoader}
                   src={article.coverImage}
                   alt={title || "Article Cover"}
                   fill
@@ -197,6 +199,7 @@ export default async function ArticleSingleCBFPage({
                       <div className="relative w-16 h-16 bg-gray-50 rounded-lg overflow-hidden shrink-0 border border-gray-100 group-hover:border-primary/20">
                         {p.productImage ? (
                           <Image
+                            loader={cloudinaryLoader}
                             src={p.productImage}
                             alt={isEn ? p.nameEN : p.nameLA}
                             fill

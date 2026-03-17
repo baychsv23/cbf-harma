@@ -39,17 +39,9 @@ export async function GET(request: NextRequest) {
       orderBy: { nameEN: "asc" },
     });
 
-    const response = NextResponse.json({
+    return {
       message: t(translations.fetchSuccess),
       ...paginatedResponse(data, total, page, limit),
-    });
-
-    // Cache the response at the edge network for 1 hour, serve stale up to a day
-    response.headers.set(
-      "Cache-Control",
-      "s-maxage=3600, stale-while-revalidate=86400"
-    );
-
-    return response;
+    };
   });
 }
