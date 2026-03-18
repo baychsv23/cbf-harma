@@ -93,7 +93,7 @@ export default async function Home() {
                   <div>
                     <h2 className="text-lg font-bold text-gray-800">{label}</h2>
                     <div
-                      className="mt-1 h-[3px] w-8 rounded-full"
+                      className="mt-1 h-0.75 w-8 rounded-full"
                       style={{ backgroundColor: cfg.accent }}
                     />
                   </div>

@@ -28,7 +28,7 @@ export default function PremiumLoginForm() {
     closeProcessing();
     if (result?.ok) {
       showSuccess(t(translations.loginSuccessful));
-      window.location.href = "/";
+      window.location.href = "/home";
     } else {
       showError(t(result?.error as string));
     }
@@ -62,7 +62,6 @@ export default function PremiumLoginForm() {
               <h1 className="text-3xl font-bold text-white mb-2">
                 {t(translations.signin)} CBF Pharma Co., Ltd
               </h1>
-
             </div>
 
             {/* Form */}
@@ -78,10 +77,11 @@ export default function PremiumLoginForm() {
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Mail
-                      className={`h-5 w-5 transition-colors duration-200 ${focusedField === "userName"
-                        ? "text-purple-400"
-                        : "text-slate-500"
-                        }`}
+                      className={`h-5 w-5 transition-colors duration-200 ${
+                        focusedField === "userName"
+                          ? "text-purple-400"
+                          : "text-slate-500"
+                      }`}
                     />
                   </div>
                   <input
@@ -89,7 +89,9 @@ export default function PremiumLoginForm() {
                     type="text"
                     required
                     className="block w-full pl-12 pr-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                    placeholder={t(translations.Placeholder, { name: t(translations.userName) })}
+                    placeholder={t(translations.Placeholder, {
+                      name: t(translations.userName),
+                    })}
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                     onFocus={() => setFocusedField("userName")}
@@ -111,10 +113,11 @@ export default function PremiumLoginForm() {
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Lock
-                      className={`h-5 w-5 transition-colors duration-200 ${focusedField === "password"
-                        ? "text-purple-400"
-                        : "text-slate-500"
-                        }`}
+                      className={`h-5 w-5 transition-colors duration-200 ${
+                        focusedField === "password"
+                          ? "text-purple-400"
+                          : "text-slate-500"
+                      }`}
                     />
                   </div>
                   <input
@@ -122,7 +125,9 @@ export default function PremiumLoginForm() {
                     type={showPassword ? "text" : "password"}
                     required
                     className="block w-full pl-12 pr-12 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                    placeholder={t(translations.Placeholder, { name: t(translations.password) })}
+                    placeholder={t(translations.Placeholder, {
+                      name: t(translations.password),
+                    })}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     onFocus={() => setFocusedField("password")}
@@ -153,7 +158,6 @@ export default function PremiumLoginForm() {
             </form>
 
             {/* Footer */}
-
           </div>
 
           {/* Bottom gradient accent */}

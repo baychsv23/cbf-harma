@@ -106,7 +106,7 @@ export default async function ArticleSingleCBFPage({
             {/* Title 
                 Added 'break-words' and 'hyphens-auto' to handle long text gracefully
             */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6 leading-[1.2] tracking-tight break-words hyphens-auto">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6 leading-[1.2] tracking-tight wrap-break-word hyphens-auto">
               {title}
             </h1>
 
@@ -137,7 +137,6 @@ export default async function ArticleSingleCBFPage({
                   alt={title || "Article Cover"}
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-700"
-                  priority
                   sizes="(max-width: 768px) 100vw, 600px"
                 />
               ) : (
@@ -166,7 +165,7 @@ export default async function ArticleSingleCBFPage({
               prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8
               prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
               prose-li:marker:text-primary
-              break-words
+              wrap-break-word
             "
             >
               <div dangerouslySetInnerHTML={{ __html: content || "" }} />

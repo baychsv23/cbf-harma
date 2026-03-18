@@ -36,7 +36,7 @@ export const paginatedResponse = <T>(
   };
 };
 
-export const DEFAULT_LIMIT = 30;
+export const DEFAULT_LIMIT = 25;
 export const DEFAULT_PAGE = 1;
 
 export function getPaginationParams(searchParams: URLSearchParams) {

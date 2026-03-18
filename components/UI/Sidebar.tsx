@@ -192,7 +192,7 @@ export default function Sidebar() {
   }
 
   if (user) {
-    const baseMenus = [{ title: translations.home, href: "/" }];
+    const baseMenus = [{ title: translations.home, href: "/home" }];
     const existing = new Set(
       menuItems.flatMap((m) =>
         m.href ? [m.href] : m.children?.map((c) => c.href) || [],
@@ -231,7 +231,7 @@ export default function Sidebar() {
                 priority
               />
             </div>
-            <span className="text-2xl font-bold text-green-900 text-accent">
+            <span className="text-2xl font-bold text-green-900">
               CBF Pharma Co., Ltd
             </span>
           </div>

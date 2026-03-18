@@ -217,7 +217,6 @@ function MobileMenuItem({
 
 // ─── Main Navbar ────────────────────────────────────────────────────────────────
 export default function Navbar() {
-  const { data: session, status } = useSession();
   const pathname = usePathname();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -234,46 +233,9 @@ export default function Navbar() {
     setIsMobileOpen(false);
   }, [pathname]);
 
-  if (status === "loading") return null;
-
-  const { user } = session || {};
-  const userRole = user?.role as string;
-  const userPermissions: string[] = (user?.permissions || []) as string[];
-
   // ── Build menu (same logic as Sidebar) ──────────────────────────────────────
   let menuItems: MenuItem[] = [...COMMON_PUBLIC];
 
-  if (userRole === Role.ADMIN) {
-    menuItems = [...ROLE_MENUS.ADMIN];
-  } else if (userPermissions.length > 0) {
-    const processedPermissions = new Set<string>();
-    const finalMenus: MenuItem[] = [];
-
-    userPermissions.forEach((permission) => {
-      if (
-        !processedPermissions.has(permission) &&
-        PERMISSION_MENUS[permission]
-      ) {
-        const menus = PERMISSION_MENUS[permission];
-        if (menus.length > 0) finalMenus.push(...menus);
-      }
-    });
-
-    menuItems = finalMenus;
-  }
-
-  if (user) {
-    const baseMenus = [{ title: translations.home, href: "/" }];
-    const existing = new Set(
-      menuItems.flatMap((m) =>
-        m.href ? [m.href] : m.children?.map((c) => c.href) || [],
-      ),
-    );
-    menuItems = [
-      ...baseMenus.filter((m) => !existing.has(m.href!)),
-      ...menuItems,
-    ];
-  }
   // ────────────────────────────────────────────────────────────────────────────
 
   return (
