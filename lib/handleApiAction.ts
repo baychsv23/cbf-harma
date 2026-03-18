@@ -24,10 +24,10 @@ export async function handleApiAction<T>(
     });
 
     // 2. Set Headers สำหรับ Caching
-    response.headers.set(
-      "Cache-Control",
-      "s-maxage=3600, stale-while-revalidate=86400",
-    );
+    // response.headers.set(
+    //   "Cache-Control",
+    //   "s-maxage=3600, stale-while-revalidate=86400",
+    // );
 
     return response;
   } catch (error: any) {
