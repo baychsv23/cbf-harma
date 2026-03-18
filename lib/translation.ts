@@ -180,4 +180,5 @@ export const translations = {
   october: "october",
   november: "november",
   december: "december",
+  applyForWork: "applyForWork",
 } as const;
