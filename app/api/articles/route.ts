@@ -8,14 +8,9 @@ import { handleApiAction } from "@/lib/handleApiAction";
 import { database } from "@/lib/prisma";
 import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
-import {
-  DEFAULT_LIMIT,
-  DEFAULT_PAGE,
-  getPaginationParams,
-  paginatedResponse,
-} from "@/lib/utils/pagination";
+import { getPaginationParams, paginatedResponse } from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const locale = getRequestLocale(request);

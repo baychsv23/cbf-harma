@@ -2,6 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
+import { translations } from "@/lib/translation";
 import {
   BarChart,
   Bar,
@@ -65,6 +67,7 @@ export default function ProductDashboardClient({
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations();
 
   const updateFilter = useCallback(
     (key: string, value: string) => {
@@ -81,7 +84,7 @@ export default function ProductDashboardClient({
       {/* ── Filter ── */}
       <div className="flex flex-wrap gap-3 mb-8">
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-600">Category:</label>
+          <label className="text-sm font-medium text-gray-600">{t(translations.category)}:</label>
           <select
             value={selectedCategory}
             onChange={(e) => updateFilter("category", e.target.value)}
@@ -89,21 +92,21 @@ export default function ProductDashboardClient({
           >
             {CATEGORIES.map((c) => (
               <option key={c.value} value={c.value}>
-                {c.label}
+                {c.value ? t(c.value) : t(translations.allCategories)}
               </option>
             ))}
           </select>
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-600">Status:</label>
+          <label className="text-sm font-medium text-gray-600">{t(translations.status)}:</label>
           <select
             value={selectedIsActive}
             onChange={(e) => updateFilter("isActive", e.target.value)}
             className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
-            <option value="">All Status</option>
-            <option value="TRUE">Active</option>
-            <option value="FALSE">Inactive</option>
+            <option value="">{t(translations.allStatus)}</option>
+            <option value="TRUE">{t(translations.active)}</option>
+            <option value="FALSE">{t(translations.inactive)}</option>
           </select>
         </div>
       </div>
@@ -113,7 +116,7 @@ export default function ProductDashboardClient({
         {/* Chart 1: Views by Category */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 col-span-1 lg:col-span-2">
           <h3 className="text-base font-semibold text-gray-800 mb-4">
-            Views by Category
+            {t(translations.viewsByCategory)}
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
@@ -132,7 +135,7 @@ export default function ProductDashboardClient({
               <Tooltip
                 formatter={(v: number | undefined) => [
                   v?.toLocaleString() || "0",
-                  "Views",
+                  t(translations.views),
                 ]}
               />
               <Bar dataKey="views" fill="#6366f1" radius={[4, 4, 0, 0]} />
@@ -143,7 +146,7 @@ export default function ProductDashboardClient({
         {/* Chart 2: Active vs Inactive — full width */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 col-span-1 lg:col-span-2">
           <h3 className="text-base font-semibold text-gray-800 mb-4">
-            Active vs Inactive by Category
+            {t(translations.activeVsInactiveByCategory)}
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
@@ -161,10 +164,10 @@ export default function ProductDashboardClient({
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip />
               <Legend verticalAlign="top" />
-              <Bar dataKey="active" name="Active" stackId="a" fill="#22c55e" />
+              <Bar dataKey="active" name={t(translations.active)} stackId="a" fill="#22c55e" />
               <Bar
                 dataKey="inactive"
-                name="Inactive"
+                name={t(translations.inactive)}
                 stackId="a"
                 fill="#f59e0b"
                 radius={[4, 4, 0, 0]}
@@ -176,19 +179,19 @@ export default function ProductDashboardClient({
         {/* Table: Top 10 Products */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 col-span-1 lg:col-span-2">
           <h3 className="text-base font-semibold text-gray-800 mb-4">
-            Top 30 Products by Views
+            {t(translations.top30ProductsByViews)}
           </h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-gray-500 border-b border-gray-100">
-                  <th className="pb-3 pr-4 font-medium">#</th>
-                  <th className="pb-3 pr-4 font-medium">Product (EN)</th>
-                  <th className="pb-3 pr-4 font-medium">ຊື່ (LA)</th>
-                  <th className="pb-3 pr-4 font-medium">Category</th>
-                  <th className="pb-3 pr-4 font-medium">Status</th>
-                  <th className="pb-3 pr-4 font-medium">Rx</th>
-                  <th className="pb-3 font-medium text-right">Views</th>
+                  <th className="pb-3 pr-4 font-medium">{t(translations.stt)}</th>
+                  <th className="pb-3 pr-4 font-medium">{t(translations.productEN)}</th>
+                  <th className="pb-3 pr-4 font-medium">{t(translations.productLA)}</th>
+                  <th className="pb-3 pr-4 font-medium">{t(translations.category)}</th>
+                  <th className="pb-3 pr-4 font-medium">{t(translations.status)}</th>
+                  <th className="pb-3 pr-4 font-medium">{t(translations.rx)}</th>
+                  <th className="pb-3 font-medium text-right">{t(translations.views)}</th>
                 </tr>
               </thead>
               <tbody>
@@ -211,7 +214,7 @@ export default function ProductDashboardClient({
                             : "bg-amber-100 text-amber-700"
                         }`}
                       >
-                        {p.isActive ? "Active" : "Inactive"}
+                        {p.isActive ? t(translations.active) : t(translations.inactive)}
                       </span>
                     </td>
                     <td className="py-3 pr-4">
@@ -222,7 +225,7 @@ export default function ProductDashboardClient({
                             : "bg-gray-100 text-gray-600"
                         }`}
                       >
-                        {p.isPrescription ? "Rx" : "OTC"}
+                        {p.isPrescription ? t(translations.rx) : t(translations.otc)}
                       </span>
                     </td>
                     <td className="py-3 text-right font-semibold text-gray-900">

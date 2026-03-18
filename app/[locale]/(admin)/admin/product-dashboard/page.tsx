@@ -3,6 +3,7 @@ import { database } from "@/lib/prisma";
 import { Package, CheckCircle, TrendingUp, ShieldAlert } from "lucide-react";
 import ProductDashboardClient from "./ProductDashboardClient";
 import { getTranslations } from "next-intl/server";
+import { translations } from "@/lib/translation";
 
 export default async function ProductDashboardPage({
   searchParams,
@@ -116,20 +117,20 @@ export default async function ProductDashboardPage({
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-extrabold text-gray-900">
-            Product Dashboard
+            {t(translations.productDashboard)}
           </h1>
           <p className="text-gray-500 mt-1">
-            Analytics for{" "}
+            {t(translations.analyticsFor)}{" "}
             <span className="font-bold text-primary">
-              {selectedCategory ? t(selectedCategory) : "All Categories"}
+              {selectedCategory ? t(selectedCategory) : t(translations.allCategories)}
             </span>
             {selectedIsActive && (
               <>
                 {" · "}
                 <span className="font-bold text-primary">
                   {selectedIsActive === "TRUE"
-                    ? "Active Only"
-                    : "Inactive Only"}
+                    ? t(translations.activeOnly)
+                    : t(translations.inactiveOnly)}
                 </span>
               </>
             )}
@@ -141,7 +142,7 @@ export default async function ProductDashboardPage({
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                Total Products
+                {t(translations.totalProducts)}
               </p>
               <h2 className="text-3xl font-bold text-gray-900">
                 {totalProducts}
@@ -154,13 +155,13 @@ export default async function ProductDashboardPage({
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                Active Products
+                {t(translations.activeProducts)}
               </p>
               <h2 className="text-3xl font-bold text-gray-900">
                 {activeCount}
               </h2>
               <p className="text-xs text-gray-400 mt-1">
-                {inactiveCount} inactive
+                {inactiveCount} {t(translations.inactive).toLowerCase()}
               </p>
             </div>
             <div className="p-3 bg-green-50 text-green-600 rounded-xl">
@@ -170,13 +171,13 @@ export default async function ProductDashboardPage({
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                Prescription Required
+                {t(translations.prescriptionRequired)}
               </p>
               <h2 className="text-3xl font-bold text-gray-900">
                 {prescriptionCount}
               </h2>
               <p className="text-xs text-gray-400 mt-1">
-                {stats.prescriptionPct}% of total
+                {stats.prescriptionPct}{t(translations.pctOfTotal)}
               </p>
             </div>
             <div className="p-3 bg-red-50 text-red-600 rounded-xl">
@@ -186,7 +187,7 @@ export default async function ProductDashboardPage({
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                Total Views
+                {t(translations.views)}
               </p>
               <h2 className="text-3xl font-bold text-gray-900">
                 {totalViews.toLocaleString()}

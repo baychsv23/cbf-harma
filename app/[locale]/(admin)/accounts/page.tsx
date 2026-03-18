@@ -192,8 +192,7 @@ export default function AccountsPage() {
             <tbody className="divide-y divide-slate-100">
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400 flex flex-col items-center justify-center gap-2">
-                    <User className="w-8 h-8 opacity-20" />
+                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400">
                     {t(translations.noData)}
                   </td>
                 </tr>

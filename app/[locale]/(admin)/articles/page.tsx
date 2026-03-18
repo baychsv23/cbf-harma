@@ -34,7 +34,13 @@ export default function ArticlePage() {
   const { showConfirm, showProcessing } = useAlert();
   const { hasPermission } = useAuth();
 
-  const [search, setSearch] = useState({ title: "", type: "", status: "", year: "", month: "" });
+  const [search, setSearch] = useState({
+    title: "",
+    type: "",
+    status: "",
+    year: "",
+    month: "",
+  });
   // โหลด Pagination
   const {
     items: articles,
@@ -47,24 +53,22 @@ export default function ArticlePage() {
     clearFilters,
   } = usePagination("/api/articles");
 
-
-
   const [allProducts, setAllProducts] = useState<any[]>([]);
   const [productPage, setProductPage] = useState(1);
   const [hasMoreProducts, setHasMoreProducts] = useState(true);
   // โหลดสินค้าทั้งหมดเพื่อมาทำ Selection (Tie-in)
 
-
   const fetchProducts = async (page: number) => {
     const { data } = await api.get(`/api/products/list?page=${page}`);
     if (data.success) {
-      setAllProducts((prev) => (page === 1 ? data.data : [...prev, ...data.data]));
+      setAllProducts((prev) =>
+        page === 1 ? data.data : [...prev, ...data.data],
+      );
       setHasMoreProducts(data.pagination.hasNext);
     }
   };
   // โหลดครั้งแรก
   useEffect(() => {
-
     fetchProducts(1);
   }, []);
 
@@ -80,7 +84,7 @@ export default function ArticlePage() {
       type: search.type,
       status: search.status,
       year: search.year,
-      month: search.month
+      month: search.month,
     });
   };
 
@@ -162,7 +166,6 @@ export default function ArticlePage() {
 
         {/* Added flex-wrap to allow filters to flow to a second line if needed */}
         <div className="flex flex-col md:flex-row flex-wrap gap-4 items-end">
-
           {/* 1. Title - flexible width */}
           <div className="flex-1 min-w-[200px] w-full">
             <label className="text-xs font-bold text-slate-500 ml-1 mb-1 block uppercase tracking-wider">
@@ -170,7 +173,9 @@ export default function ArticlePage() {
             </label>
             <input
               type="text"
-              placeholder={t(translations.SearchBy, { name: t(translations.title) })}
+              placeholder={t(translations.SearchBy, {
+                name: t(translations.title),
+              })}
               value={search.title}
               onChange={(e) => setSearch({ ...search, title: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
@@ -187,9 +192,13 @@ export default function ArticlePage() {
               onChange={(e) => setSearch({ ...search, type: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
             >
-              <option value="">{t(translations.All, { name: t(translations.article) })}</option>
+              <option value="">
+                {t(translations.All, { name: t(translations.article) })}
+              </option>
               {Object.values(ArticleType).map((type) => (
-                <option key={type} value={type}>{t(type)}</option>
+                <option key={type} value={type}>
+                  {t(type)}
+                </option>
               ))}
             </select>
           </div>
@@ -204,9 +213,13 @@ export default function ArticlePage() {
               onChange={(e) => setSearch({ ...search, status: e.target.value })}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
             >
-              <option value="">{t(translations.All, { name: t(translations.status) })}</option>
+              <option value="">
+                {t(translations.All, { name: t(translations.status) })}
+              </option>
               {Object.values(ArticleStatus).map((s) => (
-                <option key={s} value={s}>{t(s)}</option>
+                <option key={s} value={s}>
+                  {t(s)}
+                </option>
               ))}
             </select>
           </div>
@@ -238,9 +251,14 @@ export default function ArticlePage() {
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
             >
               <option value="">{t(translations.All, { name: "" })}</option>
-              {Array.from({ length: 12 }, (_, i) => (
+              {[
+                translations.january, translations.february, translations.march,
+                translations.april, translations.may, translations.june,
+                translations.july, translations.august, translations.september,
+                translations.october, translations.november, translations.december
+              ].map((monthKey, i) => (
                 <option key={i + 1} value={i + 1}>
-                  {new Date(0, i).toLocaleString('default', { month: 'long' })}
+                  {t(monthKey)}
                 </option>
               ))}
             </select>
@@ -275,7 +293,13 @@ export default function ArticlePage() {
                   {t(translations.status)}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  STATS
+                  {t(translations.author)}
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                  {t(translations.publishAt)}
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                  {t(translations.views)}
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider text-right">
                   {t(translations.actions)}
@@ -286,7 +310,7 @@ export default function ArticlePage() {
               {articles.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={8}
                     className="px-6 py-10 text-center text-slate-400"
                   >
                     {t(translations.noData)}
@@ -336,18 +360,33 @@ export default function ArticlePage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-bold border ${article.status === ArticleStatus.PUBLISHED
-                          ? "bg-secondary-100/80 text-secondary-700 border-secondary-300"
-                          : "bg-slate-100 text-slate-500 border-slate-200"
-                          }`}
+                        className={`px-2 py-1 rounded-full text-xs font-bold border ${
+                          article.status === ArticleStatus.PUBLISHED
+                            ? "bg-secondary-100/80 text-secondary-700 border-secondary-300"
+                            : "bg-slate-100 text-slate-500 border-slate-200"
+                        }`}
                       >
                         {t(article.status)}
                       </span>
-                      {article.publishedAt && (
-                        <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                          <Calendar size={10} />{" "}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-xs text-slate-600 font-medium whitespace-nowrap">
+                        <span className="text-slate-400">{t(translations.createdBy)}: </span>
+                        {article.createdBy?.fullName || "-"}
+                      </div>
+                      <div className="text-xs text-slate-600 font-medium whitespace-nowrap mt-1">
+                        <span className="text-slate-400">{t(translations.updatedBy)}: </span>
+                        {article.updatedBy?.fullName || "-"}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      {article.publishedAt ? (
+                        <div className="text-xs text-slate-500 flex items-center gap-1 whitespace-nowrap">
+                          <Calendar size={12} />
                           {formatDate(article.publishedAt)}
                         </div>
+                      ) : (
+                        <span className="text-xs text-slate-400">-</span>
                       )}
                     </td>
                     <td className="px-6 py-4">

@@ -3,14 +3,10 @@ import DashboardFilter from "@/components/Dashboard/DashboardFilter";
 import { ArticleStatus } from "@/generated/prisma/enums";
 import { database } from "@/lib/prisma"; // หรือ path ที่คุณใช้งาน
 import { FileText, CheckCircle, Clock, TrendingUp } from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import { translations } from "@/lib/translation";
 
 // Helper Functions
-const getMonthName = (monthNum: number) => {
-  const date = new Date();
-  date.setMonth(monthNum - 1);
-  return date.toLocaleString("default", { month: "short" });
-};
-
 // ฟังก์ชันหาจำนวนวันในเดือนนั้นๆ (เช่น กุมภา มี 28 หรือ 29 วัน)
 const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month, 0).getDate();
@@ -22,6 +18,17 @@ export default async function DashboardPage({
   searchParams: Promise<{ year?: string; month?: string }>;
 }) {
   const params = await searchParams;
+  const t = await getTranslations();
+
+  const getLocalizedMonth = (m: number) => {
+    const monthKeys = [
+      translations.january, translations.february, translations.march,
+      translations.april, translations.may, translations.june,
+      translations.july, translations.august, translations.september,
+      translations.october, translations.november, translations.december
+    ];
+    return t(monthKeys[m - 1]);
+  };
 
   const now = new Date();
   const selectedYear = Number(params.year) || now.getFullYear();
@@ -55,7 +62,7 @@ export default async function DashboardPage({
 
   if (selectedMonth) {
     // === CASE A: เลือกเดือน -> แสดงรายวัน (1-31) ===
-    mainChartTitle = `Daily Views in ${getMonthName(selectedMonth)} ${selectedYear}`;
+    mainChartTitle = t(translations.dailyViewsIn, { month: getLocalizedMonth(selectedMonth), year: selectedYear.toString() });
 
     // เนื่องจากใน DB ไม่มี column 'day' เราต้องดึง publishedAt มาจัดกลุ่มเอง
     const articlesInMonth = await database.article.findMany({
@@ -94,7 +101,7 @@ export default async function DashboardPage({
     });
   } else {
     // === CASE B: ดูทั้งปี -> แสดงรายเดือน (Jan-Dec) แบบเดิม ===
-    mainChartTitle = `Monthly Views in ${selectedYear}`;
+    mainChartTitle = t(translations.monthlyViewsIn, { year: selectedYear.toString() });
 
     const viewsByMonthRaw = await database.article.groupBy({
       by: ["month"],
@@ -107,7 +114,7 @@ export default async function DashboardPage({
       const monthNum = i + 1;
       const found = viewsByMonthRaw.find((v) => v.month === monthNum);
       return {
-        name: getMonthName(monthNum), // แกน X เป็น Jan, Feb...
+        name: getLocalizedMonth(monthNum), // แกน X เป็น Jan, Feb...
         value: found?._sum.views || 0,
       };
     });
@@ -136,11 +143,11 @@ export default async function DashboardPage({
     <main className="min-h-screen bg-gray-50/50 p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-extrabold text-gray-900">Dashboard</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">{t(translations.articleDashboard)}</h1>
           <p className="text-gray-500 mt-1">
-            Analytics for{" "}
+            {t(translations.analyticsFor)}{" "}
             <span className="font-bold text-primary">
-              {selectedMonth ? getMonthName(selectedMonth) : "All Year"}{" "}
+              {selectedMonth ? getLocalizedMonth(selectedMonth) : t(translations.allYear)}{" "}
               {selectedYear}
             </span>
           </p>
@@ -154,7 +161,7 @@ export default async function DashboardPage({
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                Published
+                {t("PUBLISHED")}
               </p>
               <h2 className="text-3xl font-bold text-gray-900">
                 {publishedCount}
@@ -167,7 +174,7 @@ export default async function DashboardPage({
 
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Drafts</p>
+              <p className="text-sm font-medium text-gray-500 mb-1">{t(translations.drafts)}</p>
               <h2 className="text-3xl font-bold text-gray-900">{draftCount}</h2>
             </div>
             <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
@@ -178,7 +185,7 @@ export default async function DashboardPage({
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                Total New Articles
+                {t(translations.totalNewArticles)}
               </p>
               <h2 className="text-3xl font-bold text-gray-900">
                 {totalArticles}
@@ -192,7 +199,7 @@ export default async function DashboardPage({
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-start justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 mb-1">
-                Lifetime Views
+                {t(translations.lifetimeViews)}
               </p>
               <h2 className="text-3xl font-bold text-gray-900">
                 {(totalLifetimeViews._sum.views || 0).toLocaleString()}
