@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useRef } from "react";
 import CloudinaryImage from "@/components/UI/CloudinaryImage";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation, Parallax } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
 import {
   Dialog,
   DialogPanel,
@@ -31,6 +32,7 @@ export default function BannerSection() {
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const swiperRef = useRef<SwiperType | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,32 +79,31 @@ export default function BannerSection() {
       <div className="relative px-4 sm:px-6 lg:px-8">
         <Swiper
           key={banners.length}
-          modules={[Autoplay, Pagination, Navigation, Parallax]}
-          parallax={true}
-          speed={800}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+          // initialSlide={0} // ← บังคับเริ่มที่รูปแรก
           centeredSlides={true}
+          modules={[Autoplay, Pagination, Parallax]}
+          parallax={true}
+          speed={600}
           breakpoints={{
-            // ✅ Mobile: slidesPerView=1 เต็มจอ ไม่มี peek ป้องกัน overflow
             320: { slidesPerView: 1, spaceBetween: 12 },
-            // ✅ Tablet+: เริ่ม peek ซ้าย-ขวา
             640: { slidesPerView: 1.15, spaceBetween: 16 },
             1024: { slidesPerView: 1.4, spaceBetween: 24 },
           }}
-          loop={banners.length > 1}
           autoplay={{
-            delay: 4000,
+            delay: 3000, // หน่วงระหว่าง slide (ms)
             disableOnInteraction: false,
-            pauseOnMouseEnter: true,
+            pauseOnMouseEnter: false, // ← บังคับปิด ไม่ให้หยุดตอน hover
+            waitForTransition: false,
+
+            // ← ไม่รอ transition เสร็จก่อนนับ delay
           }}
           pagination={{
             clickable: true,
             el: ".custom-pagination",
           }}
-          navigation={{
-            nextEl: ".custom-next",
-            prevEl: ".custom-prev",
-          }}
-          // ✅ KEY FIX: ลบ overflow:visible ออก — ใช้ hidden แทนเพื่อป้องกัน div ล้น mobile
           style={{ overflow: "hidden" }}
           className="w-full pb-10!"
         >
@@ -123,11 +124,10 @@ export default function BannerSection() {
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 70vw"
                     className="object-cover"
-                    priority={true}
                   />
 
                   {(banner.title || banner.description) && isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
                       <h3 className="text-white font-bold text-base md:text-lg line-clamp-2 drop-shadow-md">
                         {banner.title}
                       </h3>
@@ -140,15 +140,21 @@ export default function BannerSection() {
 
           {/* Pagination dots */}
           <div className="custom-pagination absolute bottom-0 left-1/2 -translate-x-1/2 z-30 flex gap-2" />
-
-          {/* ✅ Navigation ซ่อนบน mobile (hidden sm:flex) เพราะพื้นที่แคบเกินไป */}
-          <button className="custom-prev hidden sm:flex absolute top-1/2 -translate-y-[calc(50%+20px)] left-0 z-40 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white shadow-lg border border-gray-100 items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 cursor-pointer">
-            <ChevronLeft size={22} className="text-gray-700" />
-          </button>
-          <button className="custom-next hidden sm:flex absolute top-1/2 -translate-y-[calc(50%+20px)] right-0 z-40 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white shadow-lg border border-gray-100 items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 cursor-pointer">
-            <ChevronRight size={22} className="text-gray-700" />
-          </button>
         </Swiper>
+
+        {/* Navigation buttons — อยู่นอก <Swiper> และใช้ swiperRef แทน class selector */}
+        <button
+          onClick={() => swiperRef.current?.slidePrev()}
+          className="hidden sm:flex absolute top-1/2 -translate-y-[calc(50%+20px)] left-4 sm:left-6 lg:left-8 z-40 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white shadow-lg border border-gray-100 items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 cursor-pointer"
+        >
+          <ChevronLeft size={22} className="text-gray-700" />
+        </button>
+        <button
+          onClick={() => swiperRef.current?.slideNext()}
+          className="hidden sm:flex absolute top-1/2 -translate-y-[calc(50%+20px)] right-4 sm:right-6 lg:right-8 z-40 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white shadow-lg border border-gray-100 items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-gray-50 cursor-pointer"
+        >
+          <ChevronRight size={22} className="text-gray-700" />
+        </button>
       </div>
 
       {/* --- Modal --- */}
