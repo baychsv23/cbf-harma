@@ -8,6 +8,7 @@ type ApiHandler<T> = () => Promise<T>;
 export async function handleApiAction<T>(
   handler: ApiHandler<T>,
   t?: (key: string) => string,
+  enableCache: boolean = false
 ) {
   try {
     const result = (await handler()) as any;
@@ -24,10 +25,12 @@ export async function handleApiAction<T>(
     });
 
     // 2. Set Headers สำหรับ Caching
-    // response.headers.set(
-    //   "Cache-Control",
-    //   "s-maxage=3600, stale-while-revalidate=86400",
-    // );
+    if (enableCache) {
+      response.headers.set(
+        "Cache-Control",
+        "public, s-maxage=3600, stale-while-revalidate=86400",
+      );
+    }
 
     return response;
   } catch (error: any) {

@@ -34,5 +34,5 @@ export async function GET(request: NextRequest) {
             select: { id: true, nameLA: true, nameEN: true }
         });
         return { message: t(translations.fetchSuccess), ...paginatedResponse(data, total, page, limit) };
-    });
+    }, t, true);
 }

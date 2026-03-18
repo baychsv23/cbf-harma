@@ -44,5 +44,5 @@ export async function GET(request: NextRequest) {
                 announcement,
             },
         }
-    });
+    }, t, true);
 }
