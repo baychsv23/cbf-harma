@@ -160,6 +160,8 @@ model Article {
   contentEN          String        @db.Text
   coverImage         String?
   coverImagePublicId String?
+  contentImage         String?
+  contentImagePublicId String?
   year               Int
   month              Int
   type               ArticleType   @default(HEALTH_KNOWLEDGE)

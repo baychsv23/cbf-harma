@@ -84,6 +84,8 @@ export async function POST(request: NextRequest) {
       type,
       coverImage,
       coverImagePublicId,
+      contentImage,
+      contentImagePublicId,
     } = body;
     if (!titleEN || !titleLA || !slug) {
       throw new ApiError(translations.allFiledRequired, 400);
@@ -105,6 +107,8 @@ export async function POST(request: NextRequest) {
         contentLA: contentLA || "",
         coverImage,
         coverImagePublicId,
+        contentImage,
+        contentImagePublicId,
         type,
         status,
         publishedAt: status === ArticleStatus.PUBLISHED ? now : null,

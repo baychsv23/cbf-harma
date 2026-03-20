@@ -126,28 +126,26 @@ export default async function ArticleSingleCBFPage({
             </div>
           </div>
 
-          {/* Right: Cover Image 
-              Added 'lg:shrink-0' to ensure image width stays consistent 
-          */}
+          {/* Right: Content Image (Replacing Cover Image) */}
           <div className="w-full lg:w-[45%] lg:shrink-0 order-1 lg:order-2">
-            <div className="relative aspect-video lg:aspect-4/3 w-full rounded-2xl overflow-hidden shadow-lg bg-gray-100 ring-1 ring-black/5">
-              {article.coverImage ? (
+            {article.contentImage ? (
+              <div className="relative w-full rounded-2xl overflow-hidden shadow-lg bg-gray-50/50 ring-1 ring-black/5 flex justify-center items-center">
                 <CloudinaryImage
-                  src={article.coverImage}
-                  alt={title || "Article Cover"}
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-700"
-                  sizes="(max-width: 768px) 100vw, 600px"
+                  src={article.contentImage}
+                  alt={title || "Article Image"}
+                  width={1200}
+                  height={1200}
+                  className="w-auto h-auto max-w-full max-h-[75vh] object-contain"
                 />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                    <Tag className="w-6 h-6 text-gray-400" />
-                  </div>
-                  <span className="text-sm">No Cover Image</span>
+              </div>
+            ) : (
+              <div className="relative aspect-video lg:aspect-16/9 w-full rounded-2xl overflow-hidden shadow-lg bg-gray-100 ring-1 ring-black/5 flex flex-col items-center justify-center h-full text-gray-400 gap-2">
+                <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                  <Tag className="w-6 h-6 text-gray-400" />
                 </div>
-              )}
-            </div>
+                <span className="text-sm">No Image</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -155,6 +153,7 @@ export default async function ArticleSingleCBFPage({
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 lg:gap-16">
           {/* LEFT: Article Body */}
           <div className="min-w-0">
+
             {/* Prose Configuration */}
             <div
               className="

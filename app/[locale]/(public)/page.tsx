@@ -1,13 +1,15 @@
 import BannerSection from "@/components/UI/BannerSection";
+import ContentSlider from "@/components/UI/ContentSlider";
 import ArticleCard from "@/components/UI/Card/ArticleCard";
-import { ArticleCBF } from "@/lib/interface";
-import { getArticles } from "@/lib/getData";
-import { ArticleStatus, ArticleType } from "@/generated/prisma/enums";
-import { selectDataOfArticle } from "@/lib/selectData";
+import ProductCard from "@/components/UI/Card/ProductCard";
+import { ArticleCBF, ProductCBF } from "@/lib/interface";
+import { getArticles, getProducts } from "@/lib/getData";
+import { ArticleStatus, ArticleType, BooleanState } from "@/generated/prisma/enums";
+import { selectDataOfArticle, selectBasicDataOfProduct } from "@/lib/selectData";
 import { getTranslations } from "next-intl/server";
 import { translations } from "@/lib/translation";
 import { Link } from "@/i18n/routing";
-import { Newspaper, Megaphone, GraduationCap, ArrowRight } from "lucide-react";
+import { Newspaper, Megaphone, GraduationCap, ArrowRight, TrendingUp } from "lucide-react";
 
 // ── Section config — ปรับ ArticleType ให้ตรง enum จริงของคุณ ─────────────────
 const SECTIONS = [
@@ -43,7 +45,7 @@ const SECTIONS = [
   },
 ] as const;
 
-const PER_SECTION = 3;
+const PER_SECTION = 5;
 
 export const revalidate = 3600; // Cache the page for 1 hour to save Vercel CPU
 
@@ -52,18 +54,32 @@ export default async function Home() {
   const baseWhere = { status: ArticleStatus.PUBLISHED };
 
   // Fetch all 3 sections in parallel
-  const results = await Promise.all(
+  const articlesResultsPromise = Promise.all(
     SECTIONS.map((s) =>
       getArticles({
         where: { ...baseWhere, type: s.type },
         skip: 0,
         limit: PER_SECTION,
+        orderBy: { createdAt: "desc" },
         select: selectDataOfArticle,
       }),
     ),
   );
 
+  const topProductsPromise = getProducts({
+    where: { isActive: BooleanState.TRUE },
+    limit: 10,
+    orderBy: { views: "desc" },
+    select: selectBasicDataOfProduct,
+  });
+
+  const [results, topProductsResult] = await Promise.all([
+    articlesResultsPromise,
+    topProductsPromise,
+  ]);
+
   const sectionArticles = results.map((r) => (r.data ?? []) as ArticleCBF[]);
+  const topProducts = (topProductsResult?.data ?? []) as ProductCBF[];
 
   return (
     <main className="min-h-screen pb-24">
@@ -72,8 +88,11 @@ export default async function Home() {
         <BannerSection />
       </section>
 
+      {/* ── Top 10 Products ─────────────────────────────────────────── */}
+
+
       {/* ── 3 Article Sections ─────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
         {SECTIONS.map((cfg, idx) => {
           const Icon = cfg.icon;
           const articles = sectionArticles[idx];
@@ -114,9 +133,15 @@ export default async function Home() {
 
               {/* ── Cards ───────────────────────────────────────────────── */}
               {articles.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <ContentSlider
+                  breakpoints={{
+                    320: { slidesPerView: 1.15, spaceBetween: 16 },
+                    640: { slidesPerView: 2.2, spaceBetween: 20 },
+                    1024: { slidesPerView: 3, spaceBetween: 24 },
+                  }}
+                >
                   {articles.map((article) => (
-                    <div key={article.id} className="relative">
+                    <div key={article.id} className="relative w-full h-full flex-1 flex flex-col">
                       <span
                         className={`absolute top-3 left-3 z-10 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-md ${cfg.badgeClass}`}
                       >
@@ -125,7 +150,7 @@ export default async function Home() {
                       <ArticleCard article={article} />
                     </div>
                   ))}
-                </div>
+                </ContentSlider>
               ) : (
                 <div className="flex flex-col items-center justify-center py-14 rounded-xl border border-dashed border-gray-200 bg-white">
                   <Icon className="w-8 h-8 text-gray-300 mb-2" />
@@ -148,6 +173,70 @@ export default async function Home() {
             </section>
           );
         })}
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-14">
+        <section>
+          {/* ── Section Header ──────────────────────────────────────── */}
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                style={{ backgroundColor: "#fef2f2" }}
+              >
+                <TrendingUp className="w-5 h-5" style={{ color: "#dc2626" }} />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">
+                  {t(translations.top)} 10 {t(translations.product)}
+                </h2>
+                <div
+                  className="mt-1 h-0.75 w-8 rounded-full bg-red-600"
+                />
+              </div>
+            </div>
+
+            {/* View all — desktop */}
+            <Link
+              href="/cbf/products"
+              className="hidden md:inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors"
+            >
+              {t(translations.All, { name: t(translations.view) })}{" "}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Divider */}
+          <div className="mb-6 h-px bg-gray-200" />
+
+          {/* ── Cards ───────────────────────────────────────────────── */}
+          {topProducts.length > 0 ? (
+            <ContentSlider>
+              {topProducts.map((product) => (
+                <div key={product.id} className="relative w-full h-full flex-1 flex flex-col">
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </ContentSlider>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-14 rounded-xl border border-dashed border-gray-200 bg-white">
+              <TrendingUp className="w-8 h-8 text-gray-300 mb-2" />
+              <p className="text-sm text-gray-400">
+                {t(translations.noData)}
+              </p>
+            </div>
+          )}
+
+          {/* View all — mobile */}
+          <div className="mt-5 md:hidden">
+            <Link
+              href="/cbf/products"
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
+            >
+              {t(translations.All, { name: t(translations.view) })}{" "}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </section>
       </div>
     </main>
   );

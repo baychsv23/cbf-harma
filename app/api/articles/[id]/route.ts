@@ -36,7 +36,7 @@ export async function PUT(
         }
 
         // ตรวจสอบว่ามีบทความนี้อยู่จริงไหม
-        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true } })
+        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true, contentImage: true, contentImagePublicId: true } })
 
         if (!existingArticle) {
             throw new ApiError(translations.notFound, 404);
@@ -47,6 +47,20 @@ export async function PUT(
         ) {
             try {
                 const publicId = existingArticle.coverImagePublicId
+                if (publicId) {
+                    await deleteFromCloudinary(publicId);
+                }
+            } catch (error) {
+                logger.error("Cloudinary Delete Error:", error);
+            }
+        }
+
+        if (
+            body.contentImage &&
+            body.contentImage !== existingArticle.contentImage
+        ) {
+            try {
+                const publicId = existingArticle.contentImagePublicId
                 if (publicId) {
                     await deleteFromCloudinary(publicId);
                 }
@@ -74,6 +88,9 @@ export async function PUT(
                 contentEN: body.contentEN,
                 contentLA: body.contentLA,
                 coverImage: body.coverImage,
+                coverImagePublicId: body.coverImagePublicId,
+                contentImage: body.contentImage,
+                contentImagePublicId: body.contentImagePublicId,
                 type: body.type,
                 status: body.status,
 
@@ -103,7 +120,7 @@ export async function DELETE(
         const { id } = await params;
         const session = await requirePermission(Permission.ARTICLE_DELETE);
         if (!session) throw new ApiError(translations.forbidden, 403)
-        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true } })
+        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true, contentImage: true, contentImagePublicId: true } })
 
         if (!existingArticle) {
             throw new ApiError(translations.notFound, 404);
@@ -112,6 +129,10 @@ export async function DELETE(
             const publicId = existingArticle.coverImagePublicId
             if (publicId) {
                 await deleteFromCloudinary(publicId);
+            }
+            const contentPublicId = existingArticle.contentImagePublicId;
+            if (contentPublicId) {
+                await deleteFromCloudinary(contentPublicId);
             }
         } catch (error) {
             logger.error("Cloudinary Delete Error:", error);

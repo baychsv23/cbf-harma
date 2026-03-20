@@ -149,7 +149,7 @@ export default function ArticleFeed({
                 onClick={handleSearchClick}
                 className="px-4 py-2 md:px-5 md:py-2.5 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition shrink-0"
               >
-                <Search size={16} className="md:w-[18px] md:h-[18px]" />
+                <Search size={16} className="md:w-4.5 md:h-4.5" />
               </button>
             </div>
           </div>

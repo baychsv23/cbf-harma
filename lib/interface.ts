@@ -13,6 +13,9 @@ export interface ArticleCBF {
   contentEN?: string;
   contentLA?: string;
   coverImage?: string; // ถ้ามี field รูปภาพ
+  coverImagePublicId?: string;
+  contentImage?: string;
+  contentImagePublicId?: string;
   type: ArticleType;
   slug: string;
   status: ArticleStatus;

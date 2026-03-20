@@ -19,6 +19,7 @@ export const selectDataOfArticle = {
   contentEN: true,
   contentLA: true,
   coverImage: true,
+  contentImage: true,
   type: true,
   products: {
     where: { isActive: BooleanState.TRUE },
@@ -40,8 +41,9 @@ export const selectBasicDataOfProduct = {
   nameLA: true,
   nameEN: true,
   category: true,
-  views: true,
   isPrescription: true,
+  dosage: true,
+  packaging: true,
   productImage: true,
 };
 

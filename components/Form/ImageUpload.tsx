@@ -32,13 +32,13 @@ export default function ImageUpload({
           sources: ["local", "url"],
           clientAllowedFormats: ["jpg", "jpeg", "png", "webp"],
           validateMaxWidthHeight: true,
-          maxImageWidth: 6000,   // ✅ เพิ่มตรงนี้
-          maxImageHeight: 6000,  // ✅ เพิ่มตรงนี้
+          maxImageWidth: 6000, // ✅ เพิ่มตรงนี้
+          maxImageHeight: 6000, // ✅ เพิ่มตรงนี้
           cropping: true,
-          croppingAspectRatio: aspectRatio,
+          croppingAspectRatio: aspectRatio === 0 ? undefined : aspectRatio,
           croppingShowDimensions: true, // โชว์ขนาด Pixel ขณะตัด
           croppingValidateDimensions: true, // แจ้งเตือนถ้าตัดแล้วรูปเล็กเกินไป
-          showSkipCropButton: false, // บังคับตัดภาพเสมอ (ดีแล้วสำหรับ Layout ที่เป๊ะ)
+          showSkipCropButton: aspectRatio === 0, // บังคับตัดภาพเสมอ ยกเว้นตั้ง free crop
           styles: {
             palette: {
               window: "#FFFFFF",
@@ -65,10 +65,28 @@ export default function ImageUpload({
           },
         }}
         onSuccess={(result: any) => {
-          onChange({
-            url: result.info.secure_url,
-            publicId: result.info.public_id,
-          });
+          const info = result.info;
+
+          // ถ้ามี crop coordinates ให้สร้าง URL ที่ crop แล้ว
+          if (info.coordinates?.custom?.[0]) {
+            const [x, y, w, h] = info.coordinates.custom[0];
+
+            // แทรก transformation c_crop เข้าไปใน URL
+            const croppedUrl = info.secure_url.replace(
+              "/upload/",
+              `/upload/c_crop,x_${x},y_${y},w_${w},h_${h}/`,
+            );
+
+            onChange({
+              url: croppedUrl,
+              publicId: info.public_id,
+            });
+          } else {
+            onChange({
+              url: info.secure_url,
+              publicId: info.public_id,
+            });
+          }
         }}
       >
         {({ open }) => (
@@ -76,7 +94,7 @@ export default function ImageUpload({
             onClick={() => !disabled && open()}
             className={`
               group relative w-full overflow-hidden rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center
-              ${aspectRatio === 1 ? "aspect-square" : "aspect-video"} 
+              ${aspectRatio === 1 ? "aspect-square" : aspectRatio === 0 ? "h-48" : "aspect-video"} 
               ${disabled
                 ? "opacity-50 cursor-not-allowed border-slate-200 bg-slate-100"
                 : "cursor-pointer border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-orange-400"

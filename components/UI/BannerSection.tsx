@@ -82,7 +82,6 @@ export default function BannerSection() {
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
           }}
-          // initialSlide={0} // ← บังคับเริ่มที่รูปแรก
           centeredSlides={true}
           modules={[Autoplay, Pagination, Parallax]}
           parallax={true}
@@ -114,15 +113,14 @@ export default function BannerSection() {
             >
               {({ isActive }) => (
                 <div
-                  className={`relative aspect-video w-full overflow-hidden rounded-2xl shadow-md border border-gray-100 bg-white transition-all duration-500 ease-in-out ${
-                    isActive ? "scale-100 opacity-100" : "scale-95 opacity-50"
-                  }`}
+                  className={`relative aspect-video w-full overflow-hidden rounded-2xl shadow-md border border-gray-100 bg-white transition-all duration-500 ease-in-out ${isActive ? "scale-100 opacity-100" : "scale-95 opacity-50"
+                    }`}
                 >
                   <CloudinaryImage
                     src={banner.image}
                     alt={banner.title || "Banner"}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 70vw"
+
                     className="object-cover"
                   />
 

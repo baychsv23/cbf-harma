@@ -57,6 +57,7 @@ export default async function ProductSingleCBFPage({
   const product = (await getProductBySlug(slug, {
     select: selectDataOfProduct,
   })) as ProductCBF;
+  console.log(product);
 
   // 3. Handle 404
   if (!product) {
@@ -111,12 +112,10 @@ export default async function ProductSingleCBFPage({
               {product.productImage ? (
                 <div className="relative w-full h-full transition-transform duration-500 group-hover:scale-105">
                   <CloudinaryImage
-                    src={product.productImage}
+                    src={product?.productImage}
                     alt={name}
                     fill
                     className="object-contain drop-shadow-xl"
-                    sizes="(max-width: 768px) 100vw, 500px"
-                    priority
                   />
                 </div>
               ) : (

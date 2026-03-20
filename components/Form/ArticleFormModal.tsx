@@ -68,6 +68,8 @@ export default function ArticleFormModal({
     contentLA: string;
     coverImage: string;
     coverImagePublicId: string;
+    contentImage: string;
+    contentImagePublicId: string;
     type: ArticleType;
     status: ArticleStatus;
     slug: string;
@@ -79,6 +81,8 @@ export default function ArticleFormModal({
     contentLA: "",
     coverImage: "",
     coverImagePublicId: "",
+    contentImage: "",
+    contentImagePublicId: "",
     type: ArticleType.HEALTH_KNOWLEDGE,
     status: ArticleStatus.DRAFT,
     slug: "",
@@ -99,6 +103,8 @@ export default function ArticleFormModal({
         slug: initialData.slug || "",
         productIds: initialData.products?.map((p: any) => p.id) || [],
         coverImagePublicId: initialData.coverImagePublicId || "",
+        contentImage: initialData.contentImage || "",
+        contentImagePublicId: initialData.contentImagePublicId || "",
       });
     } else {
       setFormData({
@@ -112,6 +118,8 @@ export default function ArticleFormModal({
         slug: "",
         productIds: [],
         coverImagePublicId: "",
+        contentImage: "",
+        contentImagePublicId: "",
       });
       setActiveTab("LA"); // Reset tab to EN for new article
     }
@@ -198,6 +206,25 @@ export default function ArticleFormModal({
               />
             </div>
 
+            {/* Content Image Upload */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                <ImageIcon size={12} /> Content Image
+              </label>
+              <ImageUpload
+                value={formData.contentImage}
+                aspectRatio={0} // 0 means Free Crop
+                label="Click to Upload Content Image (Free Size)"
+                onChange={(result) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    contentImage: result.url,
+                    contentImagePublicId: result.publicId,
+                  }))
+                }
+              />
+            </div>
+
             {/* Publishing Settings */}
             <div className="space-y-4">
               <div className="pb-2 border-b border-slate-100 mb-2">
@@ -257,7 +284,7 @@ export default function ArticleFormModal({
             </div>
 
             {/* Related Products */}
-            <div className="flex-1 flex flex-col min-h-[200px]">
+            <div className="flex-1 flex flex-col min-h-50">
               <div className="pb-2 border-b border-slate-100 mb-3 flex justify-between items-end">
                 <h3 className="text-sm font-bold text-slate-800">
                   {t(translations.Related, { name: t(translations.product) })}
