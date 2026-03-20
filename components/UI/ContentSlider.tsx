@@ -28,7 +28,7 @@ export default function ContentSlider({ children, breakpoints }: ContentSliderPr
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <div className="relative group w-full">
+    <div className="relative group w-full content-slider-wrapper">
       <Swiper
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
@@ -39,7 +39,6 @@ export default function ContentSlider({ children, breakpoints }: ContentSliderPr
         breakpoints={breakpoints || defaultBreakpoints}
         pagination={{
           clickable: true,
-          el: ".content-pagination",
         }}
         className="w-full pb-10!"
       >
@@ -49,8 +48,6 @@ export default function ContentSlider({ children, breakpoints }: ContentSliderPr
           </SwiperSlide>
         ))}
 
-        {/* Pagination dots */}
-        <div className="content-pagination absolute bottom-0 left-1/2 -translate-x-1/2 z-30 flex gap-2" />
       </Swiper>
 
       {/* Navigation */}
@@ -73,7 +70,10 @@ export default function ContentSlider({ children, breakpoints }: ContentSliderPr
           display: flex !important;
           flex-direction: column !important;
         }
-        .content-pagination .swiper-pagination-bullet {
+        .content-slider-wrapper .swiper-pagination {
+          bottom: 0px !important;
+        }
+        .content-slider-wrapper .swiper-pagination-bullet {
           background: #ccc;
           width: 8px;
           height: 8px;
@@ -81,7 +81,7 @@ export default function ContentSlider({ children, breakpoints }: ContentSliderPr
           cursor: pointer;
           opacity: 1;
         }
-        .content-pagination .swiper-pagination-bullet-active {
+        .content-slider-wrapper .swiper-pagination-bullet-active {
           background: #006b3d;
           width: 24px;
           border-radius: 4px;
