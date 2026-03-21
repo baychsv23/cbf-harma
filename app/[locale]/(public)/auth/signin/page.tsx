@@ -28,7 +28,7 @@ export default function PremiumLoginForm() {
     closeProcessing();
     if (result?.ok) {
       showSuccess(t(translations.loginSuccessful));
-      window.location.href = "/home";
+      window.location.href = "/back-office";
     } else {
       showError(t(result?.error as string));
     }

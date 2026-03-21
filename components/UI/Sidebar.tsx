@@ -192,7 +192,7 @@ export default function Sidebar() {
   }
 
   if (user) {
-    const baseMenus = [{ title: translations.home, href: "/home" }];
+    const baseMenus = [{ title: translations.home, href: "/back-office" }];
     const existing = new Set(
       menuItems.flatMap((m) =>
         m.href ? [m.href] : m.children?.map((c) => c.href) || [],
