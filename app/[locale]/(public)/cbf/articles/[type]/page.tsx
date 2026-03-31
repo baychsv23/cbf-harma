@@ -1,6 +1,6 @@
 // app/[locale]/cbf/articles/[[...type]]/page.tsx
 import ArticleFeed from "@/components/UI/Card/ArticleFeed";
-import { ArticleStatus, ArticleType, BooleanState } from "@/generated/prisma/enums";
+import { ArticleStatus, ArticleType } from "@/generated/prisma/enums";
 import { getArticles } from "@/lib/getData";
 import { ArticleCBF } from "@/lib/interface";
 import { selectDataOfArticle } from "@/lib/selectData";
@@ -38,12 +38,11 @@ export default async function ArticlesCBFWithTypePage({
   const where: any = { status: ArticleStatus.PUBLISHED };
   if (typeEnum !== "ALL") where.type = typeEnum;
 
-
-
   const { data, total } = await getArticles({
     where,
     skip: 0,
     limit: DEFAULT_LIMIT,
+    orderBy: { publishedAt: "desc" },
     select: selectDataOfArticle,
   });
 

@@ -25,7 +25,11 @@ import { formatDate } from "@/lib/formateData";
 import ArticleFormModal from "@/components/Form/ArticleFormModal";
 import { isEnglish } from "@/lib/utils/locale";
 import { FilterActions } from "@/components/UI/FilterActions";
-
+const STATUS_STYLES: Record<string, string> = {
+  [ArticleStatus.PUBLISHED]:
+    "bg-emerald-50 text-emerald-700 border-emerald-200",
+  DEFAULT: "bg-slate-50 text-slate-500 border-slate-200",
+};
 export default function ArticlePage() {
   const t = useTranslations();
   const local = useLocale();
@@ -252,10 +256,18 @@ export default function ArticlePage() {
             >
               <option value="">{t(translations.All, { name: "" })}</option>
               {[
-                translations.january, translations.february, translations.march,
-                translations.april, translations.may, translations.june,
-                translations.july, translations.august, translations.september,
-                translations.october, translations.november, translations.december
+                translations.january,
+                translations.february,
+                translations.march,
+                translations.april,
+                translations.may,
+                translations.june,
+                translations.july,
+                translations.august,
+                translations.september,
+                translations.october,
+                translations.november,
+                translations.december,
               ].map((monthKey, i) => (
                 <option key={i + 1} value={i + 1}>
                   {t(monthKey)}
@@ -275,148 +287,189 @@ export default function ArticlePage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-200">
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  {t(translations.stt)}
+              <tr className="border-b border-slate-100 bg-slate-50">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-12">
+                  #
                 </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  {t(translations.Info, { name: t(translations.article) })}
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400">
+                  {t(translations.article)}
                 </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-28">
                   {t(translations.type)}
                 </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-28">
                   {t(translations.status)}
                 </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
-                  {t(translations.author)}
-                </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-32">
                   {t(translations.publishAt)}
                 </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-20">
                   {t(translations.views)}
                 </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider text-right">
-                  {t(translations.actions)}
-                </th>
+                <th className="px-4 py-3 w-20" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {articles.length === 0 ? (
+
+            <tbody>
+              {loading ? (
+                /* Skeleton rows */
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="border-b border-slate-50">
+                    <td className="px-4 py-3">
+                      <div className="h-3 w-6 bg-slate-100 rounded animate-pulse" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-14 h-9 bg-slate-100 rounded-md animate-pulse" />
+                        <div className="space-y-1.5">
+                          <div className="h-3 w-40 bg-slate-100 rounded animate-pulse" />
+                          <div className="h-2.5 w-28 bg-slate-100 rounded animate-pulse" />
+                        </div>
+                      </div>
+                    </td>
+                    {[...Array(5)].map((_, j) => (
+                      <td key={j} className="px-4 py-3">
+                        <div className="h-3 w-16 bg-slate-100 rounded animate-pulse" />
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : articles.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={8}
-                    className="px-6 py-10 text-center text-slate-400"
-                  >
-                    {t(translations.noData)}
+                  <td colSpan={7} className="px-4 py-16 text-center">
+                    <div className="flex flex-col items-center gap-2 text-slate-400">
+                      <FileText size={32} strokeWidth={1.2} />
+                      <span className="text-sm">{t(translations.noData)}</span>
+                    </div>
                   </td>
                 </tr>
               ) : (
-                (articles as any[]).map((article) => (
-                  <tr
-                    key={article.id}
-                    className="hover:bg-primary-50/30 transition-colors group"
-                  >
-                    <td className="px-6 py-4">{article.stt}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-16 h-10 bg-slate-100 rounded-lg overflow-hidden shrink-0 border border-slate-200">
-                          {article.coverImage ? (
-                            <img
-                              src={article.coverImage}
-                              className="w-full h-full object-cover"
-                              alt="cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-300">
-                              <FileText size={16} />
-                            </div>
+                (articles as any[]).map((article) => {
+                  const title = isEnglish(local)
+                    ? article.titleEN
+                    : article.titleLA;
+                  const statusClass =
+                    STATUS_STYLES[article.status] ?? STATUS_STYLES.DEFAULT;
+
+                  return (
+                    <tr
+                      key={article.id}
+                      className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors"
+                    >
+                      {/* # */}
+                      <td className="px-4 py-3 text-slate-400 text-xs">
+                        {article.stt}
+                      </td>
+
+                      {/* Article info */}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          {/* Thumbnail */}
+                          <div className="w-14 h-9 bg-slate-100 rounded-md overflow-hidden shrink-0 border border-slate-100">
+                            {article.coverImage ? (
+                              <img
+                                src={article.coverImage}
+                                className="w-full h-full object-cover"
+                                alt=""
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                <FileText size={14} />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Text */}
+                          <div>
+                            <p className="font-medium text-slate-800 line-clamp-1 leading-snug">
+                              {title}
+                            </p>
+                            <p className="text-xs text-slate-400 mt-0.5">
+                              {t(translations.createdBy)}:{" "}
+                              <span className="text-slate-500">
+                                {article.createdBy?.fullName || "-"}
+                              </span>{" "}
+                              · {formatDate(article.createdAt)}
+                            </p>
+                            {article.updatedBy && (
+                              <p className="text-xs text-slate-400 mt-0.5">
+                                {t(translations.updatedBy)}:{" "}
+                                <span className="text-slate-500">
+                                  {article.updatedBy?.fullName || "-"}
+                                </span>{" "}
+                                · {formatDate(article.updatedAt)}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Type */}
+                      <td className="px-4 py-3">
+                        <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-md font-medium">
+                          {t(article.type)}
+                        </span>
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-4 py-3">
+                        <span
+                          className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${statusClass}`}
+                        >
+                          {t(article.status)}
+                        </span>
+                      </td>
+
+                      {/* Publish date */}
+                      <td className="px-4 py-3">
+                        {article.publishedAt ? (
+                          <span className="text-xs text-slate-500 flex items-center gap-1">
+                            <Calendar size={11} className="text-slate-300" />
+                            {formatDate(article.publishedAt)}
+                          </span>
+                        ) : (
+                          <span className="text-slate-300 text-xs">—</span>
+                        )}
+                      </td>
+
+                      {/* Views */}
+                      <td className="px-4 py-3">
+                        <span className="text-xs text-slate-500 flex items-center gap-1">
+                          <Eye size={12} className="text-slate-300" />
+                          {article.views.toLocaleString()}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-1">
+                          {hasPermission(Permission.ARTICLE_UPDATE) && (
+                            <button
+                              onClick={() => handleOpenEdit(article)}
+                              className="p-1.5 text-slate-400 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition"
+                              title={t(translations.edit ?? "Edit")}
+                            >
+                              <Edit size={15} />
+                            </button>
+                          )}
+                          {hasPermission(Permission.ARTICLE_DELETE) && (
+                            <button
+                              onClick={() => handleDelete(article)}
+                              className="p-1.5 text-slate-400 rounded-lg hover:bg-red-50 hover:text-red-500 transition"
+                              title={t(translations.delete ?? "Delete")}
+                            >
+                              <Trash2 size={15} />
+                            </button>
                           )}
                         </div>
-                        <div>
-                          <div className="text-sm font-bold text-slate-800 line-clamp-1">
-                            {isEnglish(local)
-                              ? article.titleEN
-                              : article.titleLA}
-                          </div>
-                          <div className="text-xs text-slate-500 flex items-center gap-1">
-                            <Globe size={10} />{" "}
-                            {isEnglish(local)
-                              ? article.titleLA
-                              : article.titleEN}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-1 rounded text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        {t(article.type)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-bold border ${
-                          article.status === ArticleStatus.PUBLISHED
-                            ? "bg-secondary-100/80 text-secondary-700 border-secondary-300"
-                            : "bg-slate-100 text-slate-500 border-slate-200"
-                        }`}
-                      >
-                        {t(article.status)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-xs text-slate-600 font-medium whitespace-nowrap">
-                        <span className="text-slate-400">{t(translations.createdBy)}: </span>
-                        {article.createdBy?.fullName || "-"}
-                      </div>
-                      <div className="text-xs text-slate-600 font-medium whitespace-nowrap mt-1">
-                        <span className="text-slate-400">{t(translations.updatedBy)}: </span>
-                        {article.updatedBy?.fullName || "-"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {article.publishedAt ? (
-                        <div className="text-xs text-slate-500 flex items-center gap-1 whitespace-nowrap">
-                          <Calendar size={12} />
-                          {formatDate(article.publishedAt)}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-slate-400">-</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1 text-slate-600 text-sm">
-                        <Eye size={14} className="text-slate-400" />{" "}
-                        {article.views.toLocaleString()}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        {hasPermission(Permission.ARTICLE_UPDATE) && (
-                          <button
-                            onClick={() => handleOpenEdit(article)}
-                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm"
-                          >
-                            <Edit size={16} />
-                          </button>
-                        )}
-                        {hasPermission(Permission.ARTICLE_DELETE) && (
-                          <button
-                            onClick={() => handleDelete(article)}
-                            className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition shadow-sm"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -424,16 +477,17 @@ export default function ArticlePage() {
       </div>
 
       {/* Pagination */}
-      <div className="mt-10 flex justify-center">
-        {!loading && pagination.totalPages > 1 && (
+      {!loading && pagination.totalPages > 1 && (
+        <div className="mt-6 flex justify-center">
           <Pagination
             pagination={pagination}
             page={page}
             setPage={setPage}
             loading={loading}
           />
-        )}
-      </div>
+        </div>
+      )}
+
       <ArticleFormModal
         t={t}
         local={local}
@@ -442,7 +496,7 @@ export default function ArticlePage() {
         onSubmit={handleSaveArticle}
         initialData={selectedArticle}
         allProducts={allProducts}
-        onLoadMoreProducts={handleLoadMoreProducts} // ส่งฟังก์ชันไปให้ Modal
+        onLoadMoreProducts={handleLoadMoreProducts}
         hasMoreProducts={hasMoreProducts}
       />
     </div>

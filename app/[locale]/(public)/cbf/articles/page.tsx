@@ -20,11 +20,12 @@ export default async function ArticlesCBFPage() {
   // ✅ LIMIT: Set to 6 or 9 to enable "Load More" functionality
   const { data, total } = await getArticles({
     where: {
-      status: ArticleStatus.PUBLISHED
+      status: ArticleStatus.PUBLISHED,
     },
     skip: 0,
     limit: DEFAULT_LIMIT,
-    select: selectDataOfArticle
+    orderBy: { publishedAt: "desc" },
+    select: selectDataOfArticle,
   });
 
   return (

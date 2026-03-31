@@ -28,14 +28,14 @@ export default function ArticleCard({ article }: { article: ArticleCBF }) {
     <Link href={detailHref} className="block h-full">
       <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer">
         {/* ส่วนรูปภาพ */}
-        <div className="relative h-48 w-full bg-gray-200 overflow-hidden">
+        <div className="relative aspect-video w-full bg-gray-200 overflow-hidden">
           {article.coverImage ? (
             <CloudinaryImage
               src={article.coverImage}
               alt={title || "Article Image"}
               fill
               loading="eager"
-              className="object-contain"
+              className="object-cover"
             />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400 bg-gray-100">

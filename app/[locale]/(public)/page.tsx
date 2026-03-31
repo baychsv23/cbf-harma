@@ -4,12 +4,25 @@ import ArticleCard from "@/components/UI/Card/ArticleCard";
 import ProductCard from "@/components/UI/Card/ProductCard";
 import { ArticleCBF, ProductCBF } from "@/lib/interface";
 import { getArticles, getProducts } from "@/lib/getData";
-import { ArticleStatus, ArticleType, BooleanState } from "@/generated/prisma/enums";
-import { selectDataOfArticle, selectBasicDataOfProduct } from "@/lib/selectData";
+import {
+  ArticleStatus,
+  ArticleType,
+  BooleanState,
+} from "@/generated/prisma/enums";
+import {
+  selectDataOfArticle,
+  selectBasicDataOfProduct,
+} from "@/lib/selectData";
 import { getTranslations } from "next-intl/server";
 import { translations } from "@/lib/translation";
 import { Link } from "@/i18n/routing";
-import { Newspaper, Megaphone, GraduationCap, ArrowRight, TrendingUp } from "lucide-react";
+import {
+  Newspaper,
+  Megaphone,
+  GraduationCap,
+  ArrowRight,
+  TrendingUp,
+} from "lucide-react";
 
 // ── Section config — ปรับ ArticleType ให้ตรง enum จริงของคุณ ─────────────────
 const SECTIONS = [
@@ -60,7 +73,7 @@ export default async function Home() {
         where: { ...baseWhere, type: s.type },
         skip: 0,
         limit: PER_SECTION,
-        orderBy: { createdAt: "desc" },
+        orderBy: { publishedAt: "desc" },
         select: selectDataOfArticle,
       }),
     ),
@@ -89,7 +102,6 @@ export default async function Home() {
       </section>
 
       {/* ── Top 10 Products ─────────────────────────────────────────── */}
-
 
       {/* ── 3 Article Sections ─────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
@@ -141,7 +153,10 @@ export default async function Home() {
                   }}
                 >
                   {articles.map((article) => (
-                    <div key={article.id} className="relative w-full h-full flex-1 flex flex-col">
+                    <div
+                      key={article.id}
+                      className="relative w-full h-full flex-1 flex flex-col"
+                    >
                       <span
                         className={`absolute top-3 left-3 z-10 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-md ${cfg.badgeClass}`}
                       >
@@ -189,9 +204,7 @@ export default async function Home() {
                 <h2 className="text-lg font-bold text-gray-800">
                   {t(translations.top)} 10 {t(translations.product)}
                 </h2>
-                <div
-                  className="mt-1 h-0.75 w-8 rounded-full bg-red-600"
-                />
+                <div className="mt-1 h-0.75 w-8 rounded-full bg-red-600" />
               </div>
             </div>
 
@@ -212,7 +225,10 @@ export default async function Home() {
           {topProducts.length > 0 ? (
             <ContentSlider>
               {topProducts.map((product) => (
-                <div key={product.id} className="relative w-full h-full flex-1 flex flex-col">
+                <div
+                  key={product.id}
+                  className="relative w-full h-full flex-1 flex flex-col"
+                >
                   <ProductCard product={product} />
                 </div>
               ))}
@@ -220,9 +236,7 @@ export default async function Home() {
           ) : (
             <div className="flex flex-col items-center justify-center py-14 rounded-xl border border-dashed border-gray-200 bg-white">
               <TrendingUp className="w-8 h-8 text-gray-300 mb-2" />
-              <p className="text-sm text-gray-400">
-                {t(translations.noData)}
-              </p>
+              <p className="text-sm text-gray-400">{t(translations.noData)}</p>
             </div>
           )}
 
