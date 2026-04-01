@@ -20,6 +20,7 @@ import { selectDataOfArticle } from "@/lib/selectData";
 import { CATEGORY_SLUG_MAP } from "@/lib/constant";
 import ArticleViewCounter from "@/components/ArticleViewCounter";
 import { translations } from "@/lib/translation";
+import BackButton from "@/components/UI/BackButton";
 
 // 1. Generate Metadata
 export async function generateMetadata({
@@ -78,15 +79,7 @@ export default async function ArticleSingleCBFPage({
       {/* --- 1. Top Navigation Bar (Sticky & Glassmorphism) --- */}
       <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-gray-100 shadow-sm transition-all duration-300">
         <div className="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
-          <Link
-            href="/cbf/articles"
-            className="group flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary transition-colors"
-          >
-            <div className="p-2 rounded-full group-hover:bg-primary/10 transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-            </div>
-            <span className="hidden sm:inline">{t(translations.back)}</span>
-          </Link>
+          <BackButton label={t(translations.back)} />
         </div>
       </div>
 
@@ -153,7 +146,6 @@ export default async function ArticleSingleCBFPage({
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 lg:gap-16">
           {/* LEFT: Article Body */}
           <div className="min-w-0">
-
             {/* Prose Configuration */}
             <div
               className="

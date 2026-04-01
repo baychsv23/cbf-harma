@@ -19,6 +19,7 @@ import { BooleanState, CategorySub } from "@/generated/prisma/enums";
 import { selectDataOfProduct } from "@/lib/selectData";
 import { translations } from "@/lib/translation";
 import ProductViewCounter from "@/components/ProductViewCounter";
+import BackButton from "@/components/UI/BackButton";
 
 // 1. Generate Metadata
 export async function generateMetadata({
@@ -57,7 +58,6 @@ export default async function ProductSingleCBFPage({
   const product = (await getProductBySlug(slug, {
     select: selectDataOfProduct,
   })) as ProductCBF;
-  console.log(product);
 
   // 3. Handle 404
   if (!product) {
@@ -78,15 +78,7 @@ export default async function ProductSingleCBFPage({
       {/* Top Navigation Bar */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 mb-8 transition-all duration-300">
         <div className="container mx-auto px-4 max-w-6xl h-16 flex items-center">
-          <Link
-            href="/cbf/products"
-            className="group flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary transition-colors"
-          >
-            <div className="p-2 rounded-full group-hover:bg-gray-100 transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-            </div>
-            <span>{t(translations.back)}</span>
-          </Link>
+          <BackButton label={t(translations.back)} />
         </div>
       </div>
 
