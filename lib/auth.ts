@@ -5,9 +5,8 @@ import { database } from "./prisma";
 import { translations } from "./translation";
 import { timeToken } from "./constant";
 
-
 export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXT_AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -27,11 +26,10 @@ export const authOptions: NextAuthOptions = {
         if (!user) {
           throw new Error(translations.invalidLogin);
         }
-        if (!user.isActive)
-          throw new Error(translations.inactive);
+        if (!user.isActive) throw new Error(translations.inactive);
         const isValid = await bcrypt.compare(
           credentials.password,
-          user.password
+          user.password,
         );
 
         if (!isValid) {
@@ -57,7 +55,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }: any) {
       if (user) {
-
         token.id = user.id;
         token.userName = user.userName;
         token.role = user.role;
