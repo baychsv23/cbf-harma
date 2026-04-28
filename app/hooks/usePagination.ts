@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/lib/utils/pagination";
+import { api } from "@/lib/axios";
 
 interface Pagination {
   currentPage: number;
@@ -9,7 +9,6 @@ interface Pagination {
   hasNext: boolean;
   hasPrev: boolean;
 }
-
 
 interface Filters {
   [key: string]: any;
@@ -31,10 +30,9 @@ export function usePagination<T = any>(
   apiUrl: string,
   defaultFilters: Filters = {},
   defaultPage = DEFAULT_PAGE,
-  defaultLimit = DEFAULT_LIMIT
+  defaultLimit = DEFAULT_LIMIT,
 ): UsePaginatedDataResult<T> {
   const [items, setItems] = useState<T[]>([]);
-  const api = useApiWithAlert();
   const [pagination, setPagination] = useState<Pagination>({
     currentPage: 1,
     totalPages: 1,

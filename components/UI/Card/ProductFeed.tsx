@@ -9,7 +9,7 @@ import { ProductCBF } from "@/lib/interface";
 import { translations } from "@/lib/translation";
 import { CATEGORY_SLUG_MAP } from "@/lib/constant";
 import ProductCard from "./ProductCard";
-import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+import { api } from "@/lib/axios";
 
 interface ProductFeedProps {
   initialProducts: ProductCBF[];
@@ -25,7 +25,7 @@ export default function ProductFeed({
   limit,
 }: ProductFeedProps) {
   const t = useTranslations();
-  const api = useApiWithAlert();
+
   const [products, setProducts] = useState<ProductCBF[]>(initialProducts);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,7 +44,7 @@ export default function ProductFeed({
     if (currentCategory !== "ALL") params.category = currentCategory;
     if (searchParam) params.name = searchParam;
     try {
-      const { data } = await api.get("/api/products/list", { params });
+      const { data } = await api.get("/products/list", { params });
       if (data.success) {
         setProducts((prev) =>
           shouldAppend ? [...prev, ...data.data] : data.data,
@@ -173,7 +173,9 @@ export default function ProductFeed({
                   disabled={isLoading}
                   className="w-full md:w-auto px-8 py-3 bg-white border border-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-all shadow-sm"
                 >
-                  {isLoading ? "Loading..." : "Load More"}
+                  {isLoading
+                    ? t(translations.loading)
+                    : t(translations.loadMore)}
                 </button>
               </div>
             )}

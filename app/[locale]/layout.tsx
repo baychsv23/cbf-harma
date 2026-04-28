@@ -5,7 +5,7 @@ import { Noto_Sans_Lao } from "next/font/google";
 
 import SessionProvider from "@/components/provider/SessionProvider";
 import { getMessages } from "next-intl/server";
-import RouteChangeLoader from "@/components/RouteChangeLoader";
+import { ApiAlertHandler } from "@/components/ApiAlertHandler";
 
 const notoSansLao = Noto_Sans_Lao({
   subsets: ["lao"],
@@ -46,7 +46,7 @@ export default async function LocaleLayout({
     <div className={getFontClass(locale)}>
       <SessionProvider>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <RouteChangeLoader />
+          <ApiAlertHandler />
           {children}
         </NextIntlClientProvider>
       </SessionProvider>

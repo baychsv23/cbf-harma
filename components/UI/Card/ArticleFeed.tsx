@@ -10,7 +10,7 @@ import { translations } from "@/lib/translation";
 import { Link } from "@/i18n/routing";
 
 import { TYPE_SLUG_MAP } from "@/lib/constant";
-import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+import { api } from "@/lib/axios";
 
 interface ArticleFeedProps {
   initialArticles: ArticleCBF[];
@@ -26,7 +26,6 @@ export default function ArticleFeed({
   limit,
 }: ArticleFeedProps) {
   const t = useTranslations();
-  const api = useApiWithAlert();
 
   // State
   const [articles, setArticles] = useState<ArticleCBF[]>(initialArticles);
@@ -60,7 +59,7 @@ export default function ArticleFeed({
     if (searchParam) params.title = searchParam;
 
     try {
-      const { data } = await api.get("/api/articles/list", { params });
+      const { data } = await api.get("/articles/list", { params });
 
       if (data.success) {
         const newArticles = data.data;

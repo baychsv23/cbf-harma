@@ -16,10 +16,11 @@ export function useAlert() {
     backdrop: `rgba(15, 23, 42, 0.2) blur(4px)`, // เพิ่ม Blur หลังฉากให้ดูแพง
     allowOutsideClick: false,
     buttonsStyling: false,
-    padding: '2rem',
+    padding: "2rem",
     customClass: {
       // เพิ่ม Border Gradient หลอกๆ ด้วย shadow
-      popup: "rounded-[40px] border border-slate-50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] overflow-hidden",
+      popup:
+        "rounded-[40px] border border-slate-50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] overflow-hidden",
       title: "text-2xl font-black text-slate-900 tracking-tighter",
       htmlContainer: "text-md font-medium text-slate-500 mt-3",
       actions: "mt-8 gap-4",
@@ -30,15 +31,15 @@ export function useAlert() {
           animate__animated 
           animate__backInDown 
           animate__faster
-        `
+        `,
     },
     hideClass: {
       popup: `
           animate__animated 
           animate__fadeOutDown 
           animate__faster
-        `
-    }
+        `,
+    },
   };
 
   const showSuccess = (message: string) => {
@@ -62,10 +63,10 @@ export function useAlert() {
       },
       // Animation: เลื่อนลงมานิ่มๆ พร้อม Fade In
       showClass: {
-        popup: "animate__animated animate__fadeInDown animate__faster"
+        popup: "animate__animated animate__fadeInDown animate__faster",
       },
       hideClass: {
-        popup: "animate__animated animate__fadeOutUp animate__faster"
+        popup: "animate__animated animate__fadeOutUp animate__faster",
       },
       // ปรับแต่งสไตล์หัวข้อให้ดู Deep & Clean
       didOpen: () => {
@@ -75,7 +76,7 @@ export function useAlert() {
           title.style.fontWeight = "900";
           title.style.letterSpacing = "-0.025em";
         }
-      }
+      },
     });
   };
 
@@ -100,10 +101,10 @@ export function useAlert() {
       },
       // Animation: ใช้การสั่นแบบนุ่มนวลแต่ชัดเจน (Hard Shake)
       showClass: {
-        popup: "animate__animated animate__shakeX animate__faster"
+        popup: "animate__animated animate__shakeX animate__faster",
       },
       hideClass: {
-        popup: "animate__animated animate__fadeOut animate__faster"
+        popup: "animate__animated animate__fadeOut animate__faster",
       },
       // ปรับแต่งสีหัวข้อผ่าน JavaScript เพื่อความเป๊ะ
       didOpen: () => {
@@ -112,7 +113,7 @@ export function useAlert() {
           title.style.color = "#4c0519"; // สีชมพูเข้มเกือบดำ ดูพรีเมียม
           title.style.fontWeight = "900";
         }
-      }
+      },
     });
   };
 
@@ -148,11 +149,11 @@ export function useAlert() {
       },
       // Animation จังหวะการปรากฏแบบ Zoom In เล็กน้อย
       showClass: {
-        popup: "animate__animated animate__zoomIn animate__faster"
+        popup: "animate__animated animate__zoomIn animate__faster",
       },
       hideClass: {
-        popup: "animate__animated animate__zoomOut animate__faster"
-      }
+        popup: "animate__animated animate__zoomOut animate__faster",
+      },
     });
     return result.isConfirmed;
   };
@@ -175,13 +176,13 @@ export function useAlert() {
       },
       // ใส่ Animation แบบ "ส่ายหน้า" เล็กน้อยเมื่อปรากฏเพื่อดึงดูดสายตา (สมกับเป็นคำเตือน)
       showClass: {
-        popup: "animate__animated animate__headShake animate__faster"
+        popup: "animate__animated animate__headShake animate__faster",
       },
       // ตกแต่งส่วนเนื้อหาด้วย Inline CSS (เพื่อความโดดเด่นเฉพาะจุด)
       didOpen: () => {
         const title = Swal.getTitle();
         if (title) title.style.color = "#92400e"; // สีน้ำตาลเข้มแบบ Amber สวยๆ
-      }
+      },
     });
   };
 
@@ -214,10 +215,18 @@ export function useAlert() {
         `,
       customClass: {
         ...baseConfig.customClass,
-        popup: "rounded-[60px] p-16 shadow-[0_50px_100px_-20px_rgba(162,28,175,0.15)] border-0",
-      }
+        popup:
+          "rounded-[60px] p-16 shadow-[0_50px_100px_-20px_rgba(162,28,175,0.15)] border-0",
+      },
     });
   };
 
-  return { showSuccess, showError, showConfirm, showProcessing, showWarning, closeProcessing: Swal.close };
+  return {
+    showSuccess,
+    showError,
+    showConfirm,
+    showProcessing,
+    showWarning,
+    closeProcessing: Swal.close,
+  };
 }

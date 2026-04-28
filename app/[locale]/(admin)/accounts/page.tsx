@@ -11,7 +11,7 @@ import {
   User,
   Mail,
   UserCog,
-  RefreshCcw
+  RefreshCcw,
 } from "lucide-react";
 import Pagination from "@/components/UI/Pagination";
 import { usePagination } from "@/app/hooks/usePagination";
@@ -36,7 +36,6 @@ export default function AccountsPage() {
     showSuccess,
     showConfirm,
   } = useAlert();
-  const { hasPermission } = useAuth();
 
   const {
     items: users,
@@ -47,7 +46,7 @@ export default function AccountsPage() {
     reloadData,
     applyFilters,
     clearFilters,
-  } = usePagination("/api/accounts");
+  } = usePagination("/accounts");
 
   const handleApplyFilters = () => {
     applyFilters({ userName: search.userName });
@@ -65,7 +64,11 @@ export default function AccountsPage() {
         : BooleanState.TRUE; // Fixed logic to toggle correctly
 
     const text = t(translations.MessageManageIsActive, {
-      status: t(nextStatus === BooleanState.FALSE ? translations.inactive : translations.active),
+      status: t(
+        nextStatus === BooleanState.FALSE
+          ? translations.inactive
+          : translations.active,
+      ),
       name: acc.userName,
     });
 
@@ -77,10 +80,10 @@ export default function AccountsPage() {
       closeProcessing();
 
       if (result.success) {
-        showSuccess((result.message));
+        showSuccess(result.message);
         reloadData();
       } else {
-        showError((result.message));
+        showError(result.message);
       }
     }
   };
@@ -107,9 +110,15 @@ export default function AccountsPage() {
       confirmButtonColor: "#d4af37", // Accent for warning action
       width: "500px",
       preConfirm: () => {
-        const newPassword = (document.getElementById("swal-new-password") as HTMLInputElement)?.value?.trim();
+        const newPassword = (
+          document.getElementById("swal-new-password") as HTMLInputElement
+        )?.value?.trim();
         if (!newPassword) {
-          Swal.showValidationMessage(t(translations.FiledRequired, { name: t(translations.newPassword) }));
+          Swal.showValidationMessage(
+            t(translations.FiledRequired, {
+              name: t(translations.newPassword),
+            }),
+          );
           return false;
         }
         return { newPassword };
@@ -132,16 +141,16 @@ export default function AccountsPage() {
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
-
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
           <div className="bg-sky-100 p-2 rounded-xl">
             <UserCog className="text-sky-600 w-6 h-6" />
           </div>
-          <span>{t(translations.Management, { name: t(translations.account) })} </span>
+          <span>
+            {t(translations.Management, { name: t(translations.account) })}{" "}
+          </span>
         </h1>
-
 
         <Link
           href={"/accounts/create"}
@@ -150,7 +159,6 @@ export default function AccountsPage() {
           <Plus size={20} strokeWidth={2.5} />
           {t(translations.Create, { name: t(translations.account) })}
         </Link>
-
       </div>
 
       {/* Filter Card */}
@@ -162,9 +170,13 @@ export default function AccountsPage() {
             </label>
             <input
               type="text"
-              placeholder={t(translations.SearchBy, { name: t(translations.userName) })}
+              placeholder={t(translations.SearchBy, {
+                name: t(translations.userName),
+              })}
               value={search.userName}
-              onChange={(e) => setSearch({ ...search, userName: e.target.value })}
+              onChange={(e) =>
+                setSearch({ ...search, userName: e.target.value })
+              }
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none transition-all"
             />
           </div>
@@ -182,32 +194,54 @@ export default function AccountsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200">
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.stt)}</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.Info, { name: t(translations.account) })}</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.role)}</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">{t(translations.status)}</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider text-right">{t(translations.actions)}</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                  {t(translations.stt)}
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                  {t(translations.Info, { name: t(translations.account) })}
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                  {t(translations.role)}
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider">
+                  {t(translations.status)}
+                </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 tracking-wider text-right">
+                  {t(translations.actions)}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400">
+                  <td
+                    colSpan={5}
+                    className="px-6 py-10 text-center text-slate-400"
+                  >
                     {t(translations.noData)}
                   </td>
                 </tr>
               ) : (
                 (users as any[]).map((user) => (
-                  <tr key={user.id} className="hover:bg-sky-50/30 transition-colors group">
+                  <tr
+                    key={user.id}
+                    className="hover:bg-sky-50/30 transition-colors group"
+                  >
                     <td className="px-6 py-4">{user.stt}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         {/* Avatar Circle */}
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-100 to-blue-100 border border-sky-200 flex items-center justify-center text-sky-700 font-bold shrink-0">
-                          {user.fullName ? user.fullName.charAt(0).toUpperCase() : <User size={18} />}
+                          {user.fullName ? (
+                            user.fullName.charAt(0).toUpperCase()
+                          ) : (
+                            <User size={18} />
+                          )}
                         </div>
                         <div>
-                          <div className="text-sm font-bold text-slate-800">{user.fullName}</div>
+                          <div className="text-sm font-bold text-slate-800">
+                            {user.fullName}
+                          </div>
                           <div className="text-xs text-slate-500 flex items-center gap-1 font-mono">
                             <Mail size={10} /> {user.userName}
                           </div>
@@ -215,27 +249,38 @@ export default function AccountsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border flex items-center gap-1 w-fit ${user.role === Role.ADMIN
-                        ? 'bg-purple-50 text-purple-700 border-purple-200'
-                        : 'bg-slate-100 text-slate-600 border-slate-200'
-                        }`}>
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-bold border flex items-center gap-1 w-fit ${
+                          user.role === Role.ADMIN
+                            ? "bg-purple-50 text-purple-700 border-purple-200"
+                            : "bg-slate-100 text-slate-600 border-slate-200"
+                        }`}
+                      >
                         {user.role === Role.ADMIN && <Shield size={10} />}
                         {t(user.role)}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${user.isActive === BooleanState.TRUE
-                        ? 'bg-secondary-100 text-secondary-700 border-secondary-300'
-                        : 'bg-red-100/50 text-red-600/70 border-red-200/50'
-                        }`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${user.isActive === BooleanState.TRUE ? 'bg-secondary-500' : 'bg-red-300'}`}></div>
-                        {t(user.isActive === BooleanState.TRUE ? translations.active : translations.inactive)}
+                      <span
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${
+                          user.isActive === BooleanState.TRUE
+                            ? "bg-secondary-100 text-secondary-700 border-secondary-300"
+                            : "bg-red-100/50 text-red-600/70 border-red-200/50"
+                        }`}
+                      >
+                        <div
+                          className={`w-1.5 h-1.5 rounded-full ${user.isActive === BooleanState.TRUE ? "bg-secondary-500" : "bg-red-300"}`}
+                        ></div>
+                        {t(
+                          user.isActive === BooleanState.TRUE
+                            ? translations.active
+                            : translations.inactive,
+                        )}
                       </span>
                     </td>
 
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
-
                         <Link
                           href={`/accounts/${user.id}/edit`}
                           className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition shadow-sm"
@@ -243,8 +288,6 @@ export default function AccountsPage() {
                         >
                           <Edit size={16} />
                         </Link>
-
-
 
                         <button
                           onClick={() => showResetPasswordForm(user)}
@@ -254,19 +297,17 @@ export default function AccountsPage() {
                           <KeyRound size={16} />
                         </button>
 
-
-
                         <button
                           onClick={() => handleActiveStatus(user)}
-                          className={`p-2 bg-white border border-slate-200 rounded-lg transition shadow-sm ${user.isActive === BooleanState.TRUE
-                            ? "text-slate-600 hover:bg-red-100 hover:text-red-600 hover:border-red-200"
-                            : "text-slate-400 hover:bg-red-100/50 hover:text-red-600/70 hover:border-red-200/50"
-                            }`}
+                          className={`p-2 bg-white border border-slate-200 rounded-lg transition shadow-sm ${
+                            user.isActive === BooleanState.TRUE
+                              ? "text-slate-600 hover:bg-red-100 hover:text-red-600 hover:border-red-200"
+                              : "text-slate-400 hover:bg-red-100/50 hover:text-red-600/70 hover:border-red-200/50"
+                          }`}
                           title={t(translations.manage)}
                         >
                           <Power size={16} />
                         </button>
-
                       </div>
                     </td>
                   </tr>

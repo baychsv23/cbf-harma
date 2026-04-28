@@ -20,11 +20,12 @@ import {
   ArticleType,
   ArticleStatus,
 } from "@/generated/prisma/enums"; // Import Enum
-import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+
 import { formatDate } from "@/lib/formateData";
 import ArticleFormModal from "@/components/Form/ArticleFormModal";
 import { isEnglish } from "@/lib/utils/locale";
 import { FilterActions } from "@/components/UI/FilterActions";
+import { api } from "@/lib/axios";
 const STATUS_STYLES: Record<string, string> = {
   [ArticleStatus.PUBLISHED]:
     "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -33,7 +34,6 @@ const STATUS_STYLES: Record<string, string> = {
 export default function ArticlePage() {
   const t = useTranslations();
   const local = useLocale();
-  const api = useApiWithAlert();
 
   const { showConfirm, showProcessing } = useAlert();
   const { hasPermission } = useAuth();
@@ -55,7 +55,7 @@ export default function ArticlePage() {
     reloadData,
     applyFilters,
     clearFilters,
-  } = usePagination("/api/articles");
+  } = usePagination("/articles");
 
   const [allProducts, setAllProducts] = useState<any[]>([]);
   const [productPage, setProductPage] = useState(1);
@@ -63,7 +63,7 @@ export default function ArticlePage() {
   // โหลดสินค้าทั้งหมดเพื่อมาทำ Selection (Tie-in)
 
   const fetchProducts = async (page: number) => {
-    const { data } = await api.get(`/api/products/list?page=${page}`);
+    const { data } = await api.get(`/products/list?page=${page}`);
     if (data.success) {
       setAllProducts((prev) =>
         page === 1 ? data.data : [...prev, ...data.data],
@@ -114,9 +114,9 @@ export default function ArticlePage() {
   const handleSaveArticle = async (formData: any) => {
     showProcessing();
     if (selectedArticle) {
-      await api.put(`/api/articles/${selectedArticle.id}`, formData);
+      await api.put(`/articles/${selectedArticle.id}`, formData);
     } else {
-      await api.post("/api/articles", formData);
+      await api.post("/articles", formData);
     }
     setIsModalOpen(false);
     reloadData();
@@ -133,7 +133,7 @@ export default function ArticlePage() {
     if (isConfirmed) {
       showProcessing();
 
-      await api.delete(`/api/articles/${article.id}`);
+      await api.delete(`/articles/${article.id}`);
       reloadData();
     }
   };

@@ -1,5 +1,5 @@
 "use client";
-import axios from "axios";
+import { api } from "@/lib/axios";
 import { useEffect } from "react";
 
 interface ProductViewCounterProps {
@@ -17,7 +17,7 @@ export default function ProductViewCounter({ slug }: ProductViewCounterProps) {
 
     const timer = setTimeout(async () => {
       try {
-        await axios.post("/api/products/count-view", { slug });
+        await api.post("/products/count-view", { slug }, { isSilent: true });
         sessionStorage.setItem(storageKey, "1");
       } catch (error) {
         console.error("count view failed", error);

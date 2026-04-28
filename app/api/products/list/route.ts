@@ -1,4 +1,4 @@
-//api/products/list
+//products/list
 import { BooleanState } from "@/generated/prisma/enums";
 import { getProducts } from "@/lib/getData";
 import { getRequestLocale } from "@/lib/getRequestLocale";

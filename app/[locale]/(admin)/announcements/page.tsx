@@ -17,18 +17,18 @@ import { useAuth } from "@/app/hooks/useAuth";
 import { usePagination } from "@/app/hooks/usePagination";
 import { useTranslations } from "next-intl";
 import { BooleanState, ImageType, Permission } from "@/generated/prisma/enums"; // Adjust import path
-import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
 
 import CloudinaryImage from "@/components/UI/CloudinaryImage";
 import { translations } from "@/lib/translation";
 import AnnouncementFormModal from "@/components/Form/AnnouncementFormModal";
 import { formatDate } from "@/lib/formateData";
 import { FilterActions } from "@/components/UI/FilterActions";
+import { api } from "@/lib/axios";
 
 export default function AnnouncementPage() {
   const t = useTranslations();
   const { showConfirm, showProcessing } = useAlert();
-  const api = useApiWithAlert();
+
   const { hasPermission } = useAuth();
 
   // Filter state
@@ -44,7 +44,7 @@ export default function AnnouncementPage() {
     reloadData,
     applyFilters,
     clearFilters,
-  } = usePagination("/api/announcements");
+  } = usePagination("/announcements");
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,9 +67,9 @@ export default function AnnouncementPage() {
     // or JSON if handling base64/urls. Assuming JSON for consistency with your snippet.
     showProcessing();
     if (selectedItem) {
-      await api.put(`/api/announcements/${selectedItem.id}`, formData);
+      await api.put(`/announcements/${selectedItem.id}`, formData);
     } else {
-      await api.post("/api/announcements", formData);
+      await api.post("/announcements", formData);
     }
     setIsModalOpen(false);
     reloadData();
@@ -79,7 +79,7 @@ export default function AnnouncementPage() {
     const isConfirmed = await showConfirm(t(translations.confirmDelete));
     if (isConfirmed) {
       showProcessing();
-      await api.delete(`/api/announcements/${id}`);
+      await api.delete(`/announcements/${id}`);
       reloadData();
     }
   };

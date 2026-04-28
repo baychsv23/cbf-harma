@@ -1,4 +1,4 @@
-// app/api/warehouses/route.ts
+// app/warehouses/route.ts
 
 import { BooleanState, Permission } from "@/generated/prisma/enums";
 import { ApiError } from "@/lib/api-error";

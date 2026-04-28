@@ -16,8 +16,7 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-
-import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+import { api } from "@/lib/axios";
 
 interface Announcement {
   id: string;
@@ -27,7 +26,6 @@ interface Announcement {
 }
 
 export default function BannerSection() {
-  const api = useApiWithAlert();
   const [banners, setBanners] = useState<Announcement[]>([]);
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,7 +35,7 @@ export default function BannerSection() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await api.get("/api/announcements/slide-show");
+        const { data } = await api.get("/announcements/slide-show");
         setBanners(data.data.banners || []);
 
         if (data.data.announcement) {
@@ -113,14 +111,14 @@ export default function BannerSection() {
             >
               {({ isActive }) => (
                 <div
-                  className={`relative aspect-video w-full overflow-hidden rounded-2xl shadow-md border border-gray-100 bg-white transition-all duration-500 ease-in-out ${isActive ? "scale-100 opacity-100" : "scale-95 opacity-50"
-                    }`}
+                  className={`relative aspect-video w-full overflow-hidden rounded-2xl shadow-md border border-gray-100 bg-white transition-all duration-500 ease-in-out ${
+                    isActive ? "scale-100 opacity-100" : "scale-95 opacity-50"
+                  }`}
                 >
                   <CloudinaryImage
                     src={banner.image}
                     alt={banner.title || "Banner"}
                     fill
-
                     className="object-cover"
                   />
 

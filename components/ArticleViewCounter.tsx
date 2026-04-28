@@ -1,4 +1,5 @@
 "use client";
+import { api } from "@/lib/axios";
 import axios from "axios";
 import { useEffect } from "react";
 
@@ -17,7 +18,7 @@ export default function ArticleViewCounter({ slug }: ArticleViewCounterProps) {
 
     const timer = setTimeout(async () => {
       try {
-        await axios.post("/api/articles/count-view", { slug });
+        await api.post("/articles/count-view", { slug }, { isSilent: true });
         sessionStorage.setItem(storageKey, "1");
       } catch (error) {
         console.error("count view failed", error);

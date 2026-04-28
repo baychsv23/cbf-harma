@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { useAlert } from "@/app/hooks/useAlert";
 import { updateAccount } from "@/action/accounts";
 import { useRouter } from "@/i18n/routing";
-import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+
 import { Permission, Role } from "@/generated/prisma/enums";
 import { translations } from "@/lib/translation";
 
@@ -16,7 +16,7 @@ export default function EditAccountPage({ params }: any) {
   const { id }: any = unwrappedParams;
   const router = useRouter();
   const t = useTranslations();
-  const api = useApiWithAlert();
+
   const [state, formAction] = useActionState(updateAccount, initialState);
   const { showError, showSuccess, showProcessing, closeProcessing } =
     useAlert();
@@ -38,7 +38,7 @@ export default function EditAccountPage({ params }: any) {
 
       try {
         showProcessing();
-        const { data: account } = await api.get(`/api/accounts/${id}`);
+        const { data: account } = await api.get(`/accounts/${id}`);
         closeProcessing();
         const accountRes = account.data;
 

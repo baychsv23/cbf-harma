@@ -16,36 +16,29 @@ import { usePagination } from "@/app/hooks/usePagination";
 import { useLocale, useTranslations } from "next-intl";
 import { translations } from "@/lib/translation";
 import { Permission } from "@/generated/prisma/enums"; // อย่าลืมเพิ่ม Permission.SYMPTOM_MANAGE ใน Enum
-import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+
 import { isEnglish } from "@/lib/utils/locale";
 import { FilterActions } from "@/components/UI/FilterActions";
+import { api } from "@/lib/axios";
 
 interface Symptom {
   id: string;
-  stt: number
-  nameLA: string
-  nameEN: string
-
+  stt: number;
+  nameLA: string;
+  nameEN: string;
 }
 
 export default function SymptomPage() {
   const t = useTranslations();
   const local = useLocale();
-  const api = useApiWithAlert();
 
-  const {
-    showSuccess,
-    showError,
-    showConfirm,
-    showProcessing,
-    closeProcessing,
-  } = useAlert();
+  const { showConfirm, showProcessing } = useAlert();
   const { hasPermission } = useAuth();
 
   // State สำหรับการค้นหา
   const [search, setSearch] = useState({ name: "" });
 
-  // Hook Pagination (ดึงข้อมูลจาก /api/symptoms)
+  // Hook Pagination (ดึงข้อมูลจาก /symptoms)
   const {
     items: symptoms,
     pagination,
@@ -55,7 +48,7 @@ export default function SymptomPage() {
     reloadData,
     applyFilters,
     clearFilters,
-  } = usePagination("/api/symptoms");
+  } = usePagination("/symptoms");
 
   // ฟังก์ชัน Apply Search
   const handleApplyFilters = () => {
@@ -121,13 +114,11 @@ export default function SymptomPage() {
     if (formData) {
       showProcessing();
       if (symptom) {
-        await api.put(`/api/symptoms/${symptom.id}`, formData)
+        await api.put(`/symptoms/${symptom.id}`, formData);
+      } else {
+        await api.post("/symptoms", formData);
       }
-      else {
-        await api.post("/api/symptoms", formData);
-      }
-      reloadData()
-
+      reloadData();
     }
   };
 
@@ -141,13 +132,13 @@ export default function SymptomPage() {
 
     if (isConfirmed) {
       showProcessing();
-      await api.delete(`/api/symptoms/${symptom.id}`);
-      reloadData()
+      await api.delete(`/symptoms/${symptom.id}`);
+      reloadData();
     }
   };
 
   return (
-    <div className="p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50">
+    <div className="p-8 max-w-350 mx-auto min-h-screen bg-slate-50">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
@@ -155,7 +146,9 @@ export default function SymptomPage() {
             <Stethoscope className="text-emerald-600 w-6 h-6" />
           </div>
           {/* Smart Search / Symptoms */}
-          <span>{t(translations.Management, { name: t(translations.symptom) })} </span>
+          <span>
+            {t(translations.Management, { name: t(translations.symptom) })}{" "}
+          </span>
         </h1>
 
         {/* Permission Check: SYMPTOM_MANAGE or PRODUCT_CREATE */}

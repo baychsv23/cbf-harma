@@ -1,3 +1,4 @@
+import { ApiAlertHandler } from "@/components/ApiAlertHandler";
 import ContactFloatingBtn from "@/components/UI/ContactFloatingBtn";
 import Footer from "@/components/UI/Footer";
 import Navbar from "@/components/UI/Navbar";
@@ -14,6 +15,7 @@ export default function PublicLayout({
       {children}
       <ContactFloatingBtn />
       <ScrollToTopButton />
+
       <Footer />
     </>
   );

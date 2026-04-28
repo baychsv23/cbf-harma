@@ -13,16 +13,17 @@ import {
   CategorySub,
   Permission,
 } from "@/generated/prisma/enums";
-import { useApiWithAlert } from "@/app/hooks/useApiWithAlert";
+
 import ProductFormModal from "@/components/Form/ProductFormModal";
 import { isEnglish } from "@/lib/utils/locale";
 import { FilterActions } from "@/components/UI/FilterActions";
+import { api } from "@/lib/axios";
 
 export default function ProductPage() {
   const t = useTranslations();
   const locale = useLocale();
   const { showConfirm, showProcessing } = useAlert();
-  const api = useApiWithAlert();
+
   const { hasPermission } = useAuth();
 
   const [search, setSearch] = useState({
@@ -43,10 +44,10 @@ export default function ProductPage() {
     reloadData,
     applyFilters,
     clearFilters,
-  } = usePagination("/api/products");
+  } = usePagination("/products");
 
   const fetchSymptoms = async (page: number) => {
-    const { data } = await api.get(`/api/symptoms/list?page=${page}`);
+    const { data } = await api.get(`/symptoms/list?page=${page}`);
     if (data.success) {
       setAllSymptoms((prev) =>
         page === 1 ? data.data : [...prev, ...data.data],
@@ -81,9 +82,9 @@ export default function ProductPage() {
   const handleSaveProduct = async (formData: any) => {
     showProcessing();
     if (selectedProduct) {
-      await api.put(`/api/products/${selectedProduct.id}`, formData);
+      await api.put(`/products/${selectedProduct.id}`, formData);
     } else {
-      await api.post("/api/products", formData);
+      await api.post("/products", formData);
     }
     setIsModalOpen(false);
     reloadData();
@@ -123,7 +124,7 @@ export default function ProductPage() {
 
     if (confirm) {
       showProcessing();
-      await api.put(`/api/products/${product.id}`, { isActive: nextStatus });
+      await api.put(`/products/${product.id}`, { isActive: nextStatus });
       reloadData();
     }
   };

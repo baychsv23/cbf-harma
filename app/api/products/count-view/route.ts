@@ -1,4 +1,4 @@
-// app/api/articles/count-view/route.ts
+// app/articles/count-view/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { database } from "@/lib/prisma";
 import { handleApiAction } from "@/lib/handleApiAction";
