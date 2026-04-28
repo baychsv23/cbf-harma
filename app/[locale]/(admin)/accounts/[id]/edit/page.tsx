@@ -10,6 +10,7 @@ import { useRouter } from "@/i18n/routing";
 
 import { Permission, Role } from "@/generated/prisma/enums";
 import { translations } from "@/lib/translation";
+import { api } from "@/lib/axios";
 
 export default function EditAccountPage({ params }: any) {
   const unwrappedParams = use(params);
