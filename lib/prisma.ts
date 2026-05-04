@@ -9,31 +9,10 @@ declare global {
 // ----------------------------------------------------
 // 1) Retry helper
 // ----------------------------------------------------
-function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
-async function connectWithRetry(
-  client: PrismaClient,
-  retries = 10,
-  delay = 1500,
-) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      await client.$connect();
-      return client;
-    } catch (err) {
-      await wait(delay);
-    }
-  }
+const connectionString = `${process.env.DATABASE_URL}`;
 
-  return client;
-}
-
-
-const connectionString = `${process.env.DATABASE_URL}`
-
-const adapter = new PrismaPg({ connectionString })
+const adapter = new PrismaPg({ connectionString });
 
 // ----------------------------------------------------
 // 3) Create PrismaClient instance
@@ -48,7 +27,6 @@ export const database =
 // ----------------------------------------------------
 // 4) Connect with retry
 // ----------------------------------------------------
-connectWithRetry(database);
 
 // ----------------------------------------------------
 if (process.env.NODE_ENV !== "production") global.prisma = database;

@@ -13,8 +13,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${title} | CBF` };
 }
 
-export const revalidate = 3600;
-
 export default async function ProductCBFPage() {
   const where: any = { isActive: BooleanState.TRUE };
 

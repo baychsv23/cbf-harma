@@ -6,7 +6,7 @@ import NextTopLoader from "nextjs-toploader";
 export const metadata: Metadata = {
   title: "CBF",
   icons: {
-    icon: "/images/logo.svg",
+    icon: "/images/logo.png",
     shortcut: "/images/logo.png",
     apple: "/images/logo.png",
   },
