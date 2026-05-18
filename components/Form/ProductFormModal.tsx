@@ -12,6 +12,7 @@ import {
 import { BooleanState, Category, CategorySub } from "@/generated/prisma/enums";
 import { translations } from "@/lib/translation";
 import ImageUpload from "./ImageUpload";
+import TiptapEditor from "../Editor/TiptapEditor";
 import { isEnglish } from "@/lib/utils/locale";
 
 interface ProductFormProps {
@@ -516,15 +517,14 @@ export default function ProductFormModal({
                     <label className="block text-xs font-bold text-slate-500 mb-1">
                       {t(translations.indication)} (English)
                     </label>
-                    <textarea
-                      value={formData.indicationEN}
-                      onChange={(e) =>
+                    <TiptapEditor
+                      content={formData.indicationEN}
+                      onChange={(value) =>
                         setFormData({
                           ...formData,
-                          indicationEN: e.target.value,
+                          indicationEN: value,
                         })
                       }
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm min-h-[60px]"
                       placeholder="Description..."
                     />
                   </div>
@@ -532,15 +532,14 @@ export default function ProductFormModal({
                     <label className="block text-xs font-bold text-slate-500 mb-1">
                       {t(translations.indication)} (Lao)
                     </label>
-                    <textarea
-                      value={formData.indicationLA}
-                      onChange={(e) =>
+                    <TiptapEditor
+                      content={formData.indicationLA}
+                      onChange={(value) =>
                         setFormData({
                           ...formData,
-                          indicationLA: e.target.value,
+                          indicationLA: value,
                         })
                       }
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm min-h-[60px]"
                       placeholder="ສັບພະຄຸນ..."
                     />
                   </div>
@@ -557,15 +556,14 @@ export default function ProductFormModal({
                     <label className="block text-xs font-bold text-slate-500 mb-1">
                       {t(translations.administration)} (English)
                     </label>
-                    <textarea
-                      value={formData.administrationEN}
-                      onChange={(e) =>
+                    <TiptapEditor
+                      content={formData.administrationEN}
+                      onChange={(value) =>
                         setFormData({
                           ...formData,
-                          administrationEN: e.target.value,
+                          administrationEN: value,
                         })
                       }
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm min-h-[60px]"
                       placeholder="Directions for use..."
                     />
                   </div>
@@ -573,15 +571,14 @@ export default function ProductFormModal({
                     <label className="block text-xs font-bold text-slate-500 mb-1">
                       {t(translations.administration)} (Lao)
                     </label>
-                    <textarea
-                      value={formData.administrationLA}
-                      onChange={(e) =>
+                    <TiptapEditor
+                      content={formData.administrationLA}
+                      onChange={(value) =>
                         setFormData({
                           ...formData,
-                          administrationLA: e.target.value,
+                          administrationLA: value,
                         })
                       }
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm min-h-[60px]"
                       placeholder="ວິທີໃຊ້..."
                     />
                   </div>
