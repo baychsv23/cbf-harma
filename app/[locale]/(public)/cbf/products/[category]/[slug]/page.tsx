@@ -200,11 +200,13 @@ export default async function ProductSingleCBFPage({
               {/* Prose for HTML Content */}
               <div
                 className="
-                prose prose-stone max-w-none 
-                prose-p:text-gray-600 prose-p:leading-relaxed
-                prose-headings:text-gray-900 prose-headings:font-bold
-                prose-li:text-gray-600
-                prose-strong:text-gray-800
+                prose prose-lg md:prose-xl prose-stone max-w-none 
+                prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-gray-900
+                prose-p:leading-relaxed prose-p:text-gray-600
+                prose-a:text-primary prose-a:font-medium prose-a:no-underline hover:prose-a:underline
+                prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8
+                prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+                prose-li:marker:text-primary
                 wrap-break-word
               "
               >
@@ -232,11 +234,13 @@ export default async function ProductSingleCBFPage({
                 </div>
                 <div
                   className="
-                  prose prose-stone max-w-none 
-                  prose-p:text-gray-600 prose-p:leading-relaxed
-                  prose-headings:text-gray-900 prose-headings:font-bold
-                  prose-li:text-gray-600
-                  prose-strong:text-gray-800
+                  prose prose-lg md:prose-xl prose-stone max-w-none 
+                  prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-gray-900
+                  prose-p:leading-relaxed prose-p:text-gray-600
+                  prose-a:text-primary prose-a:font-medium prose-a:no-underline hover:prose-a:underline
+                  prose-img:rounded-2xl prose-img:shadow-md prose-img:my-8
+                  prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+                  prose-li:marker:text-primary
                   wrap-break-word
                 "
                 >
