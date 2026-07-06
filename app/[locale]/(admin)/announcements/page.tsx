@@ -198,7 +198,7 @@ export default function AnnouncementPage() {
                   key={item.id}
                   className="hover:bg-slate-50/50 transition-colors"
                 >
-                  <td className="px-6 py-4 text-slate-500">{item.stt}</td>
+                  <td className="px-6 py-4 text-slate-500">{item.stt.toString().padStart(2, "0")}</td>
                   <td className="px-6 py-4">
                     <div className="relative w-32 h-16 bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
                       {item.image ? (

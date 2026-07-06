@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Plus, Edit, Settings2, Pill, Stethoscope } from "lucide-react";
+import { Plus, Edit, Settings2, Pill, Stethoscope, Calendar } from "lucide-react";
+import { formatDate } from "@/lib/formateData";
 import Pagination from "@/components/UI/Pagination";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useAuth } from "@/app/hooks/useAuth";
@@ -44,7 +45,8 @@ export default function ProductPage() {
     reloadData,
     applyFilters,
     clearFilters,
-  } = usePagination("/products");
+    filters,
+  } = usePagination("/products", { sortField: "sku", sortOrder: "asc" });
 
   const fetchSymptoms = async (page: number) => {
     const { data } = await api.get(`/symptoms/list?page=${page}`);
@@ -96,12 +98,35 @@ export default function ProductPage() {
       category: search.category,
       categorySub: search.categorySub,
       isActive: search.isActive,
+      sortField: filters?.sortField,
+      sortOrder: filters?.sortOrder,
     });
   };
 
   const handleClearFilters = () => {
     setSearch({ name: "", category: "", categorySub: "", isActive: "" });
-    clearFilters();
+    applyFilters({ sortField: "sku", sortOrder: "asc" });
+  };
+
+  const handleSort = (field: string) => {
+    const isCurrentField = filters?.sortField === field;
+    const newOrder = isCurrentField && filters?.sortOrder === "asc" ? "desc" : "asc";
+    applyFilters({
+      ...filters,
+      sortField: field,
+      sortOrder: newOrder,
+    });
+  };
+
+  const renderSortIcon = (field: string) => {
+    if (filters?.sortField !== field) {
+      return <span className="text-slate-300 ml-1 text-xs">↕</span>;
+    }
+    return filters?.sortOrder === "asc" ? (
+      <span className="text-emerald-600 font-bold ml-1 text-xs">▲</span>
+    ) : (
+      <span className="text-emerald-600 font-bold ml-1 text-xs">▼</span>
+    );
   };
   // Helper to get enum translations or raw keys
 
@@ -261,17 +286,50 @@ export default function ProductPage() {
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
                 {t(translations.stt)}
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                {t(translations.Info, { name: t(translations.product) })}
+              <th
+                onClick={() => handleSort("name")}
+                className="px-6 py-4 text-xs font-bold text-slate-500 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+              >
+                <div className="flex items-center gap-1">
+                  {t(translations.Info, { name: t(translations.product) })}
+                  {renderSortIcon("name")}
+                </div>
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                {t(translations.category)}
+              <th
+                onClick={() => handleSort("category")}
+                className="px-6 py-4 text-xs font-bold text-slate-500 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+              >
+                <div className="flex items-center gap-1">
+                  {t(translations.category)}
+                  {renderSortIcon("category")}
+                </div>
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                {t(translations.sku)}
+              <th
+                onClick={() => handleSort("sku")}
+                className="px-6 py-4 text-xs font-bold text-slate-500 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+              >
+                <div className="flex items-center gap-1">
+                  {t(translations.sku)}
+                  {renderSortIcon("sku")}
+                </div>
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-500">
-                {t(translations.status)}
+              <th
+                onClick={() => handleSort("createdAt")}
+                className="px-6 py-4 text-xs font-bold text-slate-500 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+              >
+                <div className="flex items-center gap-1">
+                  {t(translations.createdAt)}
+                  {renderSortIcon("createdAt")}
+                </div>
+              </th>
+              <th
+                onClick={() => handleSort("isActive")}
+                className="px-6 py-4 text-xs font-bold text-slate-500 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+              >
+                <div className="flex items-center gap-1">
+                  {t(translations.status)}
+                  {renderSortIcon("isActive")}
+                </div>
               </th>
               <th className="px-6 py-4 text-xs font-bold text-slate-500">
                 {t(translations.actions)}
@@ -282,7 +340,7 @@ export default function ProductPage() {
             {products.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-6 py-10 text-center text-slate-400  items-center justify-center gap-2"
                 >
                   {t(translations.noData)}
@@ -294,7 +352,7 @@ export default function ProductPage() {
                   key={product.id}
                   className="hover:bg-slate-50/50 transition-colors"
                 >
-                  <td className="px-6 py-4">{product.stt}</td>
+                  <td className="px-6 py-4"> {product.stt.toString().padStart(2, "0")}</td>
                   <td className="px-6 py-4">
                     <div className="font-bold text-slate-900">
                       {isEnglish(locale) ? product.nameEN : product.nameLA}
@@ -327,6 +385,12 @@ export default function ProductPage() {
                     </div>
                     <div className="text-[10px] text-slate-400 mt-1">
                       /{product.slug}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-xs text-slate-500 whitespace-nowrap">
+                    <div className="flex items-center gap-1">
+                      <Calendar size={12} className="text-slate-400" />
+                      {formatDate(product.createdAt)}
                     </div>
                   </td>
                   <td className="px-6 py-4">

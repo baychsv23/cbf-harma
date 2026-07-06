@@ -43,6 +43,24 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit;
 
+    const sortField = searchParams.get("sortField");
+    const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
+
+    let orderBy: any;
+    if (sortField === "title") {
+      orderBy = locale === "lo" ? { titleLA: sortOrder } : { titleEN: sortOrder };
+    } else if (sortField === "type") {
+      orderBy = { type: sortOrder };
+    } else if (sortField === "status") {
+      orderBy = { status: sortOrder };
+    } else if (sortField === "publishedAt") {
+      orderBy = { publishedAt: sortOrder };
+    } else if (sortField === "views") {
+      orderBy = { views: sortOrder };
+    } else {
+      orderBy = { createdAt: "desc" };
+    }
+
     const { data, total } = await getArticles({
       where,
       skip,
@@ -52,7 +70,7 @@ export async function GET(request: NextRequest) {
         createdBy: { select: { fullName: true } },
         updatedBy: { select: { fullName: true } },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy,
     });
     return {
       message: t(translations.fetchSuccess),

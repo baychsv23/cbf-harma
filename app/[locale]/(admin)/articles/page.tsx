@@ -55,7 +55,8 @@ export default function ArticlePage() {
     reloadData,
     applyFilters,
     clearFilters,
-  } = usePagination("/articles");
+    filters,
+  } = usePagination("/articles", { sortField: "createdAt", sortOrder: "desc" });
 
   const [allProducts, setAllProducts] = useState<any[]>([]);
   const [productPage, setProductPage] = useState(1);
@@ -89,12 +90,41 @@ export default function ArticlePage() {
       status: search.status,
       year: search.year,
       month: search.month,
+      sortField: filters?.sortField,
+      sortOrder: filters?.sortOrder,
     });
   };
 
   const handleClearFilters = () => {
     setSearch({ title: "", type: "", status: "", year: "", month: "" });
-    clearFilters();
+    applyFilters({ sortField: "createdAt", sortOrder: "desc" });
+  };
+
+  const handleSort = (field: string) => {
+    const isCurrentField = filters?.sortField === field;
+    const defaultOrder = field === "title" || field === "type" || field === "status" ? "asc" : "desc";
+    const newOrder = isCurrentField
+      ? filters?.sortOrder === "asc"
+        ? "desc"
+        : "asc"
+      : defaultOrder;
+
+    applyFilters({
+      ...filters,
+      sortField: field,
+      sortOrder: newOrder,
+    });
+  };
+
+  const renderSortIcon = (field: string) => {
+    if (filters?.sortField !== field) {
+      return <span className="text-slate-300 ml-1 text-xs">↕</span>;
+    }
+    return filters?.sortOrder === "asc" ? (
+      <span className="text-emerald-600 font-bold ml-1 text-xs">▲</span>
+    ) : (
+      <span className="text-emerald-600 font-bold ml-1 text-xs">▼</span>
+    );
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -292,23 +322,53 @@ export default function ArticlePage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-12">
-                  #
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-12 select-none">
+                  {t(translations.stt)}
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400">
-                  {t(translations.article)}
+                <th
+                  onClick={() => handleSort("title")}
+                  className="px-4 py-3 text-left text-xs font-semibold text-slate-400 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+                >
+                  <div className="flex items-center gap-1">
+                    {t(translations.article)}
+                    {renderSortIcon("title")}
+                  </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-28">
-                  {t(translations.type)}
+                <th
+                  onClick={() => handleSort("type")}
+                  className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-28 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+                >
+                  <div className="flex items-center gap-1">
+                    {t(translations.type)}
+                    {renderSortIcon("type")}
+                  </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-28">
-                  {t(translations.status)}
+                <th
+                  onClick={() => handleSort("status")}
+                  className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-28 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+                >
+                  <div className="flex items-center gap-1">
+                    {t(translations.status)}
+                    {renderSortIcon("status")}
+                  </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-32">
-                  {t(translations.publishAt)}
+                <th
+                  onClick={() => handleSort("publishedAt")}
+                  className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-36 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+                >
+                  <div className="flex items-center gap-1">
+                    {t(translations.publishAt)}
+                    {renderSortIcon("publishedAt")}
+                  </div>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-20">
-                  {t(translations.views)}
+                <th
+                  onClick={() => handleSort("views")}
+                  className="px-4 py-3 text-left text-xs font-semibold text-slate-400 w-24 cursor-pointer hover:bg-slate-100 transition-colors select-none"
+                >
+                  <div className="flex items-center gap-1">
+                    {t(translations.views)}
+                    {renderSortIcon("views")}
+                  </div>
                 </th>
                 <th className="px-4 py-3 w-20" />
               </tr>
@@ -362,7 +422,7 @@ export default function ArticlePage() {
                     >
                       {/* # */}
                       <td className="px-4 py-3 text-slate-400 text-xs">
-                        {article.stt}
+                        {article.stt.toString().padStart(2, "0")}
                       </td>
 
                       {/* Article info */}
@@ -451,7 +511,7 @@ export default function ArticlePage() {
                             <button
                               onClick={() => handleOpenEdit(article)}
                               className="p-1.5 text-slate-400 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition"
-                              title={t(translations.edit ?? "Edit")}
+                              title={t(translations.edit )}
                             >
                               <Edit size={15} />
                             </button>
@@ -460,7 +520,7 @@ export default function ArticlePage() {
                             <button
                               onClick={() => handleDelete(article)}
                               className="p-1.5 text-slate-400 rounded-lg hover:bg-red-50 hover:text-red-500 transition"
-                              title={t(translations.delete ?? "Delete")}
+                              title={t(translations.delete)}
                             >
                               <Trash2 size={15} />
                             </button>

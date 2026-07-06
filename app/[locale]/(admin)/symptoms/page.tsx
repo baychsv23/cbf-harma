@@ -228,7 +228,7 @@ export default function SymptomPage() {
                     className="hover:bg-emerald-50/30 transition-colors group"
                   >
                     <td className="px-6 py-4 text-sm text-slate-500 text-center font-mono">
-                      {symptom.stt}
+                      {symptom.stt.toString().padStart(2, "0")}
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm font-semibold text-slate-700 group-hover:text-emerald-700 transition-colors">

@@ -42,11 +42,29 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit;
 
+    const sortField = searchParams.get("sortField");
+    const sortOrder = searchParams.get("sortOrder") === "desc" ? "desc" : "asc";
+
+    let orderBy: any;
+    if (sortField === "name") {
+      orderBy = locale === "lo" ? { nameLA: sortOrder } : { nameEN: sortOrder };
+    } else if (sortField === "category") {
+      orderBy = { category: sortOrder };
+    } else if (sortField === "sku") {
+      orderBy = { sku: sortOrder };
+    } else if (sortField === "isActive") {
+      orderBy = { isActive: sortOrder };
+    } else if (sortField === "createdAt") {
+      orderBy = { createdAt: sortOrder };
+    } else {
+      orderBy = { sku: "asc" };
+    }
+
     const { data, total } = await getProducts({
       where,
       skip,
       limit,
-      orderBy: { sku: "asc" },
+      orderBy,
     });
 
     return {
