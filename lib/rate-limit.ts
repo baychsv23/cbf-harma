@@ -77,7 +77,7 @@ export function checkRateLimit(
   remaining: number;
   resetTime: number;
 } {
-  const limit = options.limit ?? 5;
+  const limit = options.limit ?? 15;
   const windowMs = options.windowMs ?? 60 * 1000; // 1 minute
   const ip = getClientIp(request);
   const now = Date.now();
