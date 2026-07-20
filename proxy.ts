@@ -1,10 +1,11 @@
-// middleware.ts
+// proxy.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { routing } from "./i18n/routing";
 import createIntlMiddleware from "next-intl/middleware";
 import { Permission, Role } from "./generated/prisma/enums";
+import { checkRateLimit } from "./lib/rate-limit";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -26,6 +27,30 @@ function isAuthRoute(path: string): boolean {
   return AUTH_ROUTES.some(
     (route) => path === route || path.startsWith(route + "/"),
   );
+}
+
+function isPublicApiRoute(pathname: string): boolean {
+  if (!pathname.startsWith("/api")) return false;
+
+  const PUBLIC_API_ROUTES = [
+    "/api/articles/list",
+    "/api/articles/count-view",
+    "/api/products/list",
+    "/api/products/count-view",
+    "/api/symptoms/list",
+    "/api/announcements/slide-show",
+  ];
+
+  const isExplicitPublic = PUBLIC_API_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(route + "/")
+  );
+
+  const isGenericPublicPattern =
+    pathname.includes("/list") ||
+    pathname.includes("/count-view") ||
+    pathname.includes("/slide-show");
+
+  return isExplicitPublic || isGenericPublicPattern;
 }
 
 function hasPermission(token: any, requiredPermissions: string[]): boolean {
@@ -59,13 +84,33 @@ const ROUTES: Record<string, RouteConfig> = {
 };
 
 // --------------------------------------------------
-// Middleware logic
+// Middleware / Proxy logic
 // --------------------------------------------------
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const { locale, pathWithoutLocale } = getLocaleAndPath(pathname);
 
-  // Skip static & API routes
+  // 0️⃣ Public API Rate Limiting (max 5 requests / 1 min per IP)
+  if (isPublicApiRoute(pathname)) {
+    const rateLimit = checkRateLimit(request, {
+      limit: 5,
+      windowMs: 60 * 1000,
+    });
+
+    if (rateLimit.isRateLimited && rateLimit.response) {
+      return rateLimit.response;
+    }
+
+    const response = NextResponse.next();
+    response.headers.set("X-RateLimit-Limit", "5");
+    response.headers.set("X-RateLimit-Remaining", rateLimit.remaining.toString());
+    response.headers.set(
+      "X-RateLimit-Reset",
+      Math.ceil(rateLimit.resetTime / 1000).toString()
+    );
+    return response;
+  }
+
+  // Skip other static & non-public API routes
   if (
     pathname.startsWith("/api") ||
     pathname.startsWith("/_next") ||
@@ -73,6 +118,8 @@ export async function proxy(request: NextRequest) {
   ) {
     return NextResponse.next();
   }
+
+  const { locale, pathWithoutLocale } = getLocaleAndPath(pathname);
 
   // Get auth token
   const token = await getToken({
@@ -130,5 +177,5 @@ export async function proxy(request: NextRequest) {
 // Matcher config
 // --------------------------------------------------
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\..*).*)"],
+  matcher: ["/((?!_next/static|_next/image|.*\\..*).*)"],
 };
