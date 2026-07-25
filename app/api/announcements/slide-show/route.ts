@@ -5,6 +5,37 @@ import { database } from "@/lib/prisma";
 import { translations } from "@/lib/translation";
 import { getTranslations } from "next-intl/server";
 import { NextRequest, NextResponse } from "next/server";
+import { unstable_cache } from "next/cache";
+
+const getSlideshowData = unstable_cache(
+  async () => {
+    const [banners, announcement] = await Promise.all([
+      database.announcement.findMany({
+        where: {
+          type: ImageType.BANNER,
+          isPublic: BooleanState.TRUE,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 5,
+      }),
+
+      database.announcement.findFirst({
+        where: {
+          type: ImageType.ANNOUNCEMENT,
+          isPublic: BooleanState.TRUE,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+    ]);
+    return { banners, announcement };
+  },
+  ["announcements-slideshow"],
+  { tags: ["announcements"] }
+);
 
 export async function GET(request: NextRequest) {
   const locale = getRequestLocale(request);
@@ -13,28 +44,7 @@ export async function GET(request: NextRequest) {
   });
   return handleApiAction(
     async () => {
-      const [banners, announcement] = await Promise.all([
-        database.announcement.findMany({
-          where: {
-            type: ImageType.BANNER,
-            isPublic: BooleanState.TRUE,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-          take: 5,
-        }),
-
-        database.announcement.findFirst({
-          where: {
-            type: ImageType.ANNOUNCEMENT,
-            isPublic: BooleanState.TRUE,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-        }),
-      ]);
+      const { banners, announcement } = await getSlideshowData();
 
       return {
         message: t(translations.fetchSuccess),

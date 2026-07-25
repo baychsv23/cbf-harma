@@ -9,6 +9,7 @@ import { translations } from "@/lib/translation";
 
 import bcrypt from "bcryptjs";
 import { getTranslations } from "next-intl/server";
+import { revalidateTag } from "next/cache";
 
 export async function createAccount(prevState: any, data: FormData) {
   const t = await getTranslations();
@@ -41,7 +42,7 @@ export async function createAccount(prevState: any, data: FormData) {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      return await database.user.create({
+      const newUser = await database.user.create({
         data: {
           userName: userName,
           password: hashedPassword,
@@ -50,6 +51,10 @@ export async function createAccount(prevState: any, data: FormData) {
           permissions: permissions, // This will be stored as JSON in the database
         },
       });
+
+      revalidateTag("accounts", { expire: 0 });
+
+      return newUser;
     },
     {
       successKey: t(translations.createdSuccess),
@@ -85,7 +90,7 @@ export async function updateAccount(prevState: any, data: FormData) {
         }
       }
 
-      return await database.user.update({
+      const updatedUser = await database.user.update({
         where: { id: id },
         data: {
           userName,
@@ -94,6 +99,11 @@ export async function updateAccount(prevState: any, data: FormData) {
           permissions, // Update permissions
         },
       });
+
+      revalidateTag("accounts", { expire: 0 });
+      revalidateTag(`account-${id}`, { expire: 0 });
+
+      return updatedUser;
     },
     {
       successKey: t(translations.updatedSuccess),
@@ -115,6 +125,10 @@ export async function activeAccount(id: string, status: BooleanState) {
         },
         data: { isActive: status },
       });
+
+      revalidateTag("accounts", { expire: 0 });
+      revalidateTag(`account-${id}`, { expire: 0 });
+
       return update;
     },
     {

@@ -11,6 +11,7 @@ import { translations } from "@/lib/translation";
 import { getPaginationParams, paginatedResponse } from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
 import { NextRequest } from "next/server";
+import { revalidateTag } from "next/cache";
 
 export async function GET(request: NextRequest) {
   const locale = getRequestLocale(request);
@@ -113,6 +114,9 @@ export async function POST(request: NextRequest) {
       },
       select: { id: true },
     });
+
+    revalidateTag("products", { expire: 0 });
+
     return {
       ...newProduct,
       message: t(translations.createdSuccess),

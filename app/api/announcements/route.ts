@@ -1,5 +1,3 @@
-// app/warehouses/route.ts
-
 import { BooleanState, ImageType, Permission } from "@/generated/prisma/enums";
 import { ApiError } from "@/lib/api-error";
 import { getAnnouncements } from "@/lib/getData";
@@ -16,6 +14,7 @@ import {
 } from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 
 export async function GET(request: NextRequest) {
   const locale = getRequestLocale(request);
@@ -88,6 +87,8 @@ export async function POST(request: NextRequest) {
       },
       select: { id: true },
     });
+
+    revalidateTag("announcements", { expire: 0 });
 
     return {
       ...newProduct,

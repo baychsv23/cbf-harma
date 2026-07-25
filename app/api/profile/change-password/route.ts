@@ -9,6 +9,7 @@ import { ApiError } from "@/lib/api-error";
 import { translations } from "@/lib/translation";
 import { getRequestLocale } from "@/lib/getRequestLocale";
 import { getTranslations } from "next-intl/server";
+import { revalidateTag } from "next/cache";
 
 export async function POST(request: NextRequest) {
     const locale = getRequestLocale(request);
@@ -47,6 +48,9 @@ export async function POST(request: NextRequest) {
             data: { password: hashedPassword },
             select: { id: true }
         });
+
+        revalidateTag("accounts", { expire: 0 });
+        revalidateTag(`account-${session.user.id}`, { expire: 0 });
 
         return { message: t(translations.updatedSuccess), data: updated }
 

@@ -11,6 +11,7 @@ import { translations } from "@/lib/translation";
 import { getPaginationParams, paginatedResponse } from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
 import { NextRequest } from "next/server";
+import { revalidateTag } from "next/cache";
 
 export async function GET(request: NextRequest) {
   const locale = getRequestLocale(request);
@@ -140,6 +141,8 @@ export async function POST(request: NextRequest) {
       },
       select: { id: true },
     });
+
+    revalidateTag("articles", { expire: 0 });
 
     // 4. ส่งค่ากลับพร้อม Message
     return {

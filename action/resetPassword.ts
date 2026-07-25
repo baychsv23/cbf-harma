@@ -7,6 +7,7 @@ import { database } from "@/lib/prisma";
 import { translations } from "@/lib/translation";
 import { Permission, Role } from "@/generated/prisma/enums";
 import { getTranslations } from "next-intl/server";
+import { revalidateTag } from "next/cache";
 
 export async function resetPassword(id: string, newPassword: string) {
   const t = await getTranslations();
@@ -18,10 +19,15 @@ export async function resetPassword(id: string, newPassword: string) {
       if (!isAdmin) throw new Error(translations.forbidden);
       const hashed = await bcrypt.hash(newPassword, 10);
 
-      return await database.user.update({
+      const update = await database.user.update({
         where: { id: id },
         data: { password: hashed },
       });
+
+      revalidateTag("accounts", { expire: 0 });
+      revalidateTag(`account-${id}`, { expire: 0 });
+
+      return update;
     },
     {
       successKey: t(translations.updatedSuccess),

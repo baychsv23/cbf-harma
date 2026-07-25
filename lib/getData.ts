@@ -1,6 +1,6 @@
 import { Announcement, Article, Product, Symptom, User } from "@/generated/prisma/client";
 import { database } from "@/lib/prisma";
-
+import { unstable_cache } from "next/cache";
 
 interface GetDataParams<T = any> {
     where?: T;
@@ -39,16 +39,50 @@ async function getData<T>(
 
     return { data, total };
 }
-export const getProducts = (params: GetDataParams) =>
-    getData<Product>(database.product, params);
-export const getArticles = (params: GetDataParams) =>
-    getData<Article>(database.article, params);
-export const getSymptoms = (params: GetDataParams) =>
-    getData<Symptom>(database.symptom, params);
 
-export const getAnnouncements = (params: GetDataParams) =>
-    getData<Announcement>(database.announcement, params);
-export const getAccounts = (params: GetDataParams) =>
-    getData<User>(database.user, params);
+export const getProducts = (params: GetDataParams) => {
+    const serialized = JSON.stringify(params || {});
+    return unstable_cache(
+        async () => getData<Product>(database.product, params),
+        ["products-list", serialized],
+        { tags: ["products"] }
+    )();
+};
+
+export const getArticles = (params: GetDataParams) => {
+    const serialized = JSON.stringify(params || {});
+    return unstable_cache(
+        async () => getData<Article>(database.article, params),
+        ["articles-list", serialized],
+        { tags: ["articles"] }
+    )();
+};
+
+export const getSymptoms = (params: GetDataParams) => {
+    const serialized = JSON.stringify(params || {});
+    return unstable_cache(
+        async () => getData<Symptom>(database.symptom, params),
+        ["symptoms-list", serialized],
+        { tags: ["symptoms"] }
+    )();
+};
+
+export const getAnnouncements = (params: GetDataParams) => {
+    const serialized = JSON.stringify(params || {});
+    return unstable_cache(
+        async () => getData<Announcement>(database.announcement, params),
+        ["announcements-list", serialized],
+        { tags: ["announcements"] }
+    )();
+};
+
+export const getAccounts = (params: GetDataParams) => {
+    const serialized = JSON.stringify(params || {});
+    return unstable_cache(
+        async () => getData<User>(database.user, params),
+        ["accounts-list", serialized],
+        { tags: ["accounts"] }
+    )();
+};
 
 

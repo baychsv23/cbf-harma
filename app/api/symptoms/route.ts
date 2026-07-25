@@ -1,5 +1,3 @@
-// app/warehouses/route.ts
-
 import { BooleanState, Permission } from "@/generated/prisma/enums";
 import { ApiError } from "@/lib/api-error";
 import { getSymptoms } from "@/lib/getData";
@@ -16,6 +14,7 @@ import {
 } from "@/lib/utils/pagination";
 import { getTranslations } from "next-intl/server";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 
 export async function GET(request: NextRequest) {
   const locale = getRequestLocale(request);
@@ -71,6 +70,9 @@ export async function POST(request: NextRequest) {
       },
       select: { id: true },
     });
+
+    revalidateTag("symptoms", { expire: 0 });
+    revalidateTag("products", { expire: 0 });
 
     // To include the 'message' for your Axios interceptor,
     // we return an object that the helper will spread into NextResponse

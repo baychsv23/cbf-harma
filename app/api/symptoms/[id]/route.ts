@@ -7,6 +7,7 @@ import { requirePermission } from "@/lib/requirePermission";
 import { translations } from "@/lib/translation";
 import { getTranslations } from "next-intl/server";
 import { NextRequest } from "next/server";
+import { revalidateTag } from "next/cache";
 
 export async function PUT(
   request: NextRequest,
@@ -31,6 +32,10 @@ export async function PUT(
       select: { id: true },
     });
 
+    revalidateTag("symptoms", { expire: 0 });
+    revalidateTag(`symptom-${id}`, { expire: 0 });
+    revalidateTag("products", { expire: 0 });
+
     return { data: updated, message: t(translations.updatedSuccess) };
   }, t);
 }
@@ -47,6 +52,11 @@ export async function DELETE(
     const session = await requirePermission(Permission.SYMPTOM_DELETE);
     if (!session) throw new ApiError(translations.forbidden, 403)
     await database.symptom.delete({ where: { id: id } });
+
+    revalidateTag("symptoms", { expire: 0 });
+    revalidateTag(`symptom-${id}`, { expire: 0 });
+    revalidateTag("products", { expire: 0 });
+
     return { message: t(translations.deletedSuccess) };
   }, t);
 }

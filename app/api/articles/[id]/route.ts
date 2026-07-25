@@ -10,6 +10,7 @@ import { deleteFromCloudinary } from "@/lib/cloudinary";
 import { getArticleById } from "@/lib/getDataById";
 import { getRequestLocale } from "@/lib/getRequestLocale";
 import { getTranslations } from "next-intl/server";
+import { revalidateTag } from "next/cache";
 
 export async function PUT(
     request: NextRequest,
@@ -36,7 +37,7 @@ export async function PUT(
         }
 
         // ตรวจสอบว่ามีบทความนี้อยู่จริงไหม
-        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true, contentImage: true, contentImagePublicId: true } })
+        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true, contentImage: true, contentImagePublicId: true, slug: true } })
 
         if (!existingArticle) {
             throw new ApiError(translations.notFound, 404);
@@ -101,6 +102,16 @@ export async function PUT(
                 },
             },
         });
+
+        revalidateTag("articles", { expire: 0 });
+        revalidateTag(`article-${id}`, { expire: 0 });
+        if (existingArticle.slug) {
+            revalidateTag(`article-slug-${existingArticle.slug}`, { expire: 0 });
+        }
+        if (updatedArticle.slug) {
+            revalidateTag(`article-slug-${updatedArticle.slug}`, { expire: 0 });
+        }
+
         return {
             message: t(translations.updatedSuccess), // "Update successfully"
             data: updatedArticle,
@@ -120,7 +131,7 @@ export async function DELETE(
         const { id } = await params;
         const session = await requirePermission(Permission.ARTICLE_DELETE);
         if (!session) throw new ApiError(translations.forbidden, 403)
-        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true, contentImage: true, contentImagePublicId: true } })
+        const existingArticle = await getArticleById(id, { select: { publishedAt: true, coverImage: true, coverImagePublicId: true, contentImage: true, contentImagePublicId: true, slug: true } })
 
         if (!existingArticle) {
             throw new ApiError(translations.notFound, 404);
@@ -139,10 +150,16 @@ export async function DELETE(
         }
 
         const deleteArticle = await database.article.delete({ where: { id: id } })
+
+        revalidateTag("articles", { expire: 0 });
+        revalidateTag(`article-${id}`, { expire: 0 });
+        if (existingArticle.slug) {
+            revalidateTag(`article-slug-${existingArticle.slug}`, { expire: 0 });
+        }
+
         return {
             message: t(translations.deletedSuccess), // "Update successfully"
             data: deleteArticle,
         }
     }, t)
-
 }

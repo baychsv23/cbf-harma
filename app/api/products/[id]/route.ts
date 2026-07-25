@@ -10,6 +10,7 @@ import { deleteFromCloudinary } from "@/lib/cloudinary";
 import { getProductById } from "@/lib/getDataById";
 import { getRequestLocale } from "@/lib/getRequestLocale";
 import { getTranslations } from "next-intl/server";
+import { revalidateTag } from "next/cache";
 
 export async function PUT(
   request: NextRequest,
@@ -33,11 +34,19 @@ export async function PUT(
       const updatedStatus = await database.product.update({
         where: { id: id },
         data: { isActive: body.isActive },
+        select: { id: true, slug: true, isActive: true },
       });
+      
+      revalidateTag("products", { expire: 0 });
+      revalidateTag(`product-${id}`, { expire: 0 });
+      if (updatedStatus.slug) {
+        revalidateTag(`product-slug-${updatedStatus.slug}`, { expire: 0 });
+      }
+
       return { ...updatedStatus, message: t(translations.updatedSuccess) };
     }
     const existingProduct = await getProductById(id, {
-      select: { productImage: true, productImagePublicId: true },
+      select: { productImage: true, productImagePublicId: true, slug: true },
     });
 
     if (!existingProduct) {
@@ -80,8 +89,17 @@ export async function PUT(
           connect: symptomIds.map((id: string) => ({ id })),
         },
       },
-      select: { id: true },
+      select: { id: true, slug: true },
     });
+
+    revalidateTag("products", { expire: 0 });
+    revalidateTag(`product-${id}`, { expire: 0 });
+    if (existingProduct.slug) {
+      revalidateTag(`product-slug-${existingProduct.slug}`, { expire: 0 });
+    }
+    if (updated.slug) {
+      revalidateTag(`product-slug-${updated.slug}`, { expire: 0 });
+    }
 
     return { data: updated, message: t(translations.updatedSuccess) };
   }, t);

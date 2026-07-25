@@ -10,6 +10,7 @@ import { logger } from "@/lib/logger";
 import { getAnnouncementById } from "@/lib/getDataById";
 import { getRequestLocale } from "@/lib/getRequestLocale";
 import { getTranslations } from "next-intl/server";
+import { revalidateTag } from "next/cache";
 
 // Helper to get ID from params
 
@@ -45,6 +46,9 @@ export async function PUT(request: NextRequest,
             data: { image, imagePublicId, isPublic },
         });
 
+        revalidateTag("announcements", { expire: 0 });
+        revalidateTag(`announcement-${id}`, { expire: 0 });
+
         return {
             ...updated,
             message: t(translations.updatedSuccess),
@@ -79,9 +83,12 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
             where: { id },
         });
 
+        revalidateTag("announcements", { expire: 0 });
+        revalidateTag(`announcement-${id}`, { expire: 0 });
+
         return {
             id,
             message: t(translations.deletedSuccess),
         };
     }, t);
-}
+}

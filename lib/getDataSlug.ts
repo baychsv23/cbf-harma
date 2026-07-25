@@ -1,5 +1,6 @@
 import { Article, Product } from "@/generated/prisma/client";
 import { database } from "./prisma";
+import { unstable_cache } from "next/cache";
 
 interface GetDataBySlugParams<T = any> {
     where?: T;
@@ -29,7 +30,20 @@ async function getDataBySlug<T>(
 }
 
 
-export const getArticleBySlug = (slug: string, params: GetDataBySlugParams) =>
-    getDataBySlug<Article>(database.article, slug, params);
-export const getProductBySlug = (slug: string, params: GetDataBySlugParams) =>
-    getDataBySlug<Product>(database.product, slug, params);
+export const getArticleBySlug = (slug: string, params: GetDataBySlugParams) => {
+    const serialized = JSON.stringify(params || {});
+    return unstable_cache(
+        async () => getDataBySlug<Article>(database.article, slug, params),
+        [`article-by-slug-${slug}`, serialized],
+        { tags: ["articles", `article-slug-${slug}`] }
+    )();
+};
+
+export const getProductBySlug = (slug: string, params: GetDataBySlugParams) => {
+    const serialized = JSON.stringify(params || {});
+    return unstable_cache(
+        async () => getDataBySlug<Product>(database.product, slug, params),
+        [`product-by-slug-${slug}`, serialized],
+        { tags: ["products", `product-slug-${slug}`] }
+    )();
+};
