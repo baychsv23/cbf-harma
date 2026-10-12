@@ -1,0 +1,19 @@
+# robots.txt for CBF Pharma
+# Block aggressive scrapers and SEO crawl bots from draining server resources
+User-agent: Bytespider
+User-agent: SemrushBot
+User-agent: AhrefsBot
+User-agent: DotBot
+User-agent: PetalBot
+User-agent: ClaudeBot
+User-agent: GPTBot
+Disallow: /
+
+# General bots: allow public content, protect API & private dashboards
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /auth/
+Disallow: /unauthorized/
+Disallow: /forbidden/

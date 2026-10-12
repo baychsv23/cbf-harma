@@ -61,6 +61,7 @@ const SECTIONS = [
 const PER_SECTION = 5;
 
 // Cache the page for 1 hour to save Vercel CPU
+export const revalidate = 3600;
 
 export default async function Home() {
   const t = await getTranslations();
