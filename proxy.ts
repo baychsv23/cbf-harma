@@ -45,22 +45,27 @@ interface RouteConfig {
 }
 
 const ROUTES: Record<string, RouteConfig> = {
-  // Auth only
-  "/profile": { authOnly: true },
-  "/back-office": { authOnly: true },
   // Role-only
-  "/admin": { roles: [Role.ADMIN] },
+  "/back-office/admin": { roles: [Role.ADMIN] },
+  "/back-office/accounts": { roles: [Role.ADMIN] },
 
   // Permission-based
-  "/accounts": { roles: [Role.ADMIN] },
-  "/products": { permissions: [Permission.PRODUCT_VIEW] },
-  "/articles": { permissions: [Permission.ARTICLE_VIEW] },
-  "/symptoms": { permissions: [Permission.SYMPTOM_VIEW] },
-  "/announcements": { permissions: [Permission.ANNOUNCEMENT_VIEW] },
+  "/back-office/products": { permissions: [Permission.PRODUCT_VIEW] },
+  "/back-office/articles": { permissions: [Permission.ARTICLE_VIEW] },
+  "/back-office/symptoms": { permissions: [Permission.SYMPTOM_VIEW] },
+  "/back-office/announcements": { permissions: [Permission.ANNOUNCEMENT_VIEW] },
+
+  // Auth only
+  "/back-office/profile": { authOnly: true },
+  "/back-office": { authOnly: true },
 };
 
 function getMatchingRoute(path: string): { route: string; config: RouteConfig } | null {
-  for (const [route, config] of Object.entries(ROUTES)) {
+  // Sort by path length descending so specific subroutes match before base /back-office
+  const sortedEntries = Object.entries(ROUTES).sort(
+    ([a], [b]) => b.length - a.length,
+  );
+  for (const [route, config] of sortedEntries) {
     if (path === route || path.startsWith(route + "/")) {
       return { route, config };
     }

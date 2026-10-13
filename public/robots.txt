@@ -12,8 +12,7 @@ Disallow: /
 # General bots: allow public content, protect API & private dashboards
 User-agent: *
 Disallow: /api/
-Disallow: /admin/
-Disallow: /accounts/
+Disallow: /back-office/
 Disallow: /auth/
 Disallow: /unauthorized/
 Disallow: /forbidden/

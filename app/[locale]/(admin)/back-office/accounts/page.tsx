@@ -153,7 +153,7 @@ export default function AccountsPage() {
         </h1>
 
         <Link
-          href={"/accounts/create"}
+          href={"/back-office/accounts/create"}
           className="flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
         >
           <Plus size={20} strokeWidth={2.5} />
@@ -282,7 +282,7 @@ export default function AccountsPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <Link
-                          href={`/accounts/${user.id}/edit`}
+                          href={`/back-office/accounts/${user.id}/edit`}
                           className="p-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 transition shadow-sm"
                           title={t(translations.edit)}
                         >

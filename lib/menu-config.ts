@@ -131,35 +131,35 @@ export const ROLE_MENUS = {
       children: [
         {
           title: translations.articleDashboard,
-          href: "/admin/article-dashboard",
+          href: "/back-office/admin/article-dashboard",
         },
         {
           title: translations.productDashboard,
-          href: "/admin/product-dashboard",
+          href: "/back-office/admin/product-dashboard",
         },
       ],
     },
-    { title: translations.account, href: "/accounts" },
-    { title: translations.product, href: "/products" },
-    { title: translations.symptom, href: "/symptoms" },
-    { title: translations.article, href: "/articles" },
-    { title: translations.announcement, href: "/announcements" },
+    { title: translations.account, href: "/back-office/accounts" },
+    { title: translations.product, href: "/back-office/products" },
+    { title: translations.symptom, href: "/back-office/symptoms" },
+    { title: translations.article, href: "/back-office/articles" },
+    { title: translations.announcement, href: "/back-office/announcements" },
   ],
 };
 
 // Permission-based menu configurations
 export const PERMISSION_MENUS: Record<string, MenuItem[]> = {
   [Permission.ARTICLE_VIEW]: [
-    { title: translations.article, href: "/articles" },
+    { title: translations.article, href: "/back-office/articles" },
   ],
   [Permission.SYMPTOM_VIEW]: [
-    { title: translations.symptom, href: "/symptoms" },
+    { title: translations.symptom, href: "/back-office/symptoms" },
   ],
   [Permission.PRODUCT_VIEW]: [
-    { title: translations.product, href: "/products" },
+    { title: translations.product, href: "/back-office/products" },
   ],
   [Permission.ANNOUNCEMENT_VIEW]: [
-    { title: translations.announcement, href: "/announcements" },
+    { title: translations.announcement, href: "/back-office/announcements" },
   ],
 };
 
