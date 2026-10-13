@@ -2,6 +2,10 @@ import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Noto_Sans_Lao } from "next/font/google";
+import { Metadata } from "next";
+import NextTopLoader from "nextjs-toploader";
+import "flag-icons/css/flag-icons.min.css";
+import "./globals.css";
 
 import SessionProvider from "@/components/provider/SessionProvider";
 import { getMessages } from "next-intl/server";
@@ -23,11 +27,20 @@ function getFontClass(locale: string) {
   }
 }
 
+export const metadata: Metadata = {
+  title: "CBF",
+  icons: {
+    icon: "/images/logo.png",
+    shortcut: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
+};
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export default async function LocaleLayout({
+export default async function RootLayout({
   children,
   params,
 }: {
@@ -43,13 +56,26 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <div className={getFontClass(locale)}>
-      <SessionProvider>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <ApiAlertHandler />
-          {children}
-        </NextIntlClientProvider>
-      </SessionProvider>
-    </div>
+    <html lang={locale}>
+      <body suppressHydrationWarning className={getFontClass(locale)}>
+        <NextTopLoader
+          color="linear-gradient(to top, #059669, #10b981, #34d399)"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 16px rgba(16, 185, 129, 0.9)"
+        />
+        <SessionProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <ApiAlertHandler />
+            {children}
+          </NextIntlClientProvider>
+        </SessionProvider>
+      </body>
+    </html>
   );
 }

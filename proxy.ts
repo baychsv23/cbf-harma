@@ -47,6 +47,7 @@ interface RouteConfig {
 const ROUTES: Record<string, RouteConfig> = {
   // Auth only
   "/profile": { authOnly: true },
+  "/back-office": { authOnly: true },
   // Role-only
   "/admin": { roles: [Role.ADMIN] },
 
@@ -57,6 +58,15 @@ const ROUTES: Record<string, RouteConfig> = {
   "/symptoms": { permissions: [Permission.SYMPTOM_VIEW] },
   "/announcements": { permissions: [Permission.ANNOUNCEMENT_VIEW] },
 };
+
+function getMatchingRoute(path: string): { route: string; config: RouteConfig } | null {
+  for (const [route, config] of Object.entries(ROUTES)) {
+    if (path === route || path.startsWith(route + "/")) {
+      return { route, config };
+    }
+  }
+  return null;
+}
 
 // --------------------------------------------------
 // Middleware / Proxy logic
@@ -92,38 +102,37 @@ export async function proxy(request: NextRequest) {
     return intlMiddleware(request);
   }
 
-  // 3️⃣ Authentication required for all other routes
-  if (!token) {
-    return NextResponse.redirect(
-      new URL(`/${locale}/unauthorized`, request.url),
-    );
-  }
+  // 3️⃣ Check if this route is a protected route (Admin / Back-office)
+  const matchedRoute = getMatchingRoute(pathWithoutLocale);
+  if (matchedRoute) {
+    const { config } = matchedRoute;
 
-  // 4️⃣ Unified route check
-  for (const [route, config] of Object.entries(ROUTES)) {
-    if (pathWithoutLocale.startsWith(route)) {
-      // Role-based restriction
-      if (config.roles && !config.roles.includes(token.role as Role)) {
-        return NextResponse.redirect(
-          new URL(`/${locale}/forbidden`, request.url),
-        );
-      }
-
-      // Permission check
-      if (config.permissions && !hasPermission(token, config.permissions)) {
-        return NextResponse.redirect(
-          new URL(`/${locale}/forbidden`, request.url),
-        );
-      }
-
-      // Auth-only routes (just needs login)
-      if (config.authOnly) {
-        return intlMiddleware(request);
-      }
+    // Authentication required
+    if (!token) {
+      return NextResponse.redirect(
+        new URL(`/${locale}/unauthorized`, request.url),
+      );
     }
+
+    // Role-based restriction
+    if (config.roles && !config.roles.includes(token.role as Role)) {
+      return NextResponse.redirect(
+        new URL(`/${locale}/forbidden`, request.url),
+      );
+    }
+
+    // Permission check
+    if (config.permissions && !hasPermission(token, config.permissions)) {
+      return NextResponse.redirect(
+        new URL(`/${locale}/forbidden`, request.url),
+      );
+    }
+
+    // Auth-only or authorized
+    return intlMiddleware(request);
   }
 
-  // 5️⃣ Default allow
+  // 4️⃣ Unmatched / unknown routes - pass through so Next.js handles 404 (not-found)
   return intlMiddleware(request);
 }
 
