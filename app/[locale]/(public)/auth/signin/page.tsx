@@ -6,10 +6,11 @@ import { signIn } from "next-auth/react";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useTranslations } from "next-intl";
 import { translations } from "@/lib/translation";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 
 export default function PremiumLoginForm() {
   const t = useTranslations();
+  const router = useRouter();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +29,8 @@ export default function PremiumLoginForm() {
     closeProcessing();
     if (result?.ok) {
       showSuccess(t(translations.loginSuccessful));
-      window.location.href = "/back-office";
+      router.push("/back-office");
+      router.refresh();
     } else {
       showError(t(result?.error as string));
     }
