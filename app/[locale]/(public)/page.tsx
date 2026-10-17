@@ -1,7 +1,7 @@
-import BannerSection from "@/components/UI/BannerSection";
-import ContentSlider from "@/components/UI/ContentSlider";
-import ArticleCard from "@/components/UI/Card/ArticleCard";
-import ProductCard from "@/components/UI/Card/ProductCard";
+import BannerSection from "@/components/ui-web/BannerSection";
+import ContentSlider from "@/components/ui-web/ContentSlider";
+import ArticleCard from "@/components/ui-web/ArticleCard";
+import ProductCard from "@/components/ui-web/ProductCard";
 import { ArticleCBF, ProductCBF } from "@/lib/interface";
 import { getArticles, getProducts } from "@/lib/getData";
 import {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import CloudinaryImage from "@/components/UI/CloudinaryImage";
+import CloudinaryImage from "@/components/ui-web/CloudinaryImage";
 import { Link } from "@/i18n/routing";
 import { isEnglish } from "@/lib/utils/locale";
 import { AlertCircle, Package, Pill } from "lucide-react"; // Optional: Icons for better UI

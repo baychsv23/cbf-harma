@@ -1,5 +1,5 @@
-import DashboardCharts from "@/components/Dashboard/DashboardCharts";
-import DashboardFilter from "@/components/Dashboard/DashboardFilter";
+import DashboardCharts from "@/components/admin-dashboard/DashboardCharts";
+import DashboardFilter from "@/components/admin-dashboard/DashboardFilter";
 import { ArticleStatus } from "@/generated/prisma/enums";
 import { database } from "@/lib/prisma"; // หรือ path ที่คุณใช้งาน
 import { FileText, CheckCircle, Clock, TrendingUp } from "lucide-react";

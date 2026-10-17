@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/routing";
-import CloudinaryImage from "@/components/UI/CloudinaryImage";
+import CloudinaryImage from "@/components/ui-web/CloudinaryImage";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
@@ -19,7 +19,7 @@ import { BooleanState, CategorySub } from "@/generated/prisma/enums";
 import { selectDataOfProduct } from "@/lib/selectData";
 import { translations } from "@/lib/translation";
 import ProductViewCounter from "@/components/ProductViewCounter";
-import BackButton from "@/components/UI/BackButton";
+import BackButton from "@/components/ui-web/BackButton";
 
 // 1. Generate Metadata
 export async function generateMetadata({

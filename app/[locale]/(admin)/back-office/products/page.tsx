@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Edit, Settings2, Pill, Stethoscope, Calendar } from "lucide-react";
 import { formatDate } from "@/lib/formateData";
-import Pagination from "@/components/UI/Pagination";
+import Pagination from "@/components/ui-web/Pagination";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useAuth } from "@/app/hooks/useAuth";
 import { usePagination } from "@/app/hooks/usePagination";
@@ -15,9 +15,9 @@ import {
   Permission,
 } from "@/generated/prisma/enums";
 
-import ProductFormModal from "@/components/Form/ProductFormModal";
+import ProductFormModal from "@/components/forms/ProductFormModal";
 import { isEnglish } from "@/lib/utils/locale";
-import { FilterActions } from "@/components/UI/FilterActions";
+import { FilterActions } from "@/components/ui-web/FilterActions";
 import { api } from "@/lib/axios";
 
 export default function ProductPage() {

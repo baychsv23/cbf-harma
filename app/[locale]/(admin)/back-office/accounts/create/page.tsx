@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { initialState, modules } from "@/lib/constant";
 import { useTranslations } from "next-intl";
+import { Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
 
 import { useAlert } from "@/app/hooks/useAlert";
 import { useRouter } from "@/i18n/routing";
@@ -13,14 +14,25 @@ import { createAccount } from "@/action/accounts";
 export default function CreateAccountPage() {
   const t = useTranslations();
   const [state, formAction] = useActionState(createAccount, initialState);
-  const { showSuccess, showError, showProcessing } = useAlert();
+  const { showSuccess, showError, showProcessing, closeProcessing } = useAlert();
   const [selectedPermissions, setSelectedPermissions] = useState<Permission[]>(
     [],
   );
+  const [formData, setFormData] = useState({
+    userName: "",
+    fullName: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     if (state?.message) {
+      closeProcessing();
       if (state.success) {
         showSuccess(state.message);
         setTimeout(() => {
@@ -31,6 +43,60 @@ export default function CreateAccountPage() {
       }
     }
   }, [state, router]);
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Username validation
+    const trimmedUser = formData.userName.trim().toLowerCase();
+    if (!trimmedUser) {
+      newErrors.userName = t(translations.FiledRequired, {
+        name: t(translations.userName),
+      });
+    } else if (trimmedUser.length < 3) {
+      newErrors.userName = `${t(translations.userName)} (min 3 chars)`;
+    } else if (!/^[a-zA-Z0-9._-]+$/.test(trimmedUser)) {
+      newErrors.userName = `${t(translations.userName)} cannot contain spaces or special characters`;
+    }
+
+    // Full name validation
+    const trimmedFull = formData.fullName.trim();
+    if (!trimmedFull) {
+      newErrors.fullName = t(translations.FiledRequired, {
+        name: t(translations.fullName),
+      });
+    } else if (trimmedFull.length < 2) {
+      newErrors.fullName = `${t(translations.fullName)} (min 2 chars)`;
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = t(translations.FiledRequired, {
+        name: t(translations.password),
+      });
+    } else if (formData.password.length < 6) {
+      newErrors.password = t(translations.passwordLength);
+    }
+
+    // Confirm Password validation
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = t(translations.FiledRequired, {
+        name: t(translations.confirmNewPassword),
+      });
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = t(translations.passwordMisMatch);
+    }
+
+    // Role validation
+    if (!formData.role) {
+      newErrors.role = t(translations.FiledRequired, {
+        name: t(translations.role),
+      });
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const togglePermission = (permission: Permission) => {
     setSelectedPermissions((prev) =>
@@ -43,8 +109,6 @@ export default function CreateAccountPage() {
   const isPermissionSelected = (permission: Permission) => {
     return selectedPermissions.includes(permission);
   };
-
-  // Define modules with their CRUD permissions
 
   const selectAllForModule = (moduleName: string, permissions: string[]) => {
     const allSelected = permissions.every((p) =>
@@ -89,11 +153,22 @@ export default function CreateAccountPage() {
 
         <form
           className="space-y-8"
-          action={(formData) => {
+          onSubmit={(e) => {
+            if (!validate()) {
+              e.preventDefault();
+            }
+          }}
+          action={(submitData) => {
+            if (!validate()) return;
             showProcessing();
-            formData.set("permissions", JSON.stringify(selectedPermissions));
+            submitData.set("userName", formData.userName.trim().toLowerCase());
+            submitData.set("fullName", formData.fullName.trim());
+            submitData.set("password", formData.password);
+            submitData.set("confirmPassword", formData.confirmPassword);
+            submitData.set("role", formData.role);
+            submitData.set("permissions", JSON.stringify(selectedPermissions));
 
-            return formAction(formData);
+            return formAction(submitData);
           }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -106,6 +181,7 @@ export default function CreateAccountPage() {
                   Account Identity
                 </h3>
                 <div className="space-y-4">
+                  {/* Username */}
                   <div>
                     <label className="text-xs font-bold text-gray-500 uppercase ml-1">
                       {t(translations.userName)} *
@@ -113,11 +189,33 @@ export default function CreateAccountPage() {
                     <input
                       type="text"
                       name="userName"
-                      required
-                      className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
-                      placeholder="Username"
+                      value={formData.userName}
+                      onChange={(e) => {
+                        const val = e.target.value.toLowerCase().replace(/\s/g, "");
+                        setFormData((prev) => ({ ...prev, userName: val }));
+                        if (errors.userName) {
+                          setErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.userName;
+                            return next;
+                          });
+                        }
+                      }}
+                      className={`w-full mt-1.5 p-3 bg-gray-50 border rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all ${
+                        errors.userName
+                          ? "border-red-500 bg-red-50/20 focus:border-red-500"
+                          : "border-gray-200 focus:border-indigo-500"
+                      }`}
+                      placeholder="e.g. john.doe"
                     />
+                    {errors.userName && (
+                      <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1 font-medium">
+                        <AlertCircle size={13} /> {errors.userName}
+                      </p>
+                    )}
                   </div>
+
+                  {/* Full Name */}
                   <div>
                     <label className="text-xs font-bold text-gray-500 uppercase ml-1">
                       {t(translations.fullName)} *
@@ -125,22 +223,137 @@ export default function CreateAccountPage() {
                     <input
                       type="text"
                       name="fullName"
-                      required
-                      className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
+                      value={formData.fullName}
+                      onChange={(e) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          fullName: e.target.value,
+                        }));
+                        if (errors.fullName) {
+                          setErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.fullName;
+                            return next;
+                          });
+                        }
+                      }}
+                      className={`w-full mt-1.5 p-3 bg-gray-50 border rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all ${
+                        errors.fullName
+                          ? "border-red-500 bg-red-50/20 focus:border-red-500"
+                          : "border-gray-200 focus:border-indigo-500"
+                      }`}
                       placeholder="Full Name"
                     />
+                    {errors.fullName && (
+                      <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1 font-medium">
+                        <AlertCircle size={13} /> {errors.fullName}
+                      </p>
+                    )}
                   </div>
+
+                  {/* Password */}
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">
-                      {t(translations.password)} *
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      required
-                      className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
-                      placeholder="••••••••"
-                    />
+                    <div className="flex justify-between items-center ml-1">
+                      <label className="text-xs font-bold text-gray-500 uppercase">
+                        {t(translations.password)} *
+                      </label>
+                      <span className="text-[10px] text-gray-400">Min 6 chars</span>
+                    </div>
+                    <div className="relative mt-1.5">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={(e) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            password: e.target.value,
+                          }));
+                          if (errors.password) {
+                            setErrors((prev) => {
+                              const next = { ...prev };
+                              delete next.password;
+                              return next;
+                            });
+                          }
+                        }}
+                        className={`w-full p-3 pr-10 bg-gray-50 border rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all ${
+                          errors.password
+                            ? "border-red-500 bg-red-50/20 focus:border-red-500"
+                            : "border-gray-200 focus:border-indigo-500"
+                        }`}
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    {errors.password && (
+                      <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1 font-medium">
+                        <AlertCircle size={13} /> {errors.password}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div>
+                    <div className="flex justify-between items-center ml-1">
+                      <label className="text-xs font-bold text-gray-500 uppercase">
+                        {t(translations.confirmNewPassword)} *
+                      </label>
+                      {formData.confirmPassword &&
+                        formData.password === formData.confirmPassword && (
+                          <span className="text-[11px] text-emerald-600 flex items-center gap-1 font-semibold">
+                            <CheckCircle2 size={12} /> Matched
+                          </span>
+                        )}
+                    </div>
+                    <div className="relative mt-1.5">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={(e) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            confirmPassword: e.target.value,
+                          }));
+                          if (errors.confirmPassword) {
+                            setErrors((prev) => {
+                              const next = { ...prev };
+                              delete next.confirmPassword;
+                              return next;
+                            });
+                          }
+                        }}
+                        className={`w-full p-3 pr-10 bg-gray-50 border rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all ${
+                          errors.confirmPassword
+                            ? "border-red-500 bg-red-50/20 focus:border-red-500"
+                            : "border-gray-200 focus:border-indigo-500"
+                        }`}
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+                    </div>
+                    {errors.confirmPassword && (
+                      <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1 font-medium">
+                        <AlertCircle size={13} /> {errors.confirmPassword}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -158,8 +371,25 @@ export default function CreateAccountPage() {
                     </label>
                     <select
                       name="role"
-                      required
-                      className="w-full mt-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none appearance-none cursor-pointer"
+                      value={formData.role}
+                      onChange={(e) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          role: e.target.value,
+                        }));
+                        if (errors.role) {
+                          setErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.role;
+                            return next;
+                          });
+                        }
+                      }}
+                      className={`w-full mt-1.5 p-3 bg-gray-50 border rounded-xl focus:ring-4 focus:ring-indigo-500/10 outline-none appearance-none cursor-pointer ${
+                        errors.role
+                          ? "border-red-500 bg-red-50/20 focus:border-red-500"
+                          : "border-gray-200 focus:border-indigo-500"
+                      }`}
                     >
                       <option value="" disabled>
                         --{" "}
@@ -174,6 +404,11 @@ export default function CreateAccountPage() {
                           </option>
                         ))}
                     </select>
+                    {errors.role && (
+                      <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1 font-medium">
+                        <AlertCircle size={13} /> {errors.role}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

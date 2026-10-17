@@ -8,7 +8,7 @@ import {
   Stethoscope,
   RefreshCcw,
 } from "lucide-react"; // ใช้ Icon ทางการแพทย์
-import Pagination from "@/components/UI/Pagination";
+import Pagination from "@/components/ui-web/Pagination";
 import Swal from "sweetalert2";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useAuth } from "@/app/hooks/useAuth";
@@ -18,7 +18,7 @@ import { translations } from "@/lib/translation";
 import { Permission } from "@/generated/prisma/enums"; // อย่าลืมเพิ่ม Permission.SYMPTOM_MANAGE ใน Enum
 
 import { isEnglish } from "@/lib/utils/locale";
-import { FilterActions } from "@/components/UI/FilterActions";
+import { FilterActions } from "@/components/ui-web/FilterActions";
 import { api } from "@/lib/axios";
 
 interface Symptom {

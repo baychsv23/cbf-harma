@@ -1,6 +1,6 @@
 import { formatDate } from "@/lib/formateData";
 import { Link } from "@/i18n/routing";
-import CloudinaryImage from "@/components/UI/CloudinaryImage";
+import CloudinaryImage from "@/components/ui-web/CloudinaryImage";
 import { notFound } from "next/navigation";
 import {
   Calendar,
@@ -20,7 +20,7 @@ import { selectDataOfArticle } from "@/lib/selectData";
 import { CATEGORY_SLUG_MAP } from "@/lib/constant";
 import ArticleViewCounter from "@/components/ArticleViewCounter";
 import { translations } from "@/lib/translation";
-import BackButton from "@/components/UI/BackButton";
+import BackButton from "@/components/ui-web/BackButton";
 
 // 1. Generate Metadata
 export async function generateMetadata({

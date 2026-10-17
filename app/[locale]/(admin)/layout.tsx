@@ -1,4 +1,4 @@
-import Sidebar from "@/components/UI/Sidebar";
+import Sidebar from "@/components/ui-web/Sidebar";
 import { getAuth } from "@/lib/requirePermission";
 import { redirect } from "@/i18n/routing";
 

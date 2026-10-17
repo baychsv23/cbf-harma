@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Fragment, useRef } from "react";
-import CloudinaryImage from "@/components/UI/CloudinaryImage";
+import CloudinaryImage from "@/components/ui-web/CloudinaryImage";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation, Parallax } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";

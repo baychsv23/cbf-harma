@@ -1,5 +1,5 @@
 // app/[locale]/cbf/articles/[[...type]]/page.tsx
-import ArticleFeed from "@/components/UI/Card/ArticleFeed";
+import ArticleFeed from "@/components/ui-web/ArticleFeed";
 import { ArticleStatus, ArticleType } from "@/generated/prisma/enums";
 import { getArticles } from "@/lib/getData";
 import { ArticleCBF } from "@/lib/interface";

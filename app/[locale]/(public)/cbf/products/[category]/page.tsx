@@ -1,6 +1,6 @@
 // app/[locale]/cbf/articles/[[...type]]/page.tsx
-import ArticleFeed from "@/components/UI/Card/ArticleFeed";
-import ProductFeed from "@/components/UI/Card/ProductFeed";
+import ArticleFeed from "@/components/ui-web/ArticleFeed";
+import ProductFeed from "@/components/ui-web/ProductFeed";
 import {
   ArticleStatus,
   ArticleType,

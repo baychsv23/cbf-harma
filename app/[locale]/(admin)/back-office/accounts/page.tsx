@@ -13,7 +13,7 @@ import {
   UserCog,
   RefreshCcw,
 } from "lucide-react";
-import Pagination from "@/components/UI/Pagination";
+import Pagination from "@/components/ui-web/Pagination";
 import { usePagination } from "@/app/hooks/usePagination";
 import Swal from "sweetalert2";
 import { useAuth } from "@/app/hooks/useAuth";
@@ -24,7 +24,7 @@ import { Link } from "@/i18n/routing";
 import { BooleanState, Permission, Role } from "@/generated/prisma/enums";
 import { activeAccount } from "@/action/accounts";
 import { resetPassword } from "@/action/resetPassword";
-import { FilterActions } from "@/components/UI/FilterActions";
+import { FilterActions } from "@/components/ui-web/FilterActions";
 
 export default function AccountsPage() {
   const t = useTranslations();

@@ -11,18 +11,18 @@ import {
   EyeOff,
   RefreshCcw,
 } from "lucide-react";
-import Pagination from "@/components/UI/Pagination";
+import Pagination from "@/components/ui-web/Pagination";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useAuth } from "@/app/hooks/useAuth";
 import { usePagination } from "@/app/hooks/usePagination";
 import { useTranslations } from "next-intl";
 import { BooleanState, ImageType, Permission } from "@/generated/prisma/enums"; // Adjust import path
 
-import CloudinaryImage from "@/components/UI/CloudinaryImage";
+import CloudinaryImage from "@/components/ui-web/CloudinaryImage";
 import { translations } from "@/lib/translation";
-import AnnouncementFormModal from "@/components/Form/AnnouncementFormModal";
+import AnnouncementFormModal from "@/components/forms/AnnouncementFormModal";
 import { formatDate } from "@/lib/formateData";
-import { FilterActions } from "@/components/UI/FilterActions";
+import { FilterActions } from "@/components/ui-web/FilterActions";
 import { api } from "@/lib/axios";
 
 export default function AnnouncementPage() {

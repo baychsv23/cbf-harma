@@ -3,7 +3,7 @@
 import { formatDate } from "@/lib/formateData";
 import { ArticleCBF } from "@/lib/interface";
 import { useLocale, useTranslations } from "next-intl";
-import CloudinaryImage from "@/components/UI/CloudinaryImage";
+import CloudinaryImage from "@/components/ui-web/CloudinaryImage";
 import { Link } from "@/i18n/routing";
 import { ArticleType } from "@/generated/prisma/enums";
 import { isEnglish } from "@/lib/utils/locale";

@@ -8,11 +8,12 @@ import {
   Pill,
   AlertCircle,
   Search,
+  Globe,
 } from "lucide-react";
 import { BooleanState, Category, CategorySub } from "@/generated/prisma/enums";
 import { translations } from "@/lib/translation";
 import ImageUpload from "./ImageUpload";
-import TiptapEditor from "../Editor/TiptapEditor";
+import TiptapEditor from "../tiptap/TiptapEditor";
 import { isEnglish } from "@/lib/utils/locale";
 
 interface ProductFormProps {
@@ -78,7 +79,7 @@ export default function ProductFormModal({
     nameEN: "",
     nameLA: "",
     genericName: "",
-    sku: "",
+    sku: "CBF-",
     dosage: "",
     packaging: "",
     category: Category.OTHERS,
@@ -94,6 +95,9 @@ export default function ProductFormModal({
     symptomIds: [],
     slug: "",
   });
+  const [activeTab, setActiveTab] = useState<"LA" | "EN">(
+    isEnglish(local) ? "EN" : "LA"
+  );
   const [symptomSearch, setSymptomSearch] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -119,13 +123,14 @@ export default function ProductFormModal({
         slug: initialData.slug || "",
         productImagePublicId: initialData.productImagePublicId || "",
       });
+      setActiveTab(isEnglish(local) ? "EN" : "LA");
     } else {
       // Reset
       setFormData({
         nameEN: "",
         nameLA: "",
         genericName: "",
-        sku: "",
+        sku: "CBF-",
         dosage: "",
         packaging: "",
         category: Category.ANALGESIC_ANTIPYRETIC,
@@ -140,9 +145,10 @@ export default function ProductFormModal({
         slug: "",
         productImagePublicId: "",
       });
+      setActiveTab(isEnglish(local) ? "EN" : "LA");
     }
     setErrors({});
-  }, [initialData, isOpen]);
+  }, [initialData, isOpen, local]);
 
   if (!isOpen) return null;
 
@@ -151,7 +157,14 @@ export default function ProductFormModal({
     const newErrors: Record<string, string> = {};
     if (!formData.nameEN) newErrors.nameEN = "English name is required";
     if (!formData.nameLA) newErrors.nameLA = "Lao name is required";
-    if (!formData.sku) newErrors.sku = "SKU is required";
+
+    // Validate SKU: required, cannot be just "CBF-", disallow '(' and special characters
+    const trimmedSku = formData.sku.trim();
+    if (!trimmedSku || trimmedSku === "CBF-") {
+      newErrors.sku = "SKU is required (e.g. CBF-001)";
+    } else if (/[^A-Za-z0-9-]/.test(trimmedSku)) {
+      newErrors.sku = "SKU cannot contain parentheses '(' or special characters";
+    }
 
     // Validate English Name
     if (/[^A-Za-z0-9\s.,\-()/]/.test(formData.nameEN)) {
@@ -160,6 +173,12 @@ export default function ProductFormModal({
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      // Auto-switch to tab that has an error
+      if (activeTab === "LA" && !newErrors.nameLA && newErrors.nameEN) {
+        setActiveTab("EN");
+      } else if (activeTab === "EN" && !newErrors.nameEN && newErrors.nameLA) {
+        setActiveTab("LA");
+      }
       return;
     }
 
@@ -350,23 +369,40 @@ export default function ProductFormModal({
 
             {/* RIGHT COLUMN (Main Form) */}
             <div className="flex flex-col gap-6">
-              {/* 1. Identification */}
+              {/* 1. Specs & General Details */}
               <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
-                  {t(translations.identification)}
+                <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+                  <span>💊</span>
+                  <span>
+                    {t(translations.identification)} & {t(translations.specsCategory)}
+                  </span>
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* SKU */}
+                  <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">
                       {t(translations.sku)}{" "}
                       <span className="text-red-500">*</span>
                     </label>
                     <input
                       value={formData.sku}
-                      onChange={(e) =>
-                        setFormData({ ...formData, sku: e.target.value })
-                      }
-                      className={`w-full p-2 border rounded-lg text-sm font-mono ${errors.sku ? "border-red-500" : "border-slate-200"}`}
+                      onChange={(e) => {
+                        // Automatically disallow '(' and any character other than A-Z, 0-9, and '-'
+                        const sanitized = e.target.value
+                          .replace(/[^A-Za-z0-9-]/g, "")
+                          .toUpperCase();
+                        setFormData({ ...formData, sku: sanitized });
+                        if (errors.sku) {
+                          setErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.sku;
+                            return next;
+                          });
+                        }
+                      }}
+                      className={`w-full p-2 border rounded-lg text-sm font-mono ${
+                        errors.sku ? "border-red-500 bg-red-50/20" : "border-slate-200"
+                      }`}
                       placeholder="CBF-001"
                     />
                     {errors.sku && (
@@ -375,90 +411,8 @@ export default function ProductFormModal({
                       </p>
                     )}
                   </div>
-                  {/* <div className="col-span-1">
-                    <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.generic)}
-                    </label>
-                    <input
-                      value={formData.genericName}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          genericName: e.target.value,
-                        })
-                      }
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm"
-                      placeholder="Active Ingredient"
-                    />
-                  </div> */}
-                  <div className="col-span-2">
-                    <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.name, { Name: t(translations.product) })}{" "}
-                      (English) <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      value={formData.nameEN}
-                      onChange={(e) =>
-                        setFormData({ ...formData, nameEN: e.target.value })
-                      }
-                      className={`w-full p-2 border rounded-lg text-sm font-bold ${errors.nameEN ? "border-red-500" : "border-slate-200"}`}
-                      placeholder="Product Name"
-                    />
-                    {errors.nameEN && (
-                      <p className="text-[10px] text-red-500 mt-1">
-                        {errors.nameEN}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.name, { name: t(translations.product) })}{" "}
-                      (Lao) <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      value={formData.nameLA}
-                      onChange={(e) =>
-                        setFormData({ ...formData, nameLA: e.target.value })
-                      }
-                      className={`w-full p-2 border rounded-lg text-sm font-bold ${errors.nameLA ? "border-red-500" : "border-slate-200"}`}
-                      placeholder="ຊື່ຢາ"
-                    />
-                  </div>
-                </div>
-              </div>
 
-              {/* 2. Specs & Category */}
-              <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
-                  {t(translations.specsCategory)}
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.dosage)}
-                    </label>
-                    <input
-                      value={formData.dosage}
-                      onChange={(e) =>
-                        setFormData({ ...formData, dosage: e.target.value })
-                      }
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm"
-                      placeholder="e.g. 500mg"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.packaging)}
-                    </label>
-                    <input
-                      value={formData.packaging}
-                      onChange={(e) =>
-                        setFormData({ ...formData, packaging: e.target.value })
-                      }
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm"
-                      placeholder="e.g. 10x10"
-                    />
-                  </div>
+                  {/* Category */}
                   <div>
                     <label className="block text-xs font-bold text-slate-500 mb-1">
                       {t(translations.category)}
@@ -481,8 +435,40 @@ export default function ProductFormModal({
                       ))}
                     </select>
                   </div>
+
+                  {/* Dosage */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 mb-1">
+                      {t(translations.dosage)}
+                    </label>
+                    <input
+                      value={formData.dosage}
+                      onChange={(e) =>
+                        setFormData({ ...formData, dosage: e.target.value })
+                      }
+                      className="w-full p-2 border border-slate-200 rounded-lg text-sm"
+                      placeholder="e.g. 500mg"
+                    />
+                  </div>
+
+                  {/* Packaging */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 mb-1">
+                      {t(translations.packaging)}
+                    </label>
+                    <input
+                      value={formData.packaging}
+                      onChange={(e) =>
+                        setFormData({ ...formData, packaging: e.target.value })
+                      }
+                      className="w-full p-2 border border-slate-200 rounded-lg text-sm"
+                      placeholder="e.g. 10x10"
+                    />
+                  </div>
+
+                  {/* SubCategory if ANTIBIOTICS */}
                   {formData.category === Category.ANTIBIOTICS && (
-                    <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="sm:col-span-2 animate-in fade-in slide-in-from-top-2 duration-300">
                       <label className="block text-xs font-bold text-primary mb-1">
                         {t(Category.ANTIBIOTICS)}
                       </label>
@@ -507,79 +493,180 @@ export default function ProductFormModal({
                 </div>
               </div>
 
-              {/* 3. Clinical Indications */}
-              <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex-1">
-                <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
-                  {t(translations.indication)}
-                </h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.indication)} (English)
-                    </label>
-                    <TiptapEditor
-                      content={formData.indicationEN}
-                      onChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          indicationEN: value,
-                        })
-                      }
-                      placeholder="Description..."
-                    />
+              {/* 2. Content Tabs (Lao vs English) */}
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                {/* Language Tabs Bar */}
+                <div className="flex items-center justify-between px-5 pt-3 border-b border-slate-200 bg-slate-50/70">
+                  <div className="flex items-center gap-2">
+                    {/* Lao Tab */}
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("LA")}
+                      className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+                        activeTab === "LA"
+                          ? "border-primary text-primary bg-white rounded-t-xl shadow-xs"
+                          : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 rounded-t-xl"
+                      }`}
+                    >
+                      <span className="text-[11px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                        LA
+                      </span>
+                      <span>{t(translations.lao)}</span>
+                      {errors.nameLA && (
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                      )}
+                    </button>
+
+                    {/* English Tab */}
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("EN")}
+                      className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+                        activeTab === "EN"
+                          ? "border-primary text-primary bg-white rounded-t-xl shadow-xs"
+                          : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 rounded-t-xl"
+                      }`}
+                    >
+                      <span className="text-[11px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                        EN
+                      </span>
+                      <span>{t(translations.english)}</span>
+                      {errors.nameEN && (
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                      )}
+                    </button>
                   </div>
+
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                    <Globe size={14} />
+                    <span className="hidden sm:inline font-medium">
+                      {activeTab === "LA"
+                        ? "ເນື້ອຫາພາສາລາວ (Lao)"
+                        : "English Content (EN)"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* --- TAB CONTENT: LAO --- */}
+                <div className={activeTab === "LA" ? "p-5 space-y-5" : "hidden"}>
+                  {/* Lao Name */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.indication)} (Lao)
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5">
+                      {t(translations.name, { name: t(translations.product) })} (Lao){" "}
+                      <span className="text-red-500">*</span>
                     </label>
+                    <input
+                      value={formData.nameLA}
+                      onChange={(e) =>
+                        setFormData({ ...formData, nameLA: e.target.value })
+                      }
+                      className={`w-full p-2.5 border rounded-lg text-sm font-bold transition-all ${
+                        errors.nameLA
+                          ? "border-red-500 bg-red-50/20 focus:ring-red-200"
+                          : "border-slate-200 focus:border-primary"
+                      }`}
+                      placeholder="ຊື່ຢາ (ພາສາລາວ)"
+                    />
+                    {errors.nameLA && (
+                      <p className="text-[11px] text-red-500 mt-1 font-medium">
+                        {errors.nameLA}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Lao Indication */}
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <label className="block text-xs font-bold text-slate-600">
+                        {t(translations.indication)} (Lao)
+                      </label>
+                      <span className="text-[11px] text-slate-400">ສັບພະຄຸນ / ຂໍ້ບົ່ງໃຊ້</span>
+                    </div>
                     <TiptapEditor
                       content={formData.indicationLA}
                       onChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          indicationLA: value,
-                        })
+                        setFormData({ ...formData, indicationLA: value })
                       }
                       placeholder="ສັບພະຄຸນ..."
                     />
                   </div>
-                </div>
-              </div>
 
-              {/* 4. Administration / Directions for Use */}
-              <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex-1">
-                <h3 className="text-sm font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
-                  {t(translations.administration)}
-                </h3>
-                <div className="space-y-3">
+                  {/* Lao Administration */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.administration)} (English)
-                    </label>
-                    <TiptapEditor
-                      content={formData.administrationEN}
-                      onChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          administrationEN: value,
-                        })
-                      }
-                      placeholder="Directions for use..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-1">
-                      {t(translations.administration)} (Lao)
-                    </label>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <label className="block text-xs font-bold text-slate-600">
+                        {t(translations.administration)} (Lao)
+                      </label>
+                      <span className="text-[11px] text-slate-400">ວິທີໃຊ້ / ຂະໜາດການໃຊ້</span>
+                    </div>
                     <TiptapEditor
                       content={formData.administrationLA}
                       onChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          administrationLA: value,
-                        })
+                        setFormData({ ...formData, administrationLA: value })
                       }
                       placeholder="ວິທີໃຊ້..."
+                    />
+                  </div>
+                </div>
+
+                {/* --- TAB CONTENT: ENGLISH --- */}
+                <div className={activeTab === "EN" ? "p-5 space-y-5" : "hidden"}>
+                  {/* English Name */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5">
+                      {t(translations.name, { Name: t(translations.product) })} (English){" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      value={formData.nameEN}
+                      onChange={(e) =>
+                        setFormData({ ...formData, nameEN: e.target.value })
+                      }
+                      className={`w-full p-2.5 border rounded-lg text-sm font-bold transition-all ${
+                        errors.nameEN
+                          ? "border-red-500 bg-red-50/20 focus:ring-red-200"
+                          : "border-slate-200 focus:border-primary"
+                      }`}
+                      placeholder="Product Name (English)"
+                    />
+                    {errors.nameEN && (
+                      <p className="text-[11px] text-red-500 mt-1 font-medium">
+                        {errors.nameEN}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* English Indication */}
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <label className="block text-xs font-bold text-slate-600">
+                        {t(translations.indication)} (English)
+                      </label>
+                      <span className="text-[11px] text-slate-400">Indications / Uses</span>
+                    </div>
+                    <TiptapEditor
+                      content={formData.indicationEN}
+                      onChange={(value) =>
+                        setFormData({ ...formData, indicationEN: value })
+                      }
+                      placeholder="Description..."
+                    />
+                  </div>
+
+                  {/* English Administration */}
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <label className="block text-xs font-bold text-slate-600">
+                        {t(translations.administration)} (English)
+                      </label>
+                      <span className="text-[11px] text-slate-400">Directions for use</span>
+                    </div>
+                    <TiptapEditor
+                      content={formData.administrationEN}
+                      onChange={(value) =>
+                        setFormData({ ...formData, administrationEN: value })
+                      }
+                      placeholder="Directions for use..."
                     />
                   </div>
                 </div>

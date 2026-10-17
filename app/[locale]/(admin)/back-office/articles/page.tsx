@@ -9,7 +9,7 @@ import {
   Globe,
   Calendar,
 } from "lucide-react";
-import Pagination from "@/components/UI/Pagination";
+import Pagination from "@/components/ui-web/Pagination";
 import { useAlert } from "@/app/hooks/useAlert";
 import { useAuth } from "@/app/hooks/useAuth";
 import { usePagination } from "@/app/hooks/usePagination";
@@ -22,9 +22,9 @@ import {
 } from "@/generated/prisma/enums"; // Import Enum
 
 import { formatDate } from "@/lib/formateData";
-import ArticleFormModal from "@/components/Form/ArticleFormModal";
+import ArticleFormModal from "@/components/forms/ArticleFormModal";
 import { isEnglish } from "@/lib/utils/locale";
-import { FilterActions } from "@/components/UI/FilterActions";
+import { FilterActions } from "@/components/ui-web/FilterActions";
 import { api } from "@/lib/axios";
 const STATUS_STYLES: Record<string, string> = {
   [ArticleStatus.PUBLISHED]:
