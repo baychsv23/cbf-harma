@@ -1,7 +1,7 @@
 // proxy.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { getToken, type JWT } from "next-auth/jwt";
 import { routing } from "./i18n/routing";
 import createIntlMiddleware from "next-intl/middleware";
 import { Permission, Role } from "./generated/prisma/enums";
@@ -28,7 +28,7 @@ function isAuthRoute(path: string): boolean {
   );
 }
 
-function hasPermission(token: any, requiredPermissions: string[]): boolean {
+function hasPermission(token: JWT, requiredPermissions: Permission[]): boolean {
   if (token.role === Role.ADMIN) return true;
   // ป้องกันกรณี permissions เป็น null หรือไม่ใช่ array
   const userPerms = Array.isArray(token?.permissions) ? token.permissions : [];
@@ -90,14 +90,12 @@ export async function proxy(request: NextRequest) {
 
   const { locale, pathWithoutLocale } = getLocaleAndPath(pathname);
 
-  // Get auth token
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXT_AUTH_SECRET,
-  });
-
   // 1️⃣ Auth routes (signin/register) - redirect if already logged in
   if (isAuthRoute(pathWithoutLocale)) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXT_AUTH_SECRET,
+    });
     if (token) return NextResponse.redirect(new URL(`/${locale}`, request.url));
     return intlMiddleware(request);
   }
@@ -111,6 +109,10 @@ export async function proxy(request: NextRequest) {
   const matchedRoute = getMatchingRoute(pathWithoutLocale);
   if (matchedRoute) {
     const { config } = matchedRoute;
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXT_AUTH_SECRET,
+    });
 
     // Authentication required
     if (!token) {

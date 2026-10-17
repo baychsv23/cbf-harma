@@ -1,6 +1,5 @@
 "use client";
 import { api } from "@/lib/axios";
-import axios from "axios";
 import { useEffect } from "react";
 
 interface ArticleViewCounterProps {
@@ -23,7 +22,7 @@ export default function ArticleViewCounter({ slug }: ArticleViewCounterProps) {
       } catch (error) {
         console.error("count view failed", error);
       }
-    }, 10); // 10 s
+    }, 10_000); // 10 s
 
     return () => clearTimeout(timer);
   }, [slug]);

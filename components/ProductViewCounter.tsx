@@ -22,7 +22,7 @@ export default function ProductViewCounter({ slug }: ProductViewCounterProps) {
       } catch (error) {
         console.error("count view failed", error);
       }
-    }, 10); // 10 s
+    }, 10_000); // 10 s
 
     return () => clearTimeout(timer);
   }, [slug]);
